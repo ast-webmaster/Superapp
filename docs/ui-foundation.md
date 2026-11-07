@@ -18,7 +18,7 @@ Sources of truth, in order:
 
 ## Tokens
 
-All values are px. `--spacing` is 4, so `p-4` is 16 on every platform. Use named utilities only. No raw hex, no arbitrary values such as `p-[13px]`.
+All values are px, except line heights, which are unitless ratios with the px noted beside each: react-native-css reads a line-height that arrives through `var()` (every `text-*` utility) as a multiple of the font size, so `24px` rendered as 384 on Android. `tokens.test.ts` checks each ratio still resolves to its px. `--spacing` is 4, so `p-4` is 16 on every platform. Use named utilities only. No raw hex, no arbitrary values such as `p-[13px]`.
 
 ### Color
 

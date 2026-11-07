@@ -90,72 +90,71 @@ export function BottomNav({
 
   return (
     <View
-      pointerEvents={floating ? 'box-none' : undefined}
-      className={clsx(floating && 'absolute inset-x-0 bottom-0 px-5 pt-6', className)}
-      style={floating ? { paddingBottom: bottom + sizes.tabBarOffset } : undefined}>
-      {/* The bar floats over a lavender fade, so the glass has something to sit on. */}
-      {floating ? (
+      role="navigation"
+      onLayout={(event) => setBarWidth(event.nativeEvent.layout.width)}
+      className={clsx(floating && 'absolute right-5 left-5', className)}
+      style={floating ? { bottom: bottom + sizes.tabBarOffset } : undefined}>
+      <GlassSurface className="h-tabbar flex-row items-center gap-1 rounded-pill px-2">
+        {/* The gradient lives inside the bar; everything around it keeps the screen background. */}
         <LinearGradient
           pointerEvents="none"
-          colors={[colors['surface-gray-clear'], colors.lavender]}
-          style={StyleSheet.absoluteFill}
+          colors={[colors.surface, colors['primary-soft'], colors.lavender]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={[StyleSheet.absoluteFill, { borderRadius: radiusPill }]}
         />
-      ) : null}
-      <View role="navigation" onLayout={(event) => setBarWidth(event.nativeEvent.layout.width)}>
-        <GlassSurface className="h-tabbar flex-row items-center gap-1 rounded-pill px-2">
-          {itemWidth > 0 ? (
-            <Animated.View
-              pointerEvents="none"
-              style={[
-                {
-                  position: 'absolute',
-                  left: BAR_PADDING,
-                  top: (sizes.tabBar - ITEM_HEIGHT) / 2,
-                  width: itemWidth,
-                  height: ITEM_HEIGHT,
-                  borderRadius: radiusPill,
-                  backgroundColor: colors.primary,
-                },
-                { transform: [{ translateX: offset }] },
-              ]}
-            />
-          ) : null}
-          {items.map((item) => {
-            const active = item.key === activeKey;
+        {itemWidth > 0 ? (
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              {
+                position: 'absolute',
+                left: BAR_PADDING,
+                top: (sizes.tabBar - ITEM_HEIGHT) / 2,
+                width: itemWidth,
+                height: ITEM_HEIGHT,
+                borderRadius: radiusPill,
+                backgroundColor: colors.primary,
+              },
+              { transform: [{ translateX: offset }] },
+            ]}
+          />
+        ) : null}
+        {items.map((item) => {
+          const active = item.key === activeKey;
 
-            return (
-              <Pressable
-                key={item.key}
-                role="link"
-                aria-label={item.badge ? `${item.label}, ${item.badge} unread` : item.label}
-                aria-current={active ? 'page' : undefined}
-                accessibilityState={{ selected: active }}
-                onPress={() => onChange(item.key)}
-                className={clsx(
-                  'h-14 min-w-0 flex-1 items-center justify-center rounded-pill',
-                  !active && 'active:bg-surface-gray',
-                  focusRing,
-                )}>
-                <View>
-                  <Icon name={item.icon} color={active ? 'on-primary' : 'ink'} />
-                  {item.badge ? (
-                    <View
-                      testID={`${item.key}-badge`}
-                      className="absolute -right-3 -top-2 h-5 min-w-5 items-center justify-center rounded-pill bg-danger px-1">
-                      <AppText variant="label" tone="on-primary">
-                        {item.badge > 99 ? '99+' : String(item.badge)}
-                      </AppText>
-                    </View>
-                  ) : null}
-                </View>
-                <AppText variant="label" tone={active ? 'on-primary' : 'ink'} numberOfLines={1}>
-                  {item.label}
-                </AppText>
-              </Pressable>
-            );
-          })}
-        </GlassSurface>
-      </View>
+          return (
+            <Pressable
+              key={item.key}
+              role="link"
+              aria-label={item.badge ? `${item.label}, ${item.badge} unread` : item.label}
+              aria-current={active ? 'page' : undefined}
+              accessibilityState={{ selected: active }}
+              onPress={() => onChange(item.key)}
+              className={clsx(
+                'h-14 min-w-0 flex-1 items-center justify-center rounded-pill',
+                !active && 'active:bg-surface-gray',
+                focusRing,
+              )}>
+              <View>
+                <Icon name={item.icon} color={active ? 'on-primary' : 'ink'} />
+                {item.badge ? (
+                  <View
+                    testID={`${item.key}-badge`}
+                    className="absolute -right-3 -top-2 h-5 min-w-5 items-center justify-center rounded-pill bg-danger px-1">
+                    <AppText variant="label" tone="on-primary">
+                      {item.badge > 99 ? '99+' : String(item.badge)}
+                    </AppText>
+                  </View>
+                ) : null}
+              </View>
+              <AppText variant="label" tone={active ? 'on-primary' : 'ink'} numberOfLines={1}>
+                {item.label}
+              </AppText>
+            </Pressable>
+          );
+        })}
+      </GlassSurface>
     </View>
   );
 }
