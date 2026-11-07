@@ -7,5 +7,6 @@ export const priceApprovalManifest: ModuleManifest = {
   title: 'Price Approval',
   description: 'Review and approve price change requests',
   route: priceApprovalRoutes.list,
-  // Set `permission` once the backend's permission names are known (e.g. 'price-approval.view').
+  // The API answers 403 without one of these; hide the entry instead of opening an error screen.
+  permission: ['read_priceapproval', 'readonly_priceapproval_all'],
 };

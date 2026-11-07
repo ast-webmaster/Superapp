@@ -9,6 +9,6 @@ type FilterState = {
 };
 
 export const usePriceApprovalFilter = create<FilterState>((set) => ({
-  filter: 'pending',
+  filter: 'AWAITING',
   setFilter: (filter) => set({ filter }),
 }));

@@ -11,7 +11,13 @@ export type RequestOptions = {
   signal?: AbortSignal;
 };
 
-type LaravelErrorBody = { message?: string; errors?: FieldErrors };
+/** Success envelope of every DigitalApproval endpoint. `meta` is pagination for lists, else empty. */
+export type ApiSuccess<T, M = null> = { success: true; message: string; data: T; meta: M };
+
+type ApiErrorBody = { message?: string; errors?: FieldErrors };
+
+/** Version prefix of the API; `env.apiUrl` already ends at `/api`. */
+const API_VERSION = '/v1';
 
 // The auth layer owns the token and the sign-out policy; the client only holds what it
 // needs to send a request. Injecting them keeps core/api free of any core/auth import.
@@ -27,14 +33,18 @@ export function setUnauthorizedHandler(handler: (() => void) | undefined) {
 }
 
 function buildUrl(path: string, query?: Query) {
-  const url = new URL(`${env.apiUrl}${path}`);
+  const url = new URL(`${env.apiUrl}${API_VERSION}${path}`);
   for (const [key, value] of Object.entries(query ?? {})) {
     if (value !== undefined) url.searchParams.set(key, String(value));
   }
   return url.toString();
 }
 
-async function request<T>(method: string, path: string, options: RequestOptions = {}): Promise<T> {
+async function request<T, M>(
+  method: string,
+  path: string,
+  options: RequestOptions = {},
+): Promise<ApiSuccess<T, M>> {
   const headers: Record<string, string> = { Accept: 'application/json' };
   if (options.body !== undefined) headers['Content-Type'] = 'application/json';
   if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
@@ -53,7 +63,7 @@ async function request<T>(method: string, path: string, options: RequestOptions 
   }
 
   if (!response.ok) {
-    const body: LaravelErrorBody = await response.json().catch(() => ({}));
+    const body: ApiErrorBody = await response.json().catch(() => ({}));
     // A 401 on a request that carried no token is a failed login, not an expired session.
     if (response.status === 401 && accessToken) onUnauthorized?.();
     throw AppError.fromStatus(
@@ -63,18 +73,18 @@ async function request<T>(method: string, path: string, options: RequestOptions 
     );
   }
 
-  if (response.status === 204) return undefined as T;
-  return (await response.json()) as T;
+  return (await response.json()) as ApiSuccess<T, M>;
 }
 
 export const apiClient = {
-  get: <T>(path: string, options?: Omit<RequestOptions, 'body'>) => request<T>('GET', path, options),
-  post: <T>(path: string, body?: unknown, options?: Omit<RequestOptions, 'body'>) =>
-    request<T>('POST', path, { ...options, body }),
-  put: <T>(path: string, body?: unknown, options?: Omit<RequestOptions, 'body'>) =>
-    request<T>('PUT', path, { ...options, body }),
-  patch: <T>(path: string, body?: unknown, options?: Omit<RequestOptions, 'body'>) =>
-    request<T>('PATCH', path, { ...options, body }),
-  delete: <T>(path: string, options?: Omit<RequestOptions, 'body'>) =>
-    request<T>('DELETE', path, options),
+  get: <T, M = null>(path: string, options?: Omit<RequestOptions, 'body'>) =>
+    request<T, M>('GET', path, options),
+  post: <T, M = null>(path: string, body?: unknown, options?: Omit<RequestOptions, 'body'>) =>
+    request<T, M>('POST', path, { ...options, body }),
+  put: <T, M = null>(path: string, body?: unknown, options?: Omit<RequestOptions, 'body'>) =>
+    request<T, M>('PUT', path, { ...options, body }),
+  patch: <T, M = null>(path: string, body?: unknown, options?: Omit<RequestOptions, 'body'>) =>
+    request<T, M>('PATCH', path, { ...options, body }),
+  delete: <T, M = null>(path: string, options?: Omit<RequestOptions, 'body'>) =>
+    request<T, M>('DELETE', path, options),
 };

@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet } from 'react-native';
 
 import { toAppError } from '@/core/errors';
 import { EmptyState } from '@/shared/components/empty-state';
@@ -16,7 +16,8 @@ import { usePriceApprovalFilter } from '../store/priceApprovalFilterStore';
 export function PriceApprovalListScreen() {
   const filter = usePriceApprovalFilter((state) => state.filter);
   const setFilter = usePriceApprovalFilter((state) => state.setFilter);
-  const { data, error, fetchStatus, isRefetching, refetch } = usePriceApprovals(filter);
+  const { data, error, fetchStatus, isRefetching, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    usePriceApprovals(filter);
 
   return (
     <Screen hasHeader>
@@ -38,7 +39,7 @@ export function PriceApprovalListScreen() {
           ) : null}
           <FlatList
             data={data}
-            keyExtractor={(item) => String(item.id)}
+            keyExtractor={(item) => item.pa_uuid}
             renderItem={({ item }) => <PriceApprovalCard item={item} />}
             ListEmptyComponent={
               <EmptyState
@@ -47,8 +48,12 @@ export function PriceApprovalListScreen() {
               />
             }
             contentContainerStyle={[styles.list, data.length === 0 && styles.emptyList]}
-            refreshing={isRefetching}
+            refreshing={isRefetching && !isFetchingNextPage}
             onRefresh={() => refetch()}
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) void fetchNextPage();
+            }}
+            ListFooterComponent={isFetchingNextPage ? <ActivityIndicator style={styles.footer} /> : undefined}
           />
         </>
       )}
@@ -62,5 +67,8 @@ const styles = StyleSheet.create({
   },
   emptyList: {
     flexGrow: 1,
+  },
+  footer: {
+    paddingVertical: Spacing.three,
   },
 });

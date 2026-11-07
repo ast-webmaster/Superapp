@@ -1,7 +1,12 @@
-import { useCurrentUser, type AuthUser } from '@/core/auth';
+import { usePermissions } from '@/core/auth';
 
-export function hasPermission(user: AuthUser | null, permission: string): boolean {
-  return user?.permissions.includes(permission) ?? false;
+/** One permission, or a list of which any one is enough. */
+export type PermissionRequirement = string | readonly string[];
+
+export function hasPermission(granted: readonly string[], required: PermissionRequirement): boolean {
+  return typeof required === 'string'
+    ? granted.includes(required)
+    : required.some((permission) => granted.includes(permission));
 }
 
 /**
@@ -9,6 +14,6 @@ export function hasPermission(user: AuthUser | null, permission: string): boolea
  * permission required" and always passes, so callers can forward an optional field.
  */
 export function useCan() {
-  const user = useCurrentUser();
-  return (permission?: string) => permission === undefined || hasPermission(user, permission);
+  const granted = usePermissions();
+  return (required?: PermissionRequirement) => required === undefined || hasPermission(granted, required);
 }

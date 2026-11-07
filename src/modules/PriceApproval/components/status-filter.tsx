@@ -7,9 +7,12 @@ import { Spacing } from '@/shared/theme';
 import type { PriceApprovalFilter } from '../types';
 
 const OPTIONS: { value: PriceApprovalFilter; label: string }[] = [
-  { value: 'pending', label: 'Pending' },
-  { value: 'approved', label: 'Approved' },
-  { value: 'rejected', label: 'Rejected' },
+  { value: 'AWAITING', label: 'Awaiting' },
+  { value: 'PENDING', label: 'Pending' },
+  { value: 'FINISH', label: 'Finished' },
+  { value: 'REJECTED', label: 'Rejected' },
+  { value: 'CANCELED', label: 'Canceled' },
+  { value: 'DRAFT', label: 'Draft' },
   { value: 'all', label: 'All' },
 ];
 

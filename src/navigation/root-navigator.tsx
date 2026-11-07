@@ -36,6 +36,10 @@ export function RootNavigator() {
       <Stack.Protected guard={!signedIn}>
         <Stack.Screen name="login" />
       </Stack.Protected>
+      {/* The design system reference, for development builds only. */}
+      <Stack.Protected guard={__DEV__}>
+        <Stack.Screen name="design-system" />
+      </Stack.Protected>
     </Stack>
   );
 }

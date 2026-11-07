@@ -4,6 +4,7 @@ export type AppErrorCode =
   | 'forbidden'
   | 'not_found'
   | 'validation'
+  | 'rate_limited'
   | 'server'
   | 'unknown';
 
@@ -32,6 +33,7 @@ function codeFromStatus(status: number): AppErrorCode {
   if (status === 403) return 'forbidden';
   if (status === 404) return 'not_found';
   if (status === 422) return 'validation';
+  if (status === 429) return 'rate_limited';
   if (status >= 500) return 'server';
   return 'unknown';
 }

@@ -1,16 +1,20 @@
 import { create } from 'zustand';
 
 import { setAccessToken, setUnauthorizedHandler } from '@/core/api';
+import { toAppError } from '@/core/errors';
 import { secureStorage } from '@/core/storage';
 
 import { authApi } from './authApi';
+import { getDeviceName } from './deviceName';
 import type { AuthStatus, AuthUser, LoginCredentials } from './types';
 
 const TOKEN_KEY = 'auth_token';
+const EXPIRES_AT_KEY = 'auth_expires_at';
 
 type AuthState = {
   status: AuthStatus;
   user: AuthUser | null;
+  permissions: string[];
   /** Load the stored token and validate it. Call once at startup. */
   restore: () => Promise<void>;
   signIn: (credentials: LoginCredentials) => Promise<void>;
@@ -22,29 +26,46 @@ type AuthState = {
 export const useAuthStore = create<AuthState>((set) => ({
   status: 'restoring',
   user: null,
+  permissions: [],
 
   restore: async () => {
-    const token = await secureStorage.get(TOKEN_KEY);
-    if (!token) {
-      set({ status: 'unauthenticated', user: null });
+    const [token, expiresAt] = await Promise.all([
+      secureStorage.get(TOKEN_KEY),
+      secureStorage.get(EXPIRES_AT_KEY),
+    ]);
+    // The token is never renewed, so past its expiry the server would only answer 401.
+    if (!token || (expiresAt && Date.parse(expiresAt) <= Date.now())) {
+      await useAuthStore.getState().clearSession();
       return;
     }
     setAccessToken(token);
     try {
-      set({ status: 'authenticated', user: await authApi.me() });
-    } catch {
-      // A 401 already wiped the stored token via clearSession. Any other failure
-      // (offline, 5xx) keeps it, so the next launch can try again.
+      const { user, permissions } = await authApi.me();
+      set({ status: 'authenticated', user, permissions });
+    } catch (error) {
+      // 401 already wiped the session via the unauthorized handler. 403 means the account was
+      // deactivated, so the token is dead too. Any other failure (offline, 5xx) keeps it,
+      // so the next launch can try again.
+      if (toAppError(error).code === 'forbidden') {
+        await useAuthStore.getState().clearSession();
+        return;
+      }
       setAccessToken(null);
-      set({ status: 'unauthenticated', user: null });
+      set({ status: 'unauthenticated', user: null, permissions: [] });
     }
   },
 
   signIn: async (credentials) => {
-    const { token, user } = await authApi.login(credentials);
-    await secureStorage.set(TOKEN_KEY, token);
+    const { token, expires_at, user, permissions } = await authApi.login(
+      credentials,
+      await getDeviceName(),
+    );
+    await Promise.all([
+      secureStorage.set(TOKEN_KEY, token),
+      secureStorage.set(EXPIRES_AT_KEY, expires_at),
+    ]);
     setAccessToken(token);
-    set({ status: 'authenticated', user });
+    set({ status: 'authenticated', user, permissions });
   },
 
   signOut: async () => {
@@ -55,8 +76,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   clearSession: async () => {
     setAccessToken(null);
-    set({ status: 'unauthenticated', user: null });
-    await secureStorage.remove(TOKEN_KEY);
+    set({ status: 'unauthenticated', user: null, permissions: [] });
+    await Promise.all([secureStorage.remove(TOKEN_KEY), secureStorage.remove(EXPIRES_AT_KEY)]);
   },
 }));
 
@@ -64,3 +85,4 @@ setUnauthorizedHandler(() => void useAuthStore.getState().clearSession());
 
 export const useAuthStatus = () => useAuthStore((state) => state.status);
 export const useCurrentUser = () => useAuthStore((state) => state.user);
+export const usePermissions = () => useAuthStore((state) => state.permissions);

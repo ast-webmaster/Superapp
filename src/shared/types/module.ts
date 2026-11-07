@@ -8,6 +8,6 @@ export type ModuleManifest = {
    * its path, but the typed route tree belongs to the app shell, which casts when linking.
    */
   route: string;
-  /** Hidden from users who lack this permission. Omit when everyone may open it. */
-  permission?: string;
+  /** Hidden from users who hold none of these permissions. Omit when everyone may open it. */
+  permission?: string | readonly string[];
 };

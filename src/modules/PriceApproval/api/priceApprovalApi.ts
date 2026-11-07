@@ -1,14 +1,15 @@
 import { apiClient } from '@/core/api';
 
-import type { PriceApproval, PriceApprovalFilter } from '../types';
+import type { PageMeta, PriceApprovalFilter, PriceApprovalListItem } from '../types';
 
-// ASSUMED endpoint and response envelope (`{ data: [...] }`, like a Laravel API Resource).
+const PAGE_SIZE = 15;
+
 export const priceApprovalApi = {
-  list: async (filter: PriceApprovalFilter, signal?: AbortSignal) => {
-    const response = await apiClient.get<{ data: PriceApproval[] }>('/price-approvals', {
-      query: { status: filter === 'all' ? undefined : filter },
+  list: async (filter: PriceApprovalFilter, page: number, signal?: AbortSignal) => {
+    const response = await apiClient.get<PriceApprovalListItem[], PageMeta>('/price-approval', {
+      query: { status: filter === 'all' ? undefined : filter, page, per_page: PAGE_SIZE },
       signal,
     });
-    return response.data;
+    return { items: response.data, meta: response.meta };
   },
 };

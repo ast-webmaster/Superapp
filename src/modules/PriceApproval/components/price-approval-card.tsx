@@ -4,23 +4,26 @@ import { ThemedText } from '@/shared/components/themed-text';
 import { ThemedView } from '@/shared/components/themed-view';
 import { Spacing } from '@/shared/theme';
 
-import type { PriceApproval } from '../types';
+import type { PriceApprovalListItem } from '../types';
 
-export function PriceApprovalCard({ item }: { item: PriceApproval }) {
+export function PriceApprovalCard({ item }: { item: PriceApprovalListItem }) {
   return (
     <ThemedView type="backgroundElement" style={styles.card}>
       <View style={styles.row}>
-        <ThemedText type="smallBold">{item.code}</ThemedText>
+        <ThemedText type="smallBold">{item.pa_no}</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
           {item.status}
         </ThemedText>
       </View>
-      <ThemedText>{item.itemName}</ThemedText>
+      <ThemedText>{item.customer_name ?? item.customer_id ?? '-'}</ThemedText>
       <View style={styles.row}>
         <ThemedText type="small" themeColor="textSecondary">
-          {item.requestedBy}
+          {item.request_by_name ?? item.request_by}
         </ThemedText>
-        <ThemedText type="smallBold">{item.requestedPrice.toLocaleString('id-ID')}</ThemedText>
+        <ThemedText type="small" themeColor="textSecondary">
+          {item.last_updated_tier ? `${item.last_updated_tier} · ` : ''}
+          {item.pa_date}
+        </ThemedText>
       </View>
     </ThemedView>
   );

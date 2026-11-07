@@ -2,4 +2,4 @@
 export { priceApprovalManifest } from './manifest';
 export { PriceApprovalLayout } from './navigation/price-approval-layout';
 export { PriceApprovalListScreen } from './screens/price-approval-list-screen';
-export type { PriceApproval, PriceApprovalStatus } from './types';
+export type { PriceApprovalListItem, PriceApprovalStatus } from './types';
