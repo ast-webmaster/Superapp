@@ -1,5 +1,6 @@
 // Public interface of the Astrindo design system. Other code imports only from here.
 export { Alert, type AlertProps, type AlertTone } from './alert/alert';
+export { focusRing } from './focus';
 export { ToastProvider, useToast } from './alert/toast';
 export { Badge, type BadgeProps } from './badge/badge';
 export {

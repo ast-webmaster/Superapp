@@ -187,7 +187,9 @@ A list card is `rounded-xl bg-surface p-4 shadow-card gap-2`: `module-title` + `
 
 ### Detail
 
-No screen uses this yet; it is composed from the same parts. Native stack header with the record title → `surface` card with the summary (`module-title`, `Badge`, caption meta) → `ListGroup` of key-value rows → one `primary` `Button block` at the bottom for the main action.
+Native stack header → `ScrollView` (`gap-4 px-5`, pull to refresh, `keyboardShouldPersistTaps="handled"`) → stale/offline `Alert` → `surface` summary card (`module-title` + `Badge`, `body` subject, `caption muted` meta ending in "Updated 10:42") → `ListGroup` of key-value rows → sections with a `title` heading over a `ListGroup` → the decision card at the bottom: one `primary` `Button block` for the main action, `soft` for the rest, only the actions the server allows. Reference: `src/modules/PriceApproval/screens/price-approval-detail-screen.tsx` and `components/approval-actions.tsx`. Data rules for actions: [data-management.md](data-management.md#writing-actions).
+
+A tappable list card is a `Pressable` with `role="button"`, an `aria-label`, `active:bg-surface-gray` and `focusRing` (exported from `@/shared/ui`). Reference: `price-approval-card.tsx`.
 
 ## States
 
@@ -199,7 +201,9 @@ Every data screen has all of these. Do not flash "empty" during the first load.
 | Empty | `EmptyState` with a task icon and one short line of why |
 | Error, no data | `EmptyState icon="alert"`, the message, `Button variant="soft"` "Try again" |
 | Offline, no data | `EmptyState icon="alert"` "You are offline" plus retry |
-| Error, have data | Keep the list. `Alert tone="warning"` "Could not refresh. Showing saved data." |
+| Error, have data | Keep the list. `Alert tone="warning"` "Could not refresh. Showing data from 10:42." |
+| Offline, have data | Keep the list. `Alert tone="warning"` "You are offline. Showing data from 10:42." Actions disabled with a caption saying why |
+| Action result | `Alert` by the actions: success with the server's new status, warning on a conflict, danger when the outcome is unknown |
 | Loading more | `Loading` as the list footer |
 
 ## Accessibility
@@ -210,7 +214,7 @@ Every data screen has all of these. Do not flash "empty" during the first load.
 - Status is never color only: a `Badge` always has a label, an `Alert` always has an icon and text.
 - Icon-only controls need a label (`IconButton` requires one). A field without a visible label needs `aria-label`.
 - Errors are announced: `Alert` and `TextField` already do it. Do not add a second announcement.
-- Interactive components carry the focus ring (`focusRing`). Keep it on anything new.
+- Interactive components carry the focus ring (`focusRing`, exported from `@/shared/ui` for module-local pressables). Keep it on anything new.
 
 ## Copy
 

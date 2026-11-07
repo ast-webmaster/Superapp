@@ -1,8 +1,11 @@
 export type AppErrorCode =
   | 'network'
+  | 'timeout'
   | 'unauthorized'
   | 'forbidden'
   | 'not_found'
+  /** The record changed on the server since the client read it (409). */
+  | 'conflict'
   | 'validation'
   | 'rate_limited'
   | 'server'
@@ -32,6 +35,7 @@ function codeFromStatus(status: number): AppErrorCode {
   if (status === 401) return 'unauthorized';
   if (status === 403) return 'forbidden';
   if (status === 404) return 'not_found';
+  if (status === 409) return 'conflict';
   if (status === 422) return 'validation';
   if (status === 429) return 'rate_limited';
   if (status >= 500) return 'server';
@@ -43,7 +47,9 @@ export function toAppError(error: unknown): AppError {
   return new AppError(error instanceof Error ? error.message : 'Something went wrong', 'unknown');
 }
 
-/** 4xx responses will not succeed on retry; network and 5xx failures might. */
+const TRANSIENT: readonly AppErrorCode[] = ['network', 'timeout', 'server'];
+
+/** 4xx responses will not succeed on retry; network, timeout and 5xx failures might. */
 export function isRetryable(error: unknown): boolean {
-  return error instanceof AppError && (error.code === 'network' || error.code === 'server');
+  return error instanceof AppError && TRANSIENT.includes(error.code);
 }

@@ -1,13 +1,23 @@
-import { View } from 'react-native';
+import { clsx } from 'clsx';
+import { router, type Href } from 'expo-router';
+import { Pressable, View } from 'react-native';
 
-import { AppText, Badge } from '@/shared/ui';
+import { AppText, Badge, focusRing } from '@/shared/ui';
 
+import { priceApprovalRoutes } from '../navigation/routes';
 import type { PriceApprovalListItem } from '../types';
 import { statusBadge } from './status';
 
 export function PriceApprovalCard({ item }: { item: PriceApprovalListItem }) {
   return (
-    <View className="gap-2 rounded-xl bg-surface p-4 shadow-card">
+    <Pressable
+      role="button"
+      aria-label={`Open ${item.pa_no}`}
+      onPress={() => router.push(priceApprovalRoutes.detail(item.pa_uuid) as Href)}
+      className={clsx(
+        'gap-2 rounded-xl bg-surface p-4 shadow-card active:bg-surface-gray',
+        focusRing,
+      )}>
       <View className="flex-row items-start justify-between gap-3">
         <AppText variant="module-title" className="min-w-0 flex-1">
           {item.pa_no}
@@ -24,6 +34,6 @@ export function PriceApprovalCard({ item }: { item: PriceApprovalListItem }) {
           {item.pa_date}
         </AppText>
       </View>
-    </View>
+    </Pressable>
   );
 }

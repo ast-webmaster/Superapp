@@ -18,6 +18,8 @@ type ApiErrorBody = { message?: string; errors?: FieldErrors };
 
 /** Version prefix of the API; `env.apiUrl` already ends at `/api`. */
 const API_VERSION = '/v1';
+/** A request that has not finished by then fails as `timeout` instead of spinning forever. */
+export const REQUEST_TIMEOUT_MS = 20_000;
 
 // The auth layer owns the token and the sign-out policy; the client only holds what it
 // needs to send a request. Injecting them keeps core/api free of any core/auth import.
@@ -45,6 +47,35 @@ async function request<T, M>(
   path: string,
   options: RequestOptions = {},
 ): Promise<ApiSuccess<T, M>> {
+  // One signal for both the caller's cancel and the timeout. AbortSignal.any and
+  // AbortSignal.timeout are not guaranteed on Hermes, so they are combined by hand.
+  const controller = new AbortController();
+  const cancel = () => controller.abort();
+  if (options.signal?.aborted) controller.abort();
+  options.signal?.addEventListener('abort', cancel);
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, REQUEST_TIMEOUT_MS);
+
+  try {
+    return await send<T, M>(method, path, options, controller.signal);
+  } catch (error) {
+    if (timedOut) throw new AppError('The server took too long to respond. Try again.', 'timeout');
+    throw error;
+  } finally {
+    clearTimeout(timer);
+    options.signal?.removeEventListener('abort', cancel);
+  }
+}
+
+async function send<T, M>(
+  method: string,
+  path: string,
+  options: RequestOptions,
+  signal: AbortSignal,
+): Promise<ApiSuccess<T, M>> {
   const headers: Record<string, string> = { Accept: 'application/json' };
   if (options.body !== undefined) headers['Content-Type'] = 'application/json';
   if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
@@ -55,10 +86,11 @@ async function request<T, M>(
       method,
       headers,
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
-      signal: options.signal,
+      signal,
     });
   } catch (error) {
-    if (options.signal?.aborted) throw error;
+    // Cancelled or timed out: request() decides which.
+    if (signal.aborted) throw error;
     throw new AppError('Cannot reach the server. Check your connection.', 'network');
   }
 

@@ -4,16 +4,28 @@ import { FlatList, View } from 'react-native';
 import { toAppError } from '@/core/errors';
 import { Alert, Button, EmptyState, Loading, Screen } from '@/shared/ui';
 
+import { formatSyncedAt } from '../components/format';
 import { PriceApprovalCard } from '../components/price-approval-card';
 import { StatusFilter } from '../components/status-filter';
+import { useIsOnline } from '../hooks/use-is-online';
 import { usePriceApprovals } from '../hooks/use-price-approvals';
 import { usePriceApprovalFilter } from '../store/priceApprovalFilterStore';
 
 export function PriceApprovalListScreen() {
   const filter = usePriceApprovalFilter((state) => state.filter);
   const setFilter = usePriceApprovalFilter((state) => state.setFilter);
-  const { data, error, fetchStatus, isRefetching, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
-    usePriceApprovals(filter);
+  const online = useIsOnline();
+  const {
+    data,
+    error,
+    fetchStatus,
+    dataUpdatedAt,
+    isRefetching,
+    refetch,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = usePriceApprovals(filter);
 
   const retry = (
     <Button variant="soft" onPress={() => refetch()}>
@@ -29,11 +41,17 @@ export function PriceApprovalListScreen() {
       </View>
       {data === undefined ? (
         error ? (
-          <EmptyState icon="alert" title="Could not load requests" description={toAppError(error).message}>
+          <EmptyState
+            icon="alert"
+            title="Could not load requests"
+            description={toAppError(error).message}>
             {retry}
           </EmptyState>
         ) : fetchStatus === 'paused' ? (
-          <EmptyState icon="alert" title="You are offline" description="Check your connection and try again.">
+          <EmptyState
+            icon="alert"
+            title="You are offline"
+            description="Check your connection and try again.">
             {retry}
           </EmptyState>
         ) : (
@@ -41,8 +59,18 @@ export function PriceApprovalListScreen() {
         )
       ) : (
         <>
-          {error ? (
-            <Alert tone="warning" message="Could not refresh. Showing saved data." className="mx-5 mt-4" />
+          {!online ? (
+            <Alert
+              tone="warning"
+              message={`You are offline. Showing data from ${formatSyncedAt(dataUpdatedAt)}.`}
+              className="mx-5 mt-4"
+            />
+          ) : error ? (
+            <Alert
+              tone="warning"
+              message={`Could not refresh. Showing data from ${formatSyncedAt(dataUpdatedAt)}.`}
+              className="mx-5 mt-4"
+            />
           ) : null}
           <FlatList
             data={data}
@@ -52,7 +80,9 @@ export function PriceApprovalListScreen() {
               <EmptyState
                 icon="clipboard"
                 title="Nothing here"
-                description={filter === 'all' ? 'No price requests yet.' : 'No requests with this status.'}
+                description={
+                  filter === 'all' ? 'No price requests yet.' : 'No requests with this status.'
+                }
               />
             }
             contentContainerClassName={clsx('gap-4 px-5 py-4', data.length === 0 && 'grow')}
@@ -61,7 +91,9 @@ export function PriceApprovalListScreen() {
             onEndReached={() => {
               if (hasNextPage && !isFetchingNextPage) void fetchNextPage();
             }}
-            ListFooterComponent={isFetchingNextPage ? <Loading label="Loading more requests" /> : undefined}
+            ListFooterComponent={
+              isFetchingNextPage ? <Loading label="Loading more requests" /> : undefined
+            }
           />
         </>
       )}
