@@ -12,7 +12,7 @@ const navigationTheme = {
   colors: {
     ...DefaultTheme.colors,
     primary: colors.primary,
-    background: colors['surface-gray'],
+    background: colors.surface,
     card: colors.surface,
     text: colors.ink,
     border: colors.border,

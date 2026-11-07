@@ -64,7 +64,7 @@ src/shared/      reusable UI + utils: components, hooks, theme, types
 - **Class names only reach React Native primitives.** Third-party components such as `GlassView`, `expo-image` and `Animated.View` take `style`, or wrap a plain `View`. The browser will not show this bug; a native build will.
 - **Fonts on native.** Text must go through `AppText`: React Native does not inherit `font-jakarta` from a parent `View`.
 - **Accessibility.** Use `role` and `aria-*`, which work on web and native, and add `accessibilityState` for selected state on native. A `View` with a `role` needs `accessible` or screen readers skip it. Touch targets are at least 48: keep the visible control smaller inside a 48 press area. Status is never color only.
-- **Backgrounds.** Inputs and unselected chips are `surface-gray`, the same as the app background, so they must sit on a `surface` card or header.
+- **Backgrounds.** The app background is `surface` (white). Inputs and unselected chips are `surface-gray`.
 - **Copy.** Sentence case, short, second person, verbs on buttons, no emoji, no exclamation marks.
 - **`+html.tsx`** must render `useServerDocumentContext()`'s nodes. Without them the web page gets no scripts and never hydrates.
 

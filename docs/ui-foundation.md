@@ -32,7 +32,7 @@ All values are px, except line heights, which are unitless ratios with the px no
 | `ink` | `#0b0b1a` | Headings and primary text |
 | `ink-muted` | `#5b6270` | Secondary text, captions, placeholders |
 | `surface` | `#ffffff` | Cards, headers, sheets, modals |
-| `surface-gray` | `#f4f5f7` | App background, inputs, unselected chips |
+| `surface-gray` | `#f4f5f7` | Inputs, unselected chips, neutral fills |
 | `border` | `#e5e7eb` | Hairlines between rows |
 | `glass` | `rgba(255,255,255,0.7)` | Bottom nav surface |
 | `control-off` | `#868c98` | Toggle track when off |
@@ -40,7 +40,7 @@ All values are px, except line heights, which are unitless ratios with the px no
 | `danger` / `danger-bg` | `#b42318` / `#fde8e8` | Errors, destructive |
 | `warning` / `warning-bg` | `#8a5a00` / `#fff4d6` | Warnings, waiting states |
 
-**Background rule.** Inputs and unselected chips are `surface-gray`, which is also the app background. They must sit on a `surface` card or header, never directly on the screen ground.
+**Background rule.** The app background is `surface` (white). Inputs and unselected chips are `surface-gray`, so they stand out on it.
 
 The app is light only. There is no dark palette.
 
@@ -51,7 +51,7 @@ Always through `AppText`. Native text does not inherit the font from a parent `V
 | `variant` | Size / line, weight | Use |
 |---|---|---|
 | `display` | 40 / 44, 800 | Marketing or splash moments only |
-| `heading` | 28 / 34, 700 | Screen title |
+| `heading` | 24 / 30, 700 | Screen title |
 | `title` | 20 / 26, 700 | Section title, empty-state title, stepper value |
 | `module-title` | 17 / 22, 700 | Card title |
 | `info-title` | 16 / 24, 700 | Title inside an `InfoCard` |
@@ -91,11 +91,11 @@ Give a screen title `role="heading"`.
 | `rounded-md` | 12 | Icon wells, pressable rows |
 | `rounded-sm` | 8 | Skeleton blocks |
 
-Shadows: `shadow-card` on a white card sitting on the gray ground. `shadow-glass` is internal to `BottomNav`. A card inside another card gets no shadow.
+Shadows: `shadow-card` on a white card sitting on the white ground. `shadow-glass` is internal to `BottomNav`. A card inside another card gets no shadow.
 
 ## Layout rules
 
-- **Ground and width.** Every screen is wrapped in `Screen`: `surface-gray` ground, content held to `max-w-phone` (480) and centered on wide displays.
+- **Ground and width.** Every screen is wrapped in `Screen`: `surface` (white) ground, content held to `max-w-phone` (480) and centered on wide displays.
 - **Margins.** Content is inset `px-5`. Items in a stack are separated by `gap-4`. Use `gap`, not margins, for rhythm.
 - **Safe area.** The screen adds it, not the component. Under the app's own header, pad the top with `useSafeAreaInsets().top + sizes.screenTopGap`. Under a native stack header, add no top inset. Above the bottom nav, pad the bottom with `useBottomNavInset()`. Elsewhere pad with `bottom`.
 - **Screen header.** A `rounded-b-xl bg-surface px-5 pb-5` block holds the title, search and filters. That makes the white ground inputs and chips need.
@@ -141,7 +141,7 @@ Icon names: `home grid search bell user calendar settings building box wallet us
 | `Toggle` | On/off setting | `label`, `value`, `onValueChange` |
 | `Stepper` | A small number, such as a quantity | `label`, `value`, `min`, `max`, `onChange` |
 
-Button choice: `primary` is the one main action per screen. `secondary` (white with shadow) sits on the gray ground. **On a white card use `soft`**, because `secondary` disappears on white. Buttons stretch with `block` in forms and stay content-width elsewhere.
+Button choice: `primary` is the one main action per screen. `secondary` (white with shadow) is only a subtle lift on the white ground. Prefer `soft` on white, because `secondary` nearly disappears. Buttons stretch with `block` in forms and stay content-width elsewhere.
 
 ### Feedback
 

@@ -16,7 +16,7 @@ export default function AppLayout() {
           headerStyle: { backgroundColor: colors.surface },
           headerTintColor: colors.ink,
           headerTitleStyle: { fontFamily: 'PlusJakartaSans', fontWeight: '700' },
-          contentStyle: { backgroundColor: colors['surface-gray'] },
+          contentStyle: { backgroundColor: colors.surface },
         }}
       />
     </Stack>

@@ -24,7 +24,7 @@ describe('design tokens', () => {
   it('writes line heights as ratios that resolve to the intended px', () => {
     const intendedPx: Record<string, number> = {
       display: 44,
-      heading: 34,
+      heading: 30,
       title: 26,
       'module-title': 22,
       'info-title': 24,

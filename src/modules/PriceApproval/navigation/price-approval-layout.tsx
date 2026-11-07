@@ -10,7 +10,7 @@ export function PriceApprovalLayout() {
         headerStyle: { backgroundColor: colors.surface },
         headerTintColor: colors.ink,
         headerTitleStyle: { fontFamily: 'PlusJakartaSans', fontWeight: '700' },
-        contentStyle: { backgroundColor: colors['surface-gray'] },
+        contentStyle: { backgroundColor: colors.surface },
       }}>
       <Stack.Screen name="index" options={{ title: 'Price approval' }} />
     </Stack>

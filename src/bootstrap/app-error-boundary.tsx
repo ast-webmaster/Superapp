@@ -13,7 +13,7 @@ export function AppErrorBoundary({ retry }: ErrorBoundaryProps) {
   }, []);
 
   return (
-    <View className="flex-1 justify-center gap-4 bg-surface-gray p-5">
+    <View className="flex-1 justify-center gap-4 bg-surface p-5">
       <Alert tone="danger" message="Something went wrong. Please try again." />
       <Button block onPress={() => void retry()}>
         Try again

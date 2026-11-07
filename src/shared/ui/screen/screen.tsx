@@ -7,10 +7,10 @@ export interface ScreenProps {
   className?: string;
 }
 
-/** The ground of every screen: `surface-gray`, with the content held to phone width on wide displays. */
+/** The ground of every screen: `surface` (white), with the content held to phone width on wide displays. */
 export function Screen({ children, className }: ScreenProps) {
   return (
-    <View className="flex-1 items-center bg-surface-gray">
+    <View className="flex-1 items-center bg-surface">
       <View className={clsx('w-full max-w-phone flex-1', className)}>{children}</View>
     </View>
   );

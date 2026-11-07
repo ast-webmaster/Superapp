@@ -98,7 +98,7 @@ export function BottomNav({
         {/* The gradient lives inside the bar; everything around it keeps the screen background. */}
         <LinearGradient
           pointerEvents="none"
-          colors={[colors.surface, colors['primary-soft'], colors.lavender]}
+          colors={[colors['primary-soft'], colors.surface, colors.surface, colors['primary-soft']]}
           start={{ x: 0, y: 0.5 }}
           end={{ x: 1, y: 0.5 }}
           style={[StyleSheet.absoluteFill, { borderRadius: radiusPill }]}
