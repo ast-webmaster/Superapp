@@ -12,7 +12,7 @@ export const authApi = {
     return response.data;
   },
   /** Fresh profile and permissions for the token in use. */
-  me: async () => (await apiClient.get<SessionData>('/me')).data,
+  me: async (signal?: AbortSignal) => (await apiClient.get<SessionData>('/me', { signal })).data,
   /** Revokes only this device's token. */
   logout: () => apiClient.post('/logout'),
 };

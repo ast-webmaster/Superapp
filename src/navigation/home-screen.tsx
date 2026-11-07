@@ -1,62 +1,42 @@
-import { Link, type Href } from 'expo-router';
-import { FlatList, Pressable, StyleSheet } from 'react-native';
+import { router, type Href } from 'expo-router';
+import { ScrollView, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { EmptyState } from '@/shared/components/empty-state';
-import { Screen } from '@/shared/components/screen';
-import { ThemedText } from '@/shared/components/themed-text';
-import { ThemedView } from '@/shared/components/themed-view';
-import { Spacing } from '@/shared/theme';
+import { sizes } from '@/shared/theme/tokens';
+import { AppText, IconButton, InfoCard, Logo, Screen, useBottomNavInset } from '@/shared/ui';
 
-import { useAvailableModules } from './use-available-modules';
+import { useInboxCount } from './use-inbox-count';
 
 export function HomeScreen() {
-  const modules = useAvailableModules();
+  const inboxCount = useInboxCount();
+  const { top } = useSafeAreaInsets();
+  const bottomInset = useBottomNavInset();
 
   return (
-    <Screen withTabInset>
-      <ThemedText type="subtitle" style={styles.title}>
-        Superapp
-      </ThemedText>
-      <FlatList
-        data={modules}
-        keyExtractor={(manifest) => manifest.id}
-        renderItem={({ item }) => (
-          <Link href={item.route as Href} asChild>
-            <Pressable accessibilityRole="button" style={({ pressed }) => pressed && styles.pressed}>
-              <ThemedView type="backgroundElement" style={styles.tile}>
-                <ThemedText type="smallBold">{item.title}</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {item.description}
-                </ThemedText>
-              </ThemedView>
-            </Pressable>
-          </Link>
-        )}
-        ListEmptyComponent={
-          <EmptyState title="No modules yet" description="Your account has no access to any module." />
-        }
-        contentContainerStyle={[styles.list, modules.length === 0 && styles.emptyList]}
-      />
+    <Screen>
+      <ScrollView
+        contentContainerClassName="grow gap-4"
+        contentContainerStyle={{ paddingBottom: bottomInset }}>
+        <View
+          className="gap-4 rounded-b-xl bg-surface px-5 pb-5"
+          style={{ paddingTop: top + sizes.screenTopGap }}>
+          <View className="flex-row items-center justify-between">
+            <Logo width={136} className="py-2" />
+            <IconButton icon="user" label="Account" onPress={() => router.push('/account' as Href)} />
+          </View>
+          <AppText variant="heading" role="heading">
+            Home
+          </AppText>
+        </View>
+        <View className="px-5">
+          <InfoCard
+            icon="bell"
+            title="Inbox"
+            description={inboxCount > 0 ? `${inboxCount} waiting for you` : 'Nothing new'}
+            onPress={() => router.navigate('/inbox' as Href)}
+          />
+        </View>
+      </ScrollView>
     </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    marginTop: Spacing.four,
-  },
-  list: {
-    gap: Spacing.three,
-  },
-  emptyList: {
-    flexGrow: 1,
-  },
-  tile: {
-    padding: Spacing.three,
-    borderRadius: Spacing.three,
-    gap: Spacing.one,
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-});

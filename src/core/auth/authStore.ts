@@ -10,6 +10,8 @@ import type { AuthStatus, AuthUser, LoginCredentials } from './types';
 
 const TOKEN_KEY = 'auth_token';
 const EXPIRES_AT_KEY = 'auth_expires_at';
+/** How long startup waits for /me before treating it like any other non-401/403 failure. */
+const RESTORE_TIMEOUT_MS = 8000;
 
 type AuthState = {
   status: AuthStatus;
@@ -39,19 +41,25 @@ export const useAuthStore = create<AuthState>((set) => ({
       return;
     }
     setAccessToken(token);
+    // Aborting after the timeout ends the splash on a bad network. fetch's signal is the
+    // only cancel hook, and AbortSignal.timeout is not guaranteed on Hermes.
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), RESTORE_TIMEOUT_MS);
     try {
-      const { user, permissions } = await authApi.me();
+      const { user, permissions } = await authApi.me(controller.signal);
       set({ status: 'authenticated', user, permissions });
     } catch (error) {
       // 401 already wiped the session via the unauthorized handler. 403 means the account was
-      // deactivated, so the token is dead too. Any other failure (offline, 5xx) keeps it,
-      // so the next launch can try again.
+      // deactivated, so the token is dead too. Any other failure (offline, 5xx, timeout)
+      // keeps it, so the next launch can try again.
       if (toAppError(error).code === 'forbidden') {
         await useAuthStore.getState().clearSession();
         return;
       }
       setAccessToken(null);
       set({ status: 'unauthenticated', user: null, permissions: [] });
+    } finally {
+      clearTimeout(timeout);
     }
   },
 

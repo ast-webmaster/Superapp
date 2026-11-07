@@ -2,7 +2,7 @@ import '../global.css';
 
 import * as SplashScreen from 'expo-splash-screen';
 
-import { AnimatedSplashOverlay } from '@/bootstrap/animated-icon';
+import { AnimatedSplashOverlay } from '@/bootstrap/splash-overlay';
 import { useAppFonts } from '@/bootstrap/use-app-fonts';
 import { RootNavigator } from '@/navigation/root-navigator';
 import { AppProviders } from '@/providers/app-providers';

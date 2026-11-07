@@ -1,43 +1,29 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import { ThemedText } from '@/shared/components/themed-text';
-import { ThemedView } from '@/shared/components/themed-view';
-import { Spacing } from '@/shared/theme';
+import { AppText, Badge } from '@/shared/ui';
 
 import type { PriceApprovalListItem } from '../types';
+import { statusBadge } from './status';
 
 export function PriceApprovalCard({ item }: { item: PriceApprovalListItem }) {
   return (
-    <ThemedView type="backgroundElement" style={styles.card}>
-      <View style={styles.row}>
-        <ThemedText type="smallBold">{item.pa_no}</ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
-          {item.status}
-        </ThemedText>
+    <View className="gap-2 rounded-xl bg-surface p-4 shadow-card">
+      <View className="flex-row items-start justify-between gap-3">
+        <AppText variant="module-title" className="min-w-0 flex-1">
+          {item.pa_no}
+        </AppText>
+        <Badge {...statusBadge(item.status)} />
       </View>
-      <ThemedText>{item.customer_name ?? item.customer_id ?? '-'}</ThemedText>
-      <View style={styles.row}>
-        <ThemedText type="small" themeColor="textSecondary">
+      <AppText>{item.customer_name ?? item.customer_id ?? '-'}</AppText>
+      <View className="flex-row justify-between gap-3">
+        <AppText variant="caption" tone="muted" className="min-w-0 flex-1">
           {item.request_by_name ?? item.request_by}
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary">
+        </AppText>
+        <AppText variant="caption" tone="muted">
           {item.last_updated_tier ? `${item.last_updated_tier} · ` : ''}
           {item.pa_date}
-        </ThemedText>
+        </AppText>
       </View>
-    </ThemedView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    padding: Spacing.three,
-    borderRadius: Spacing.three,
-    gap: Spacing.one,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: Spacing.two,
-  },
-});

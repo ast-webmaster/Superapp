@@ -13,6 +13,7 @@ export const colors = {
   'ink-muted': '#5b6270',
   surface: '#ffffff',
   'surface-gray': '#f4f5f7',
+  'surface-gray-clear': '#f4f5f700',
   border: '#e5e7eb',
   glass: 'rgba(255, 255, 255, 0.7)',
   'control-off': '#868c98',

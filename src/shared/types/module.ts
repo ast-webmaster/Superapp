@@ -1,3 +1,5 @@
+import type { IconName } from '@/shared/ui';
+
 /** What a business module tells the app shell about itself. */
 export type ModuleManifest = {
   id: string;
@@ -8,6 +10,8 @@ export type ModuleManifest = {
    * its path, but the typed route tree belongs to the app shell, which casts when linking.
    */
   route: string;
+  /** Tile icon on the home screen. Falls back to a generic box. */
+  icon?: IconName;
   /** Hidden from users who hold none of these permissions. Omit when everyone may open it. */
   permission?: string | readonly string[];
 };

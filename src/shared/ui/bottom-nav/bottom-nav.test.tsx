@@ -15,6 +15,15 @@ describe('BottomNav', () => {
     expect(screen.getByRole('link', { name: 'Apps' })).not.toBeSelected();
   });
 
+  it('shows an unread count and names it for screen readers', async () => {
+    const inbox: BottomNavItem = { key: 'inbox', label: 'Inbox', icon: 'bell', badge: 120 };
+    await render(<BottomNav items={[home, inbox]} activeKey="home" onChange={jest.fn()} />);
+
+    expect(screen.getByText('99+')).toBeOnTheScreen();
+    expect(screen.getByRole('link', { name: 'Inbox, 120 unread' })).toBeOnTheScreen();
+    expect(screen.queryByTestId('home-badge')).toBeNull();
+  });
+
   it('reports the pressed item', async () => {
     const onChange = jest.fn();
     await render(<BottomNav items={[home, apps]} activeKey="home" onChange={onChange} />);

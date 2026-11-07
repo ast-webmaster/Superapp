@@ -54,6 +54,8 @@ src/shared/      reusable UI + utils: components, hooks, theme, types
 
 ## Design system
 
+**Before designing or building any screen or layout, read `docs/ui-foundation.md`**: it is the reference for tokens, components, layout rules, screen recipes, states and the done checklist. Update it whenever the system changes.
+
 `src/shared/ui` is the Astrindo design system; import it only from `@/shared/ui`. `src/shared/components` holds the older components still used by existing screens; build new UI from `shared/ui` and migrate old screens when they are touched. The reference lives at `/design-system` (the board) and `/design-system/demo` (a screen in context), in development builds only.
 
 - **Tokens only.** Every color, type style, radius and shadow is a named utility from `@theme` in `src/global.css`. No raw hex or arbitrary values in components. Native props that cannot take a class (icon color, placeholder color) read `src/shared/theme/tokens.ts`; `tokens.test.ts` fails if it drifts from `global.css`.

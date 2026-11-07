@@ -1,10 +1,7 @@
 import { Stack } from 'expo-router/stack';
 import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
 
 import { useAuthStatus, useAuthStore } from '@/core/auth';
-import { Loading } from '@/shared/components/loading';
-import { ThemedView } from '@/shared/components/themed-view';
 
 export function RootNavigator() {
   const status = useAuthStatus();
@@ -15,14 +12,9 @@ export function RootNavigator() {
   }, [restore]);
 
   // Do not pick a screen from a session we have not loaded yet: that would flash the
-  // login screen at a signed-in user and misroute deep links.
-  if (status === 'restoring') {
-    return (
-      <ThemedView style={styles.fill}>
-        <Loading />
-      </ThemedView>
-    );
-  }
+  // login screen at a signed-in user and misroute deep links. The splash overlay covers
+  // the screen meanwhile, so nothing is drawn here.
+  if (status === 'restoring') return null;
 
   const signedIn = status === 'authenticated';
 
@@ -43,9 +35,3 @@ export function RootNavigator() {
     </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  fill: {
-    flex: 1,
-  },
-});

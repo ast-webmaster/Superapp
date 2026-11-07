@@ -1,18 +1,12 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { ScrollView } from 'react-native';
 
-import { ThemedText } from '@/shared/components/themed-text';
-import { ThemedView } from '@/shared/components/themed-view';
-import { Spacing } from '@/shared/theme';
+import { ChipGroup } from '@/shared/ui';
 
 import type { PriceApprovalFilter } from '../types';
+import { statusLabels } from './status';
 
-const OPTIONS: { value: PriceApprovalFilter; label: string }[] = [
-  { value: 'AWAITING', label: 'Awaiting' },
-  { value: 'PENDING', label: 'Pending' },
-  { value: 'FINISH', label: 'Finished' },
-  { value: 'REJECTED', label: 'Rejected' },
-  { value: 'CANCELED', label: 'Canceled' },
-  { value: 'DRAFT', label: 'Draft' },
+const OPTIONS = [
+  ...Object.entries(statusLabels).map(([value, label]) => ({ value, label })),
   { value: 'all', label: 'All' },
 ];
 
@@ -23,36 +17,18 @@ type StatusFilterProps = {
 
 export function StatusFilter({ value, onChange }: StatusFilterProps) {
   return (
-    <View style={styles.row} accessibilityRole="tablist">
-      {OPTIONS.map((option) => {
-        const selected = option.value === value;
-        return (
-          <Pressable
-            key={option.value}
-            accessibilityRole="tab"
-            accessibilityState={{ selected }}
-            onPress={() => onChange(option.value)}>
-            <ThemedView type={selected ? 'backgroundSelected' : 'backgroundElement'} style={styles.chip}>
-              <ThemedText type="small" themeColor={selected ? 'text' : 'textSecondary'}>
-                {option.label}
-              </ThemedText>
-            </ThemedView>
-          </Pressable>
-        );
-      })}
-    </View>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      className="grow-0"
+      contentContainerClassName="px-5">
+      <ChipGroup
+        label="Filter by status"
+        options={OPTIONS}
+        value={value}
+        onChange={(next) => onChange(next as PriceApprovalFilter)}
+        className="flex-nowrap"
+      />
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.two,
-  },
-  chip: {
-    paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.three,
-  },
-});

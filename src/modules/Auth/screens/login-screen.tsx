@@ -1,15 +1,18 @@
+import { Image } from 'expo-image';
+import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAuthStore } from '@/core/auth';
 import { toAppError } from '@/core/errors';
-import { Button } from '@/shared/components/button';
-import { Screen } from '@/shared/components/screen';
-import { TextField } from '@/shared/components/text-field';
-import { ThemedText } from '@/shared/components/themed-text';
-import { Spacing } from '@/shared/theme';
+import { sizes } from '@/shared/theme/tokens';
+import { Alert, AppText, Button, Logo, Screen, TextField } from '@/shared/ui';
+
+const illustration = require('@/assets/illustrations/login-welcome.png');
 
 export function LoginScreen() {
+  const { top } = useSafeAreaInsets();
   const signIn = useAuthStore((state) => state.signIn);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -46,77 +49,112 @@ export function LoginScreen() {
 
   return (
     <Screen>
-      <ThemedText type="subtitle" style={styles.title}>
-        Sign in
-      </ThemedText>
-      <TextField
-        label="Email"
-        value={email}
-        onChangeText={setEmail}
-        error={error?.fieldErrors?.email?.[0]}
-        autoCapitalize="none"
-        autoComplete="email"
-        keyboardType="email-address"
-        textContentType="username"
-      />
-      <TextField
-        label="Password"
-        value={password}
-        onChangeText={setPassword}
-        error={error?.fieldErrors?.password?.[0]}
-        autoCapitalize="none"
-        autoComplete="current-password"
-        secureTextEntry
-        textContentType="password"
-        onSubmitEditing={needsCode ? undefined : submit}
-      />
-      {needsCode ? (
-        <>
-          <ThemedText type="small" themeColor="textSecondary">
-            {useRecoveryCode
-              ? 'Enter one of your recovery codes. Each code works once.'
-              : 'Enter the 6-digit code from your authenticator app.'}
-          </ThemedText>
-          <TextField
-            label={useRecoveryCode ? 'Recovery code' : 'Authentication code'}
-            value={code}
-            onChangeText={setCode}
-            error={error?.fieldErrors?.code?.[0]}
-            autoCapitalize="none"
-            autoCorrect={false}
-            autoComplete="one-time-code"
-            keyboardType={useRecoveryCode ? 'default' : 'number-pad'}
-            textContentType="oneTimeCode"
-            onSubmitEditing={submit}
+      {/* The hero is black behind the status bar, so its icons must be light. */}
+      <StatusBar style="light" />
+      {/* No `grow` anywhere: nested flex-grow inside scroll content stretched every child on
+          Android. The ScrollView itself is white, so a short form still ends on white. */}
+      <ScrollView bounces={false} className="bg-surface" keyboardShouldPersistTaps="handled">
+        {/* The artwork hangs ILLUSTRATION_OVERLAP below the hero (negative margin) and the hero
+            is raised above the sheet, so the figure's white body runs into the white form. */}
+        <View className="bg-ink px-5" style={{ paddingTop: top + sizes.screenTopGap, zIndex: 1 }}>
+          <Logo variant="light" width={112} className="self-end" />
+          {/* expo-image takes `style`, not `className`. */}
+          <Image
+            accessible={false}
+            contentFit="contain"
+            source={illustration}
+            style={styles.illustration}
           />
-          <Button
-            title={useRecoveryCode ? 'Use authenticator code' : 'Use a recovery code'}
-            variant="secondary"
-            onPress={() => {
-              setUseRecoveryCode((value) => !value);
-              setCode('');
-              setError(null);
-            }}
-          />
-        </>
-      ) : null}
-      {error && !error.fieldErrors ? (
-        <ThemedText type="small" themeColor="danger">
-          {error.message}
-        </ThemedText>
-      ) : null}
-      <Button
-        title="Sign in"
-        onPress={submit}
-        loading={submitting}
-        disabled={!email || !password || (needsCode && !trimmedCode)}
-      />
+        </View>
+        {/* The black behind the sheet shows in its rounded corners. The sheet is white, so the
+            gray inputs sit on a surface as the design system requires. */}
+        <View className="bg-ink">
+          <View className="gap-6 rounded-t-xl bg-surface px-5 pb-10 pt-12">
+            <View className="gap-2">
+              <AppText variant="title" role="heading">
+                Welcome, employee
+              </AppText>
+              <AppText tone="muted">
+                Fill in the form to sign in. Only registered employees can access the app.
+              </AppText>
+            </View>
+            <View className="gap-4">
+              <TextField
+                label="Email"
+                value={email}
+                onChangeText={setEmail}
+                error={error?.fieldErrors?.email?.[0]}
+                autoCapitalize="none"
+                autoComplete="email"
+                keyboardType="email-address"
+                textContentType="username"
+              />
+              <TextField
+                label="Password"
+                type="password"
+                value={password}
+                onChangeText={setPassword}
+                error={error?.fieldErrors?.password?.[0]}
+                autoCapitalize="none"
+                autoComplete="current-password"
+                textContentType="password"
+                onSubmitEditing={needsCode ? undefined : submit}
+              />
+              {needsCode ? (
+                <>
+                  <AppText variant="caption" tone="muted">
+                    {useRecoveryCode
+                      ? 'Enter one of your recovery codes. Each code works once.'
+                      : 'Enter the 6-digit code from your authenticator app.'}
+                  </AppText>
+                  <TextField
+                    label={useRecoveryCode ? 'Recovery code' : 'Authentication code'}
+                    value={code}
+                    onChangeText={setCode}
+                    error={error?.fieldErrors?.code?.[0]}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    autoComplete="one-time-code"
+                    keyboardType={useRecoveryCode ? 'default' : 'number-pad'}
+                    textContentType="oneTimeCode"
+                    onSubmitEditing={submit}
+                  />
+                  <Button
+                    block
+                    variant="soft"
+                    onPress={() => {
+                      setUseRecoveryCode((value) => !value);
+                      setCode('');
+                      setError(null);
+                    }}>
+                    {useRecoveryCode ? 'Use authenticator code' : 'Use a recovery code'}
+                  </Button>
+                </>
+              ) : null}
+            </View>
+            {error && !error.fieldErrors ? <Alert tone="danger" message={error.message} /> : null}
+            <Button
+              block
+              onPress={submit}
+              loading={submitting}
+              disabled={!email || !password || (needsCode && !trimmedCode)}>
+              Sign in
+            </Button>
+          </View>
+        </View>
+      </ScrollView>
     </Screen>
   );
 }
 
+// The artwork is 200x156. These are layout sizes, not looks, so they live here as a style.
+const ILLUSTRATION_OVERLAP = 32;
 const styles = StyleSheet.create({
-  title: {
-    marginTop: Spacing.six,
+  illustration: {
+    width: '75%',
+    aspectRatio: 200 / 156,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    marginBottom: -ILLUSTRATION_OVERLAP,
   },
 });
