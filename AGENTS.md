@@ -31,6 +31,27 @@ Run lint and typecheck before declaring any task done.
 - Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
 - Docs: https://docs.expo.dev/router/introduction.md
 
+## Frontend architecture (modular, feature-based)
+
+Mirrors the Laravel modular monolith backend: one folder per business module, one shared infrastructure.
+
+```
+src/app/         routes only: thin re-exports of screens/layouts (no logic)
+src/providers/   app-wide React providers        src/bootstrap/  splash/startup
+src/navigation/  app shell: module registry, home launcher, root navigator, tabs
+src/modules/<Name>/  business module: api/ components/ hooks/ screens/ navigation/ store/ types/ index.ts
+src/core/        infrastructure: api (single HTTP client), auth, storage, permissions, config, errors
+src/shared/      reusable UI + utils: components, hooks, theme, types
+```
+
+- **Dependency direction** (enforced by `eslint.config.js`): `app`/`providers`/`navigation`/`bootstrap` → `modules` → `shared`, `core`. `core` imports nothing else in `src`; `shared` never imports `core`/`modules`; modules never import the shell. `import/no-cycle` is on.
+- **Module boundary**: other code imports a module only via `@/modules/<Name>` (its `index.ts`). No deep imports. Inside a module use relative imports. Export only what others need (manifest, layout, screens, public types).
+- **One HTTP client**: `core/api`. A module owns its endpoints in `<name>Api.ts` and its data contract in `types/`. Do not duplicate auth, token, or permission logic in a module.
+- **State**: server state → TanStack Query; auth session → `core/auth` (zustand); module UI state → a small zustand store inside the module. No global store holding business state.
+- **Adding a module**: create `src/modules/<Name>/` with a `manifest.ts` (+ `index.ts`), register the manifest in `src/navigation/registry.ts`, and add thin route files under `src/app/(app)/<route>/`. Nothing else in the shell changes. Routes behind sign-in must live under `src/app/(app)/`.
+- Only put something in `shared/` when two or more modules use it. File names: kebab-case for components/hooks, camelCase for api/store/type files.
+- Typed routes on Windows: Expo's generator keeps `/index` for nested index routes, so `Href` has no `/` or `/<module>`; module manifests therefore hold `route` as a plain string and the shell casts to `Href` when linking.
+
 ## Building with EAS
 
 Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.
