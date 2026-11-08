@@ -1,5 +1,3 @@
-import { ScrollView } from 'react-native';
-
 import { ChipGroup } from '@/shared/ui';
 
 import type { PriceApprovalFilter } from '../types';
@@ -15,20 +13,15 @@ type StatusFilterProps = {
   onChange: (value: PriceApprovalFilter) => void;
 };
 
+/** Status chips in one row. `ListToolbar` scrolls them beside its buttons. */
 export function StatusFilter({ value, onChange }: StatusFilterProps) {
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      className="grow-0"
-      contentContainerClassName="px-5">
-      <ChipGroup
-        label="Filter by status"
-        options={OPTIONS}
-        value={value}
-        onChange={(next) => onChange(next as PriceApprovalFilter)}
-        className="flex-nowrap"
-      />
-    </ScrollView>
+    <ChipGroup
+      label="Filter by status"
+      options={OPTIONS}
+      value={value}
+      onChange={(next) => onChange(next as PriceApprovalFilter)}
+      className="flex-nowrap"
+    />
   );
 }

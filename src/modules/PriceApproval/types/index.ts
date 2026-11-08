@@ -14,6 +14,8 @@ export type PriceApprovalListItem = {
   /** Not narrowed to `PriceApprovalStatus`: show values the app does not know as they are. */
   status: string;
   last_updated_tier: string | null;
+  grand_total: number;
+  items_count: number;
   customer_id: string | null;
   customer_name: string | null;
   request_by: string;
@@ -32,8 +34,16 @@ export type PriceApprovalAction = 'approve' | 'reject' | 'pending' | 'no_approva
 
 export type PriceApprovalLine = {
   sku_no: string;
+  product_name: string | null;
+  brand_name: string | null;
+  category_name: string | null;
+  /** Product manager: email and display name. */
+  pm: string;
+  pm_name: string | null;
+  remark: string | null;
   qty: number;
   price: number;
+  /** Kind of discount: '1' none, '2' percent, '3' nominal. */
   discount: string | null;
   percent: number;
   nominal: number;

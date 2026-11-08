@@ -11,9 +11,14 @@ import type {
 const PAGE_SIZE = 15;
 
 export const priceApprovalApi = {
-  list: async (filter: PriceApprovalFilter, page: number, signal?: AbortSignal) => {
+  list: async (filter: PriceApprovalFilter, search: string, page: number, signal?: AbortSignal) => {
     const response = await apiClient.get<PriceApprovalListItem[], PageMeta>('/price-approval', {
-      query: { status: filter === 'all' ? undefined : filter, page, per_page: PAGE_SIZE },
+      query: {
+        status: filter === 'all' ? undefined : filter,
+        search: search || undefined,
+        page,
+        per_page: PAGE_SIZE,
+      },
       signal,
     });
     return { items: response.data, meta: response.meta };

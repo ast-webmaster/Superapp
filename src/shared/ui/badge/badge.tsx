@@ -23,21 +23,33 @@ export interface BadgeProps {
   icon?: IconName;
   /** Fills the icon, for a pinned star. */
   iconFilled?: boolean;
+  /** `sm` for a badge inside a dense row. */
+  size?: 'md' | 'sm';
   className?: string;
 }
 
-export function Badge({ label, tone = 'neutral', icon, iconFilled, className }: BadgeProps) {
+export function Badge({
+  label,
+  tone = 'neutral',
+  icon,
+  iconFilled,
+  size = 'md',
+  className,
+}: BadgeProps) {
   const style = tones[tone];
 
   return (
     <View
       className={clsx(
-        'min-h-8 flex-row items-center gap-1 self-start rounded-pill px-3',
+        'flex-row items-center gap-1 self-start rounded-pill',
+        size === 'sm' ? 'min-h-6 px-2' : 'min-h-8 px-3',
         style.container,
         className,
       )}>
-      {icon ? <Icon name={icon} size={16} color={style.icon} filled={iconFilled} /> : null}
-      <AppText variant="caption" tone={style.text}>
+      {icon ? (
+        <Icon name={icon} size={size === 'sm' ? 12 : 16} color={style.icon} filled={iconFilled} />
+      ) : null}
+      <AppText variant={size === 'sm' ? 'label' : 'caption'} tone={style.text}>
         {label}
       </AppText>
     </View>

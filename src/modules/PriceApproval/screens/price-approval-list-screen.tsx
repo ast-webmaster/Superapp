@@ -1,17 +1,22 @@
 import { clsx } from 'clsx';
+import { useState } from 'react';
 import { FlatList, View } from 'react-native';
 
 import { toAppError } from '@/core/errors';
-import { Alert, Button, EmptyState, Loading, Screen } from '@/shared/ui';
+import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
+import { Alert, Button, EmptyState, ListToolbar, Loading, Screen } from '@/shared/ui';
 
 import { formatSyncedAt } from '../components/format';
 import { PriceApprovalCard } from '../components/price-approval-card';
+import { PriceApprovalListSkeleton } from '../components/price-approval-skeletons';
 import { StatusFilter } from '../components/status-filter';
 import { useIsOnline } from '../hooks/use-is-online';
 import { usePriceApprovals } from '../hooks/use-price-approvals';
 import { usePriceApprovalFilter } from '../store/priceApprovalFilterStore';
 
 export function PriceApprovalListScreen() {
+  const [query, setQuery] = useState('');
+  const search = useDebouncedValue(query.trim());
   const filter = usePriceApprovalFilter((state) => state.filter);
   const setFilter = usePriceApprovalFilter((state) => state.setFilter);
   const online = useIsOnline();
@@ -25,7 +30,7 @@ export function PriceApprovalListScreen() {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = usePriceApprovals(filter);
+  } = usePriceApprovals(filter, search);
 
   const retry = (
     <Button variant="soft" onPress={() => refetch()}>
@@ -37,7 +42,9 @@ export function PriceApprovalListScreen() {
     <Screen>
       {/* Unselected chips are surface-gray, so they sit on a white header. */}
       <View className="rounded-b-xl bg-surface pb-5 pt-4">
-        <StatusFilter value={filter} onChange={setFilter} />
+        <ListToolbar search={{ value: query, onChange: setQuery, placeholder: 'Search requests' }}>
+          <StatusFilter value={filter} onChange={setFilter} />
+        </ListToolbar>
       </View>
       {data === undefined ? (
         error ? (
@@ -55,7 +62,7 @@ export function PriceApprovalListScreen() {
             {retry}
           </EmptyState>
         ) : (
-          <Loading label="Loading requests" className="flex-1" />
+          <PriceApprovalListSkeleton />
         )
       ) : (
         <>
@@ -81,7 +88,11 @@ export function PriceApprovalListScreen() {
                 icon="clipboard"
                 title="Nothing here"
                 description={
-                  filter === 'all' ? 'No price requests yet.' : 'No requests with this status.'
+                  search
+                    ? 'No requests match your search.'
+                    : filter === 'all'
+                      ? 'No price requests yet.'
+                      : 'No requests with this status.'
                 }
               />
             }

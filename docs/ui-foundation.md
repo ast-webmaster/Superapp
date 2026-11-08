@@ -46,20 +46,23 @@ The app is light only. There is no dark palette.
 
 ### Type
 
-Always through `AppText`. Native text does not inherit the font from a parent `View`.
+Always through `AppText`. Defaults for the whole app: every bold style is weight 800 (ExtraBold, the heaviest weight the app loads), and sizes sit two steps below the old scale, floored at 13 for text and 12 for labels. Bottom navigation (`label`) and the Price Approval list and detail screens were already at 13/12 and did not change size. Native text does not inherit the font from a parent `View`.
 
 | `variant` | Size / line, weight | Use |
 |---|---|---|
-| `display` | 40 / 44, 800 | Marketing or splash moments only |
-| `heading` | 24 / 30, 700 | Screen title |
-| `title` | 20 / 26, 700 | Section title, empty-state title, stepper value |
-| `module-title` | 17 / 22, 700 | Card title |
-| `info-title` | 16 / 24, 700 | Title inside an `InfoCard` |
-| `body` | 16 / 24, 400 | Default text |
-| `body-strong` | 16 / 24, 600 | Row labels, emphasized body |
+| `display` | 20 / 22, 800 | Marketing or splash moments only |
+| `heading` | 17 / 22, 800 | Screen title |
+| `title` | 16 / 20, 800 | Section title, empty-state title, stepper value |
+| `module-title` | 13 / 20, 800 | Card title |
+| `info-title` | 13 / 20, 800 | Title inside an `InfoCard` |
+| `body` | 13 / 20, 400 | Default text |
+| `body-strong` | 13 / 20, 800 | Row labels, emphasized body |
 | `caption` | 13 / 20, 500 | Meta, helper text, timestamps |
-| `button` | 17 / 20, 600 | Button text (set by `Button`) |
-| `label` | 12 / 16, 600 | Field labels, nav labels |
+| `caption-strong` | 13 / 20, 800 | Dense card titles and totals, where `module-title` is too large |
+| `button` | 13 / 20, 800 | Button text (set by `Button`) |
+| `label` | 12 / 16, 800 | Field labels, nav labels |
+
+Dates and money are formatted only through `@/shared/utils/format`: `formatDate` ("1 Okt 2026"), `formatDateTime` ("1 Okt 2026 14:30") and `formatMoney` ("Rp 20,000", "Rp 20,000.50": always the Rp symbol, decimals only when present). Never format them per module.
 
 `tone`: `ink` (default), `muted`, `primary`, `on-primary`, `success`, `danger`, `warning`.
 
@@ -127,7 +130,7 @@ All from `@/shared/ui`.
 | `Badge` | Status or count. Always has a text label | `label`, `tone` (`neutral`, `info`, `success`, `danger`, `warning`), `icon` |
 | `Icon` | Glyphs. Decorative unless `label` is set | `name`, `size`, `color` (a color token), `filled` |
 
-Icon names: `home grid search bell user calendar settings building box wallet users chart truck clipboard doc chat heart bookmark share pin lock eye eye-off sliders list map cart star plus minus check x alert info arrow-right chevron-right`. Icons are Lucide, drawn at 24px, 1.75 stroke.
+Icon names: `home grid search bell user calendar settings building box wallet users chart truck clipboard doc chat heart bookmark share pin lock eye eye-off sliders list map cart star plus more copy download upload minus check x alert info arrow-right chevron-right`. Icons are Lucide, drawn at 24px, 1.75 stroke.
 
 ### Actions and input
 
@@ -139,6 +142,9 @@ Icon names: `home grid search bell user calendar settings building box wallet us
 | `Chip` / `ChipGroup` | Single-select filters | `ChipGroup`: `label`, `options`, `value`, `onChange`. An option with an `icon` becomes a department switch |
 | `SegmentedControl` | Choose one of 2–4 views | `label`, `options`, `value`, `onChange` |
 | `Toggle` | On/off setting | `label`, `value`, `onValueChange` |
+| `ListToolbar` | Top row of a module index: search, filter, actions buttons plus the module chips. See the recipe | `search`, `onFilter`, `filterActive`, `actions`, `children` |
+| `Fab` | Create button, floats bottom right. Last child of `Screen`, only with the create permission | `label`, `icon` |
+| `Sheet` | Bottom sheet: filter form, action menu | `visible`, `title`, `onClose`, `footer` |
 | `Stepper` | A small number, such as a quantity | `label`, `value`, `min`, `max`, `onChange` |
 
 Button choice: `primary` is the one main action per screen. `secondary` (white with shadow) is only a subtle lift on the white ground. Prefer `soft` on white, because `secondary` nearly disappears. Buttons stretch with `block` in forms and stay content-width elsewhere.
@@ -150,7 +156,8 @@ Button choice: `primary` is the one main action per screen. `secondary` (white w
 | `Alert` | An inline message in the flow | `tone` (`success`, `danger`, `warning`, `info`), `message` (one sentence), `onDismiss` |
 | `useToast().show` | A short confirmation after an action | `{ tone, message }`. Needs `ToastProvider`, which today is mounted only in the design-system layout |
 | `EmptyState` | Nothing to show, or a failed load. Fills its space | `title`, `description`, `icon`, `children` for the next step |
-| `Loading` | Spinner. Pass `flex-1` to fill a screen | `label` |
+| `Loading` | Spinner for a short wait: a list footer, a small area | `label` |
+| `Skeleton` + `SkeletonGroup` | First load of a screen. Compose pulsing blocks in the shape of the real content; the group announces one loading state | `Skeleton`: `className` (size and shape). `SkeletonGroup`: `label` |
 
 ## Screen recipes
 
@@ -177,6 +184,30 @@ Under a native stack header. `surface` block with a horizontal `ChipGroup` → l
 
 A list card is `rounded-xl bg-surface p-4 shadow-card gap-2`: `module-title` + `Badge` on the first row, `body` for the subject, `caption muted` for meta. Reference: `price-approval-card.tsx`.
 
+### Module index (list with toolbar)
+
+Every module index starts with `ListToolbar`, on the white header block. Buttons, left to right: search, filter, actions (`more`), then the module chips, which scroll beside them. A button shows only when its prop is passed, so each module declares what it supports:
+
+- `search`: the button opens a field with Cancel. The module decides what the text matches (a server param when the API has one).
+- `onFilter`: the module opens its own `Sheet` (title "Filter", sections, `footer` with a primary "Apply" button).
+- `actions`: a list such as Export and Import. Pass only what the module supports, each gated with `useCan()`. An empty list hides the button.
+- Create: `<Fab label="New …" onPress={…} />` as the last child of `Screen`, rendered only when `useCan()` allows the module's create permission.
+- Chips (PriceApproval keeps its status chips) go in as `children`.
+
+```tsx
+<Screen>
+  <View className="rounded-b-xl bg-surface pb-5 pt-4">
+    <ListToolbar search={{ value, onChange }} onFilter={openFilter} actions={actions}>
+      <StatusFilter … />
+    </ListToolbar>
+  </View>
+  <FlatList … />
+  {can('create_x') ? <Fab label="New x" onPress={create} /> : null}
+</Screen>
+```
+
+Reference: `price-approval-list-screen.tsx` (search and chips only).
+
 ### Form
 
 `Screen` → `ScrollView` (`gap-6 px-5`, `keyboardShouldPersistTaps="handled"`) → `Logo` (sign-in only) and `heading` → a `surface` card (`gap-4 rounded-xl p-5 shadow-card`) holding the `TextField`s → `Alert` for a form-level error → `Button block`. Field errors go on the field with `error`. Reference: `src/modules/Auth/screens/login-screen.tsx`.
@@ -197,7 +228,7 @@ Every data screen has all of these. Do not flash "empty" during the first load.
 
 | State | Show |
 |---|---|
-| First load | `Loading className="flex-1"`, or skeletons (`ModuleCard loading`) |
+| First load | Skeletons shaped like the content (`SkeletonGroup` + `Skeleton`, `ModuleCard loading`). Reference: `PriceApproval/components/price-approval-skeletons.tsx`. Pulse stops with reduce motion |
 | Empty | `EmptyState` with a task icon and one short line of why |
 | Error, no data | `EmptyState icon="alert"`, the message, `Button variant="soft"` "Try again" |
 | Offline, no data | `EmptyState icon="alert"` "You are offline" plus retry |

@@ -18,6 +18,8 @@ import {
   ListRow,
   Logo,
   ModuleCard,
+  Skeleton,
+  SkeletonGroup,
   SegmentedControl,
   Stepper,
   TextField,
@@ -234,6 +236,13 @@ export default function BoardScreen() {
             onOpen={() => show({ tone: 'success', message: 'Stock opname opened' })}
           />
           <ModuleCard loading />
+          <SkeletonGroup
+            label="Loading request"
+            className="gap-2 rounded-xl bg-surface p-4 shadow-card">
+            <Skeleton className="h-6 w-1/2" />
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-4 w-1/3" />
+          </SkeletonGroup>
         </BoardCard>
         <BoardCard number="08" title="Info cards" span={4}>
           <InfoCard

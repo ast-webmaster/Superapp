@@ -15,7 +15,7 @@ export default function AppLayout() {
           headerShadowVisible: false,
           headerStyle: { backgroundColor: colors.surface },
           headerTintColor: colors.ink,
-          headerTitleStyle: { fontFamily: 'PlusJakartaSans', fontWeight: '700' },
+          headerTitleStyle: { fontFamily: 'PlusJakartaSans', fontWeight: '800' },
           contentStyle: { backgroundColor: colors.surface },
         }}
       />

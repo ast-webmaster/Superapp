@@ -7,7 +7,8 @@ import type { PriceApprovalFilter } from '../types';
 export const priceApprovalKeys = {
   all: ['price-approval'] as const,
   lists: () => [...priceApprovalKeys.all, 'list'] as const,
-  list: (filter: PriceApprovalFilter) => [...priceApprovalKeys.lists(), filter] as const,
+  list: (filter: PriceApprovalFilter, search: string) =>
+    [...priceApprovalKeys.lists(), filter, search] as const,
   details: () => [...priceApprovalKeys.all, 'detail'] as const,
   detail: (uuid: string) => [...priceApprovalKeys.details(), uuid] as const,
 };

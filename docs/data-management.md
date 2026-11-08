@@ -54,7 +54,8 @@ Every module has one key factory. Its first segment is the manifest `id`, so two
 export const priceApprovalKeys = {
   all: ['price-approval'] as const,
   lists: () => [...priceApprovalKeys.all, 'list'] as const,
-  list: (filter: PriceApprovalFilter) => [...priceApprovalKeys.lists(), filter] as const,
+  list: (filter: PriceApprovalFilter, search: string) =>
+    [...priceApprovalKeys.lists(), filter, search] as const,
   details: () => [...priceApprovalKeys.all, 'detail'] as const,
   detail: (uuid: string) => [...priceApprovalKeys.details(), uuid] as const,
 };
@@ -67,6 +68,7 @@ export const priceApprovalKeys = {
 
 - `useQuery` / `useInfiniteQuery` with the key factory and `signal` passed to the api function, so leaving a screen cancels its request.
 - Default `staleTime` is 60 s. Set `staleTime: 0` on a detail whose actions depend on its current status, so opening the screen always asks again while the cached copy shows.
+- Search text goes to the server (`search` query param) through the key, debounced with `useDebouncedValue`, with `placeholderData: keepPreviousData` so rows stay while the next result loads. Never filter loaded pages on the client: paging makes that incomplete.
 - Paged lists that are sorted newest first de-duplicate rows by id in `select`, because a new record shifts rows into the next page.
 - Keep `status` as `string` in the types and show unknown values as they are. The backend adds statuses without warning.
 

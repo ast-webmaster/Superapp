@@ -23,14 +23,15 @@ describe('design tokens', () => {
   // on native. Line heights must be unitless ratios; this checks each one still lands on its px.
   it('writes line heights as ratios that resolve to the intended px', () => {
     const intendedPx: Record<string, number> = {
-      display: 44,
-      heading: 30,
-      title: 26,
-      'module-title': 22,
-      'info-title': 24,
-      body: 24,
-      'body-strong': 24,
+      display: 22,
+      heading: 22,
+      title: 20,
+      'module-title': 20,
+      'info-title': 20,
+      body: 20,
+      'body-strong': 20,
       caption: 20,
+      'caption-strong': 20,
       button: 20,
       label: 16,
     };

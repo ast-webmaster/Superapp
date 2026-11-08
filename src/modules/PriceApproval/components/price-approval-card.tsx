@@ -3,10 +3,12 @@ import { router, type Href } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
 import { AppText, Badge, focusRing } from '@/shared/ui';
+import { formatDate, formatMoney } from '@/shared/utils/format';
 
 import { priceApprovalRoutes } from '../navigation/routes';
 import type { PriceApprovalListItem } from '../types';
-import { statusBadge } from './status';
+import { RequesterPill } from './requester-pill';
+import { sentenceCase, statusBadge } from './status';
 
 export function PriceApprovalCard({ item }: { item: PriceApprovalListItem }) {
   return (
@@ -15,24 +17,37 @@ export function PriceApprovalCard({ item }: { item: PriceApprovalListItem }) {
       aria-label={`Open ${item.pa_no}`}
       onPress={() => router.push(priceApprovalRoutes.detail(item.pa_uuid) as Href)}
       className={clsx(
-        'gap-2 rounded-xl bg-surface p-4 shadow-card active:bg-surface-gray',
+        'gap-4 rounded-xl bg-surface p-4 shadow-card active:bg-surface-gray',
         focusRing,
       )}>
-      <View className="flex-row items-start justify-between gap-3">
-        <AppText variant="module-title" className="min-w-0 flex-1">
+      <View className="gap-1">
+        <AppText variant="label" tone="muted" numberOfLines={1}>
           {item.pa_no}
         </AppText>
-        <Badge {...statusBadge(item.status)} />
+        <AppText variant="caption-strong" numberOfLines={2}>
+          {item.customer_name ?? item.customer_id ?? '-'}
+        </AppText>
+        <View className="flex-row flex-wrap items-center gap-2">
+          <Badge size="sm" {...statusBadge(item.status)} />
+          {item.last_updated_tier ? (
+            <Badge size="sm" label={sentenceCase(item.last_updated_tier)} />
+          ) : null}
+        </View>
       </View>
-      <AppText>{item.customer_name ?? item.customer_id ?? '-'}</AppText>
-      <View className="flex-row justify-between gap-3">
-        <AppText variant="caption" tone="muted" className="min-w-0 flex-1">
-          {item.request_by_name ?? item.request_by}
-        </AppText>
-        <AppText variant="caption" tone="muted">
-          {item.last_updated_tier ? `${item.last_updated_tier} · ` : ''}
-          {item.pa_date}
-        </AppText>
+      <View role="separator" className="h-px bg-border" />
+      <View className="flex-row items-end justify-between gap-3">
+        <View>
+          <AppText variant="label" tone="muted">
+            Grand total
+          </AppText>
+          <AppText variant="caption-strong">{formatMoney(item.grand_total)}</AppText>
+        </View>
+        <View className="min-w-0 max-w-1/2 shrink items-end gap-1">
+          <RequesterPill name={item.request_by_name ?? item.request_by} />
+          <AppText variant="label" tone="muted">
+            {formatDate(item.pa_date)}
+          </AppText>
+        </View>
       </View>
     </Pressable>
   );

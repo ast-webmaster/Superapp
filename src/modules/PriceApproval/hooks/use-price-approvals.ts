@@ -1,13 +1,15 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 
 import { priceApprovalApi } from '../api/priceApprovalApi';
 import { priceApprovalKeys } from '../api/priceApprovalKeys';
 import type { PriceApprovalFilter } from '../types';
 
-export function usePriceApprovals(filter: PriceApprovalFilter) {
+export function usePriceApprovals(filter: PriceApprovalFilter, search: string) {
   return useInfiniteQuery({
-    queryKey: priceApprovalKeys.list(filter),
-    queryFn: ({ pageParam, signal }) => priceApprovalApi.list(filter, pageParam, signal),
+    queryKey: priceApprovalKeys.list(filter, search),
+    queryFn: ({ pageParam, signal }) => priceApprovalApi.list(filter, search, pageParam, signal),
+    // Keep the rows on screen while a new search loads, instead of flashing the skeleton.
+    placeholderData: keepPreviousData,
     initialPageParam: 1,
     getNextPageParam: ({ meta }) =>
       meta.current_page < meta.last_page ? meta.current_page + 1 : undefined,

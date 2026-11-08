@@ -1,6 +1,7 @@
 import type { BadgeProps } from '@/shared/ui';
+import { formatMoney } from '@/shared/utils/format';
 
-import type { PriceApprovalStatus } from '../types';
+import type { PriceApprovalLine, PriceApprovalStatus } from '../types';
 
 export const statusLabels: Record<PriceApprovalStatus, string> = {
   AWAITING: 'Awaiting',
@@ -50,4 +51,23 @@ export function stepBadge(status: string): Pick<BadgeProps, 'label' | 'tone'> {
     label: status === 'SUBMITED' ? 'Submitted' : sentenceCase(status),
     tone: stepTones[status] ?? 'neutral',
   };
+}
+
+/**
+ * `discount` on a line is a code, not an amount: 1 none, 2 percent (`percent`), 3 nominal
+ * (`nominal`). The badge shows the one the line uses.
+ */
+export function discountBadge(
+  line: Pick<PriceApprovalLine, 'discount' | 'percent' | 'nominal'>,
+): Pick<BadgeProps, 'label' | 'tone'> {
+  switch (line.discount) {
+    case '1':
+      return { label: 'No discount', tone: 'neutral' };
+    case '2':
+      return { label: `Discount: ${line.percent} %`, tone: 'info' };
+    case '3':
+      return { label: `Discount: ${formatMoney(line.nominal)}`, tone: 'info' };
+    default:
+      return { label: line.discount ?? '-', tone: 'neutral' };
+  }
 }

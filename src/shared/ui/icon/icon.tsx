@@ -9,6 +9,9 @@ import Calendar from 'lucide-react-native/icons/calendar';
 import Check from 'lucide-react-native/icons/check';
 import ChevronRight from 'lucide-react-native/icons/chevron-right';
 import ClipboardCheck from 'lucide-react-native/icons/clipboard-check';
+import Copy from 'lucide-react-native/icons/copy';
+import Download from 'lucide-react-native/icons/download';
+import Ellipsis from 'lucide-react-native/icons/ellipsis';
 import Eye from 'lucide-react-native/icons/eye';
 import EyeOff from 'lucide-react-native/icons/eye-off';
 import FileText from 'lucide-react-native/icons/file-text';
@@ -30,6 +33,7 @@ import ShoppingCart from 'lucide-react-native/icons/shopping-cart';
 import SlidersHorizontal from 'lucide-react-native/icons/sliders-horizontal';
 import Star from 'lucide-react-native/icons/star';
 import Truck from 'lucide-react-native/icons/truck';
+import Upload from 'lucide-react-native/icons/upload';
 import User from 'lucide-react-native/icons/user';
 import Users from 'lucide-react-native/icons/users';
 import Wallet from 'lucide-react-native/icons/wallet';
@@ -68,6 +72,10 @@ const icons = {
   cart: ShoppingCart,
   star: Star,
   plus: Plus,
+  more: Ellipsis,
+  copy: Copy,
+  download: Download,
+  upload: Upload,
   minus: Minus,
   check: Check,
   x: X,

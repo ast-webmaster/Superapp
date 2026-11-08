@@ -10,6 +10,7 @@ const textVariants = {
   body: 'text-body',
   'body-strong': 'text-body-strong',
   caption: 'text-caption',
+  'caption-strong': 'text-caption-strong',
   button: 'text-button',
   label: 'text-label',
 } as const;

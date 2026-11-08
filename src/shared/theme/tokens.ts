@@ -14,6 +14,7 @@ export const colors = {
   surface: '#ffffff',
   'surface-gray': '#f4f5f7',
   border: '#e5e7eb',
+  scrim: 'rgba(11, 11, 26, 0.4)',
   glass: 'rgba(255, 255, 255, 0.7)',
   'control-off': '#868c98',
   success: '#176a42',
