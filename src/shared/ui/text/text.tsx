@@ -34,7 +34,12 @@ export interface AppTextProps extends TextProps {
 export function AppText({ variant = 'body', tone = 'ink', className, ...props }: AppTextProps) {
   return (
     <Text
-      className={clsx(variant === 'body' ? 'font-rubik' : 'font-rubik-medium', textVariants[variant], textTones[tone], className)}
+      className={clsx(
+        variant === 'body' || tone === 'muted' ? 'font-rubik' : 'font-rubik-medium',
+        textVariants[variant],
+        textTones[tone],
+        className,
+      )}
       {...props}
     />
   );

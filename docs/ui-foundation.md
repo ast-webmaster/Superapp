@@ -46,7 +46,7 @@ The app is light only. There is no dark palette.
 
 ### Type
 
-Always through `AppText`. Defaults for the whole app: every bold style is weight 500 (Rubik Medium; the app loads only Regular 400 and Medium 500, each as its own family: `font-rubik` and `font-rubik-medium`, because native ignores `font-weight` for custom fonts; `AppText` picks the family from the variant), and sizes sit two steps below the old scale, floored at 13 for text and 12 for labels. Bottom navigation (`label`) and the Price Approval list and detail screens were already at 13/12 and did not change size. Native text does not inherit the font from a parent `View`.
+Always through `AppText`. Defaults for the whole app: every bold style is weight 500 (Rubik Medium; the app loads only Regular 400 and Medium 500, each as its own family: `font-rubik` and `font-rubik-medium`, because native ignores `font-weight` for custom fonts; `AppText` picks the family: Regular for `body` and any `tone="muted"` text, Medium for the rest), and sizes sit two steps below the old scale, floored at 13 for text and 12 for labels. Bottom navigation (`label`) and the Price Approval list and detail screens were already at 13/12 and did not change size. Native text does not inherit the font from a parent `View`.
 
 | `variant` | Size / line, weight | Use |
 |---|---|---|

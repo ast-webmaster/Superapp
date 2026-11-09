@@ -13,5 +13,7 @@ export function useAppFonts() {
     RubikMedium: Rubik_500Medium,
   });
 
+  if (error) console.warn('Fonts failed to load, using the system font:', error);
+
   return loaded || error !== null;
 }
