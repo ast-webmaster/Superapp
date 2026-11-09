@@ -5,14 +5,15 @@ import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useCurrentUser, useRoles } from '@/core/auth';
+import { profilePhotoUri } from '@/modules/Auth';
 import { InboxRow, InboxRowsSkeleton, useInbox, useRefreshInboxOnFocus } from '@/modules/Inbox';
 import { colors, sizes } from '@/shared/theme/tokens';
 import {
   Alert,
   AppText,
+  Avatar,
   Badge,
   focusRing,
-  IconButton,
   ListGroup,
   Logo,
   Screen,
@@ -51,12 +52,13 @@ export function HomeScreen() {
             {/* Logo above the card, the account button on the other side. */}
             <View className="flex-row items-center justify-between gap-4">
               <Logo width={112} />
-              <IconButton
-                size="sm"
-                icon="user"
-                label="Profile"
+              <Pressable
+                role="button"
+                aria-label="Profile"
                 onPress={() => router.push('/profile' as Href)}
-              />
+                className={clsx('rounded-pill', focusRing)}>
+                <Avatar size="sm" name={user?.name ?? ''} uri={profilePhotoUri(user ?? null)} />
+              </Pressable>
             </View>
             <View className="gap-2 rounded-2xl bg-ink p-5">
               <AppText tone="on-primary">{formatWeekdayDate(new Date())}</AppText>

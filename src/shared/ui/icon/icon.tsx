@@ -36,6 +36,7 @@ import Settings from 'lucide-react-native/icons/settings';
 import Share from 'lucide-react-native/icons/share';
 import ShoppingCart from 'lucide-react-native/icons/shopping-cart';
 import SlidersHorizontal from 'lucide-react-native/icons/sliders-horizontal';
+import Sparkles from 'lucide-react-native/icons/sparkles';
 import Star from 'lucide-react-native/icons/star';
 import Truck from 'lucide-react-native/icons/truck';
 import Upload from 'lucide-react-native/icons/upload';
@@ -64,6 +65,7 @@ const icons = {
   clipboard: ClipboardCheck,
   doc: FileText,
   chat: MessageSquare,
+  ai: Sparkles,
   heart: Heart,
   bookmark: Bookmark,
   share: Share,

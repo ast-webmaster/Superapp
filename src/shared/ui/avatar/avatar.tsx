@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText, type AppTextProps } from '../text/text';
 
 const sizes = {
+  sm: { container: 'size-10', text: 'body-strong' },
   md: { container: 'size-control', text: 'title' },
   xl: { container: 'size-32', text: 'avatar' },
 } as const satisfies Record<string, { container: string; text: AppTextProps['variant'] }>;

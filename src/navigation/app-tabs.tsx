@@ -11,7 +11,7 @@ const tabs = [
   { key: 'home', label: 'Home', icon: 'home', href: '/' },
   { key: 'apps', label: 'Apps', icon: 'grid', href: '/apps' },
   { key: 'inbox', label: 'Inbox', icon: 'bell', href: '/inbox' },
-  { key: 'ai-chat', label: 'AI chat', icon: 'chat', href: '/ai-chat' },
+  { key: 'ai-chat', label: 'AI chat', icon: 'ai', href: '/ai-chat' },
 ] as const;
 
 export default function AppTabs() {
