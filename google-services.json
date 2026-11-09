@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "445932847248",
+    "project_id": "notification-superapp",
+    "storage_bucket": "notification-superapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445932847248:android:d46cdcfad9e7b9f4111815",
+        "android_client_info": {
+          "package_name": "com.gustierlsteam.superapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPwegXzYEJ8t8ZICCKWpWcyC4ldDIXwrA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
