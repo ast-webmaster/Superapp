@@ -62,7 +62,7 @@ export function TextField({
           placeholder={placeholder}
           placeholderTextColor={colors['ink-muted']}
           secureTextEntry={type === 'password' && !revealed}
-          className="min-w-0 flex-1 self-stretch font-jakarta text-body text-ink outline-none"
+          className="min-w-0 flex-1 self-stretch font-rubik text-body text-ink outline-none"
           onFocus={(event) => {
             setFocused(true);
             onFocus?.(event);

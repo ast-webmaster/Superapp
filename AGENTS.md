@@ -63,7 +63,7 @@ src/shared/      reusable UI + utils: components, hooks, theme, types
 - **Values are px** in `@theme`, because rem is 14 on native and 16 on web. Exception: `--text-*--line-height` must be a unitless ratio (native multiplies it by the font size). `--spacing` is 4px, so `p-4` is 16 on every platform.
 - **Component pattern.** Function components with named exports, a `NameProps` interface, variant maps as `const` objects, `clsx` for classes, `ref` as a prop (React 19), and `className` for layout only (use `variant` and `tone` for looks, since CSS order decides conflicts, not class order). One folder per component: `name/name.tsx` and `name/name.test.tsx`.
 - **Class names only reach React Native primitives.** Third-party components such as `GlassView`, `expo-image` and `Animated.View` take `style`, or wrap a plain `View`. The browser will not show this bug; a native build will.
-- **Fonts on native.** Text must go through `AppText`: React Native does not inherit `font-jakarta` from a parent `View`.
+- **Fonts on native.** Text must go through `AppText`: React Native does not inherit `font-rubik` from a parent `View`, and weight comes from the font family (`font-rubik-medium`), not `font-weight`.
 - **Accessibility.** Use `role` and `aria-*`, which work on web and native, and add `accessibilityState` for selected state on native. A `View` with a `role` needs `accessible` or screen readers skip it. Touch targets are at least 48: keep the visible control smaller inside a 48 press area. Status is never color only.
 - **Backgrounds.** The app background is `surface` (white). Inputs and unselected chips are `surface-gray`.
 - **Copy.** Sentence case, short, second person, verbs on buttons, no emoji, no exclamation marks.

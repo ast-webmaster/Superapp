@@ -35,43 +35,44 @@
   --color-warning-bg: #fff4d6;
   --color-transparent: transparent;
 
-  --font-jakarta: 'PlusJakartaSans';
+  --font-rubik: 'Rubik';
+  --font-rubik-medium: 'RubikMedium';
 
   --text-*: initial;
   --text-display: 20px;
   --text-display--line-height: 1.1; /* 22px */
-  --text-display--font-weight: 800;
+  --text-display--font-weight: 500;
   --text-display--letter-spacing: -0.4px;
   --text-heading: 17px;
   --text-heading--line-height: 1.2941176; /* 22px */
-  --text-heading--font-weight: 800;
+  --text-heading--font-weight: 500;
   --text-title: 16px;
   --text-title--line-height: 1.25; /* 20px */
-  --text-title--font-weight: 800;
+  --text-title--font-weight: 500;
   --text-module-title: 13px;
   --text-module-title--line-height: 1.5384615; /* 20px */
-  --text-module-title--font-weight: 800;
+  --text-module-title--font-weight: 500;
   --text-info-title: 13px;
   --text-info-title--line-height: 1.5384615; /* 20px */
-  --text-info-title--font-weight: 800;
+  --text-info-title--font-weight: 500;
   --text-body: 13px;
   --text-body--line-height: 1.5384615; /* 20px */
   --text-body--font-weight: 400;
   --text-body-strong: 13px;
   --text-body-strong--line-height: 1.5384615; /* 20px */
-  --text-body-strong--font-weight: 800;
+  --text-body-strong--font-weight: 500;
   --text-caption: 13px;
   --text-caption--line-height: 1.5384615; /* 20px */
   --text-caption--font-weight: 500;
   --text-caption-strong: 13px;
   --text-caption-strong--line-height: 1.5384615; /* 20px */
-  --text-caption-strong--font-weight: 800;
+  --text-caption-strong--font-weight: 500;
   --text-button: 13px;
   --text-button--line-height: 1.5384615; /* 20px */
-  --text-button--font-weight: 800;
+  --text-button--font-weight: 500;
   --text-label: 12px;
   --text-label--line-height: 1.3333333; /* 16px */
-  --text-label--font-weight: 800;
+  --text-label--font-weight: 500;
 
   /* 4px base, so p-1 = 4, p-4 = 16 (card gap), p-5 = 20 (screen margin), p-10 = 40. */
   --spacing: 4px;

@@ -46,21 +46,21 @@ The app is light only. There is no dark palette.
 
 ### Type
 
-Always through `AppText`. Defaults for the whole app: every bold style is weight 800 (ExtraBold, the heaviest weight the app loads), and sizes sit two steps below the old scale, floored at 13 for text and 12 for labels. Bottom navigation (`label`) and the Price Approval list and detail screens were already at 13/12 and did not change size. Native text does not inherit the font from a parent `View`.
+Always through `AppText`. Defaults for the whole app: every bold style is weight 500 (Rubik Medium; the app loads only Regular 400 and Medium 500, each as its own family: `font-rubik` and `font-rubik-medium`, because native ignores `font-weight` for custom fonts; `AppText` picks the family from the variant), and sizes sit two steps below the old scale, floored at 13 for text and 12 for labels. Bottom navigation (`label`) and the Price Approval list and detail screens were already at 13/12 and did not change size. Native text does not inherit the font from a parent `View`.
 
 | `variant` | Size / line, weight | Use |
 |---|---|---|
-| `display` | 20 / 22, 800 | Marketing or splash moments only |
-| `heading` | 17 / 22, 800 | Screen title |
-| `title` | 16 / 20, 800 | Section title, empty-state title, stepper value |
-| `module-title` | 13 / 20, 800 | Card title |
-| `info-title` | 13 / 20, 800 | Title inside an `InfoCard` |
+| `display` | 20 / 22, 500 | Marketing or splash moments only |
+| `heading` | 17 / 22, 500 | Screen title |
+| `title` | 16 / 20, 500 | Section title, empty-state title, stepper value |
+| `module-title` | 13 / 20, 500 | Card title |
+| `info-title` | 13 / 20, 500 | Title inside an `InfoCard` |
 | `body` | 13 / 20, 400 | Default text |
-| `body-strong` | 13 / 20, 800 | Row labels, emphasized body |
+| `body-strong` | 13 / 20, 500 | Row labels, emphasized body |
 | `caption` | 13 / 20, 500 | Meta, helper text, timestamps |
-| `caption-strong` | 13 / 20, 800 | Dense card titles and totals, where `module-title` is too large |
-| `button` | 13 / 20, 800 | Button text (set by `Button`) |
-| `label` | 12 / 16, 800 | Field labels, nav labels |
+| `caption-strong` | 13 / 20, 500 | Dense card titles and totals, where `module-title` is too large |
+| `button` | 13 / 20, 500 | Button text (set by `Button`) |
+| `label` | 12 / 16, 500 | Field labels, nav labels |
 
 Dates and money are formatted only through `@/shared/utils/format`: `formatDate` ("1 Okt 2026"), `formatDateTime` ("1 Okt 2026 14:30") and `formatMoney` ("Rp 20,000", "Rp 20,000.50": always the Rp symbol, decimals only when present). Never format them per module.
 
