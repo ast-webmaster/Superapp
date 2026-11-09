@@ -29,7 +29,7 @@ export function Chip({ label, icon, selected = false, className, ...props }: Chi
       accessibilityState={{ selected }}
       className={clsx(
         'min-h-touch flex-row items-center justify-center gap-2 rounded-pill px-5',
-        selected ? selectedStyle : 'bg-surface-gray active:bg-border',
+        selected ? selectedStyle : 'bg-surface active:bg-border',
         focusRing,
         className,
       )}

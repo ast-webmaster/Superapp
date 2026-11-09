@@ -17,14 +17,20 @@ const tones = {
   { container: string; text: AppTextProps['tone']; icon: ColorToken }
 >;
 
+const sizes = {
+  md: { container: 'min-h-8 px-3', icon: 16, text: 'caption' },
+  sm: { container: 'min-h-6 px-2', icon: 12, text: 'label' },
+  xs: { container: 'min-h-3 px-1.5', icon: 10, text: 'micro' },
+} as const;
+
 export interface BadgeProps {
   label: string;
   tone?: keyof typeof tones;
   icon?: IconName;
   /** Fills the icon, for a pinned star. */
   iconFilled?: boolean;
-  /** `sm` for a badge inside a dense row. */
-  size?: 'md' | 'sm';
+  /** `sm` for a badge inside a dense row, `xs` for a quiet tag under a title. */
+  size?: 'md' | 'sm' | 'xs';
   className?: string;
 }
 
@@ -42,14 +48,14 @@ export function Badge({
     <View
       className={clsx(
         'flex-row items-center gap-1 self-start rounded-pill',
-        size === 'sm' ? 'min-h-6 px-2' : 'min-h-8 px-3',
+        sizes[size].container,
         style.container,
         className,
       )}>
       {icon ? (
-        <Icon name={icon} size={size === 'sm' ? 12 : 16} color={style.icon} filled={iconFilled} />
+        <Icon name={icon} size={sizes[size].icon} color={style.icon} filled={iconFilled} />
       ) : null}
-      <AppText variant={size === 'sm' ? 'label' : 'caption'} tone={style.text}>
+      <AppText variant={sizes[size].text} tone={style.text}>
         {label}
       </AppText>
     </View>

@@ -54,7 +54,7 @@ export function SegmentedControl({
     <View
       role="radiogroup"
       aria-label={label}
-      className={clsx('flex-row self-start rounded-pill bg-surface-gray px-0.5', className)}>
+      className={clsx('flex-row self-start rounded-pill bg-surface px-0.5', className)}>
       {options.map((option, index) => {
         const selected = option.value === current;
 

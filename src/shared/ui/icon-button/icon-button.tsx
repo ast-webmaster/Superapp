@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import type { ComponentRef, Ref } from 'react';
-import { Pressable, type PressableProps } from 'react-native';
+import { Pressable, View, type PressableProps } from 'react-native';
 
 import { focusRing } from '../focus';
 import { Icon, type IconName } from '../icon/icon';
@@ -11,6 +11,8 @@ export interface IconButtonProps extends Omit<PressableProps, 'children' | 'styl
   label: string;
   active?: boolean;
   disabled?: boolean;
+  /** `sm` draws a 40 circle inside the 48 press area, for a header where 56 is too heavy. */
+  size?: 'md' | 'sm';
   className?: string;
   ref?: Ref<ComponentRef<typeof Pressable>>;
 }
@@ -20,9 +22,14 @@ export function IconButton({
   label,
   active = false,
   disabled = false,
+  size = 'md',
   className,
   ...props
 }: IconButtonProps) {
+  const fill = active ? 'bg-primary' : 'bg-surface';
+  const pressed = active ? 'active:bg-primary-pressed' : 'active:bg-border';
+  const iconColor = active ? 'on-primary' : 'ink';
+
   return (
     <Pressable
       role="button"
@@ -32,14 +39,20 @@ export function IconButton({
       accessibilityState={{ selected: active, disabled }}
       disabled={disabled}
       className={clsx(
-        'size-control items-center justify-center rounded-pill',
-        active ? 'bg-primary active:bg-primary-pressed' : 'bg-surface-gray active:bg-border',
+        'items-center justify-center rounded-pill',
+        size === 'md' ? ['size-control', fill, pressed] : 'size-touch',
         disabled && 'opacity-50',
         focusRing,
         className,
       )}
       {...props}>
-      <Icon name={icon} color={active ? 'on-primary' : 'ink'} />
+      {size === 'md' ? (
+        <Icon name={icon} color={iconColor} />
+      ) : (
+        <View className={clsx('size-10 items-center justify-center rounded-pill', fill)}>
+          <Icon name={icon} size={20} color={iconColor} />
+        </View>
+      )}
     </Pressable>
   );
 }

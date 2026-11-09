@@ -7,6 +7,7 @@ import { sizes } from '@/shared/theme/tokens';
 import {
   Alert,
   AppText,
+  Avatar,
   Badge,
   BottomNav,
   Button,
@@ -266,9 +267,10 @@ export default function BoardScreen() {
             <ListRow icon="user" label="Personal info" onPress={() => {}} />
             <ListRow icon="building" label="My departments" onPress={() => {}} />
             <ListRow icon="clipboard" label="Approvals" value="3" onPress={() => {}} />
+            <ListRow icon="log-out" label="Sign out" destructive onPress={() => {}} />
           </ListGroup>
         </BoardCard>
-        <BoardCard number="10" title="Bottom navigation (liquid glass tab bar)" span={4}>
+        <BoardCard number="10" title="Bottom navigation (black tab bar)" span={4}>
           <View className="rounded-lg bg-lavender p-4">
             <BottomNav items={navItems} activeKey={tab} onChange={setTab} placement="inline" />
           </View>
@@ -324,13 +326,20 @@ export default function BoardScreen() {
       </BoardRow>
 
       <BoardRow>
-        <BoardCard number="15" title="Tags / badges" span={12}>
+        <BoardCard number="15" title="Tags / badges" span={6}>
           <View className="flex-row flex-wrap gap-3">
             <Badge label="Pinned" tone="warning" icon="star" iconFilled />
             <Badge label="New" tone="success" />
             <Badge label="Overdue" tone="danger" />
             <Badge label="Admin" tone="info" />
             <Badge label="Draft" />
+          </View>
+        </BoardCard>
+        <BoardCard number="16" title="Avatar" span={6}>
+          <View className="flex-row items-center gap-4">
+            <Avatar name="Diana Larussa" size="xl" />
+            <Avatar name="Budi Santoso" />
+            <Avatar name="Rina" />
           </View>
         </BoardCard>
       </BoardRow>

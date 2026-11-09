@@ -35,6 +35,18 @@ describe('apiClient', () => {
     expect(init.headers).toMatchObject({ Accept: 'application/json', Authorization: 'Bearer tok' });
   });
 
+  it('sends a FormData body as is, leaving the multipart Content-Type to fetch', async () => {
+    respond(200, { success: true, message: 'ok', data: null, meta: null });
+    const form = new FormData();
+    form.append('name', 'Diana');
+
+    await apiClient.post('/me/profile', form);
+
+    const [, init] = fetchMock.mock.calls[0];
+    expect(init.body).toBe(form);
+    expect(init.headers).not.toHaveProperty('Content-Type');
+  });
+
   it('exposes 422 field errors and maps 429 to rate_limited', async () => {
     respond(422, { success: false, message: 'Validasi gagal', errors: { code: ['required'] } });
     await expect(apiClient.post('/login', {})).rejects.toMatchObject({

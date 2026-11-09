@@ -1,4 +1,11 @@
-import { formatDate, formatDateTime, formatMoney } from './format';
+import {
+  formatDate,
+  formatDateTime,
+  formatMoney,
+  formatRoles,
+  formatWeekdayDate,
+  sentenceCase,
+} from './format';
 
 describe('formatDate', () => {
   it('writes day, short Indonesian month and year', () => {
@@ -44,5 +51,28 @@ describe('formatMoney', () => {
 
   it('keeps the minus sign', () => {
     expect(formatMoney(-14000)).toBe('-Rp 14,000');
+  });
+});
+
+describe('formatWeekdayDate', () => {
+  it('writes the short weekday, day and month', () => {
+    expect(formatWeekdayDate(new Date(2026, 10, 9))).toBe('Sen, 9 Nov');
+    expect(formatWeekdayDate(new Date(2026, 4, 30))).toBe('Sab, 30 Mei');
+  });
+});
+
+describe('sentenceCase', () => {
+  it('lowers capitals and keeps the first letter up', () => {
+    expect(sentenceCase('AWAITING')).toBe('Awaiting');
+    expect(sentenceCase('PRODUCT MANAGER')).toBe('Product manager');
+    expect(sentenceCase('')).toBe('');
+  });
+});
+
+describe('formatRoles', () => {
+  it('shows the first role and how many more', () => {
+    expect(formatRoles(['Sales'])).toBe('Sales');
+    expect(formatRoles(['Sales', 'Admin', 'HR'])).toBe('Sales +2');
+    expect(formatRoles([])).toBeNull();
   });
 });

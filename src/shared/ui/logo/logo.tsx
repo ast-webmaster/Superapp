@@ -6,13 +6,13 @@ const sources = {
   light: require('@/assets/brand/astrindo-logo-white.png'),
 } as const;
 
-const ASPECT_RATIO = 254 / 66;
-const MIN_WIDTH = 96;
+const ASPECT_RATIO = 4000 / 888;
+const MIN_WIDTH = 64;
 
 export interface LogoProps {
   /** `dark` is the black logo for light grounds; `light` is the white one for `primary` grounds. */
   variant?: keyof typeof sources;
-  /** Rendered width in px. The brand minimum of 96 is always enforced. */
+  /** Rendered width in px. The brand minimum of 64 is always enforced. */
   width?: number;
   className?: string;
 }

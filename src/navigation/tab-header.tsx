@@ -1,28 +1,20 @@
 import type { ReactNode } from 'react';
 import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { sizes } from '@/shared/theme/tokens';
-import { AppText } from '@/shared/ui';
+import { TopAppBar } from '@/shared/ui';
 
 export interface TabHeaderProps {
   title: string;
-  /** Extra content under the title, such as a search field. It sits on the white header. */
+  /** Extra content under the bar, such as a search field. It sits on the screen ground. */
   children?: ReactNode;
 }
 
-/** The white header block at the top of a tab screen. */
+/** The top of a tab screen: the top app bar with its title, and anything under it. */
 export function TabHeader({ title, children }: TabHeaderProps) {
-  const { top } = useSafeAreaInsets();
-
   return (
-    <View
-      className="gap-4 rounded-b-xl bg-surface px-5 pb-5"
-      style={{ paddingTop: top + sizes.screenTopGap }}>
-      <AppText variant="heading" role="heading">
-        {title}
-      </AppText>
-      {children}
+    <View>
+      <TopAppBar title={title} />
+      {children ? <View className="gap-4 px-5 pb-4">{children}</View> : null}
     </View>
   );
 }

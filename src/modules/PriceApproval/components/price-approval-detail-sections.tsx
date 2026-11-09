@@ -2,12 +2,12 @@ import type { ReactNode } from 'react';
 import { View } from 'react-native';
 
 import { AppText, Badge } from '@/shared/ui';
-import { formatDate, formatDateTime, formatMoney } from '@/shared/utils/format';
+import { formatDate, formatDateTime, formatMoney, sentenceCase } from '@/shared/utils/format';
 
 import type { PriceApprovalDetail, PriceApprovalLine } from '../types';
 import { CopyButton } from './copy-button';
 import { RequesterPill } from './requester-pill';
-import { discountBadge, sentenceCase, statusBadge, stepBadge } from './status';
+import { discountBadge, statusBadge, stepBadge } from './status';
 
 const divider = <View role="separator" className="h-px bg-border" />;
 

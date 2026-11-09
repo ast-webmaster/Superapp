@@ -1,2 +1,8 @@
-export { useAuthStatus, useAuthStore, useCurrentUser, usePermissions } from './authStore';
-export type { AuthStatus, AuthUser, LoginCredentials } from './types';
+export { useAuthStatus, useAuthStore, useCurrentUser, usePermissions, useRoles } from './authStore';
+export type {
+  AuthStatus,
+  AuthUser,
+  ChangePasswordInput,
+  LoginCredentials,
+  UpdateProfileInput,
+} from './types';

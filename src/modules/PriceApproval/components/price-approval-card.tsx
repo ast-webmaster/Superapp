@@ -3,12 +3,12 @@ import { router, type Href } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
 import { AppText, Badge, focusRing } from '@/shared/ui';
-import { formatDate, formatMoney } from '@/shared/utils/format';
+import { formatDate, formatMoney, sentenceCase } from '@/shared/utils/format';
 
 import { priceApprovalRoutes } from '../navigation/routes';
 import type { PriceApprovalListItem } from '../types';
 import { RequesterPill } from './requester-pill';
-import { sentenceCase, statusBadge } from './status';
+import { statusBadge } from './status';
 
 export function PriceApprovalCard({ item }: { item: PriceApprovalListItem }) {
   return (

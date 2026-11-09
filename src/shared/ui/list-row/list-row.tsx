@@ -10,21 +10,31 @@ export interface ListRowProps extends Omit<PressableProps, 'children' | 'style'>
   label: string;
   icon?: IconName;
   value?: string;
+  /** An exit or destructive action, such as Sign out: danger color, no chevron. */
+  destructive?: boolean;
   className?: string;
   ref?: Ref<ComponentRef<typeof Pressable>>;
 }
 
 const rowStyle = 'min-h-control flex-row items-center gap-3 py-3';
 
-export function ListRow({ label, icon, value, onPress, className, ...props }: ListRowProps) {
+export function ListRow({
+  label,
+  icon,
+  value,
+  destructive = false,
+  onPress,
+  className,
+  ...props
+}: ListRowProps) {
   const content = (
     <>
-      {icon ? <Icon name={icon} /> : null}
-      <AppText variant="body-strong" className="min-w-0 flex-1">
+      {icon ? <Icon name={icon} color={destructive ? 'danger' : 'ink'} /> : null}
+      <AppText variant="body-strong" tone={destructive ? 'danger' : 'ink'} className="min-w-0 flex-1">
         {label}
       </AppText>
       {value ? <AppText tone="muted">{value}</AppText> : null}
-      {onPress ? <Icon name="chevron-right" color="ink-muted" /> : null}
+      {onPress && !destructive ? <Icon name="chevron-right" color="ink-muted" /> : null}
     </>
   );
 

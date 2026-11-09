@@ -40,8 +40,7 @@ export function PriceApprovalListScreen() {
 
   return (
     <Screen>
-      {/* Unselected chips are surface-gray, so they sit on a white header. */}
-      <View className="rounded-b-xl bg-surface pb-5 pt-4">
+      <View className="pb-4 pt-2">
         <ListToolbar search={{ value: query, onChange: setQuery, placeholder: 'Search requests' }}>
           <StatusFilter value={filter} onChange={setFilter} />
         </ListToolbar>

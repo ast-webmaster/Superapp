@@ -1,7 +1,6 @@
 import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
-import { AccessibilityInfo, Animated, Easing, Pressable, StyleSheet, View } from 'react-native';
+import { AccessibilityInfo, Animated, Easing, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { colors, radiusPill, sizes } from '@/shared/theme/tokens';
@@ -9,7 +8,6 @@ import { colors, radiusPill, sizes } from '@/shared/theme/tokens';
 import { focusRing } from '../focus';
 import { Icon, type IconName } from '../icon/icon';
 import { AppText } from '../text/text';
-import { GlassSurface } from './glass-surface';
 
 // These mirror the `px-2 gap-1` classes and `h-14` item height on the bar below.
 const BAR_PADDING = 8;
@@ -94,15 +92,8 @@ export function BottomNav({
       onLayout={(event) => setBarWidth(event.nativeEvent.layout.width)}
       className={clsx(floating && 'absolute right-5 left-5', className)}
       style={floating ? { bottom: bottom + sizes.tabBarOffset } : undefined}>
-      <GlassSurface className="h-tabbar flex-row items-center gap-1 rounded-pill px-2">
-        {/* The gradient lives inside the bar; everything around it keeps the screen background. */}
-        <LinearGradient
-          pointerEvents="none"
-          colors={[colors['primary-soft'], colors.surface, colors.surface, colors['primary-soft']]}
-          start={{ x: 0, y: 0.5 }}
-          end={{ x: 1, y: 0.5 }}
-          style={[StyleSheet.absoluteFill, { borderRadius: radiusPill }]}
-        />
+      {/* Solid black like the login hero; the active item is a lavender pill. */}
+      <View className="h-tabbar flex-row items-center gap-1 rounded-pill bg-ink px-2 shadow-glass">
         {itemWidth > 0 ? (
           <Animated.View
             pointerEvents="none"
@@ -114,7 +105,7 @@ export function BottomNav({
                 width: itemWidth,
                 height: ITEM_HEIGHT,
                 borderRadius: radiusPill,
-                backgroundColor: colors.primary,
+                backgroundColor: colors.lavender,
               },
               { transform: [{ translateX: offset }] },
             ]}
@@ -133,11 +124,11 @@ export function BottomNav({
               onPress={() => onChange(item.key)}
               className={clsx(
                 'h-14 min-w-0 flex-1 items-center justify-center rounded-pill',
-                !active && 'active:bg-surface-gray',
+                !active && 'active:bg-primary',
                 focusRing,
               )}>
               <View>
-                <Icon name={item.icon} color={active ? 'on-primary' : 'ink'} />
+                <Icon name={item.icon} color={active ? 'primary' : 'on-primary'} />
                 {item.badge ? (
                   <View
                     testID={`${item.key}-badge`}
@@ -148,13 +139,13 @@ export function BottomNav({
                   </View>
                 ) : null}
               </View>
-              <AppText variant="label" tone={active ? 'on-primary' : 'ink'} numberOfLines={1}>
+              <AppText variant="label" tone={active ? 'primary' : 'on-primary'} numberOfLines={1}>
                 {item.label}
               </AppText>
             </Pressable>
           );
         })}
-      </GlassSurface>
+      </View>
     </View>
   );
 }

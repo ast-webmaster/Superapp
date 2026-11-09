@@ -77,7 +77,9 @@ async function send<T, M>(
   signal: AbortSignal,
 ): Promise<ApiSuccess<T, M>> {
   const headers: Record<string, string> = { Accept: 'application/json' };
-  if (options.body !== undefined) headers['Content-Type'] = 'application/json';
+  // A FormData body is sent as-is: fetch sets the multipart Content-Type with its boundary.
+  const isForm = options.body instanceof FormData;
+  if (options.body !== undefined && !isForm) headers['Content-Type'] = 'application/json';
   if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
 
   let response;
@@ -85,7 +87,12 @@ async function send<T, M>(
     response = await fetch(buildUrl(path, options.query), {
       method,
       headers,
-      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      body:
+        options.body === undefined
+          ? undefined
+          : isForm
+            ? (options.body as FormData)
+            : JSON.stringify(options.body),
       signal,
     });
   } catch (error) {

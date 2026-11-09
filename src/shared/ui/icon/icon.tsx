@@ -1,5 +1,7 @@
 import AlertTriangle from 'lucide-react-native/icons/triangle-alert';
+import ArrowDown from 'lucide-react-native/icons/arrow-down';
 import ArrowRight from 'lucide-react-native/icons/arrow-right';
+import ArrowUp from 'lucide-react-native/icons/arrow-up';
 import BarChart3 from 'lucide-react-native/icons/chart-column';
 import Bell from 'lucide-react-native/icons/bell';
 import Bookmark from 'lucide-react-native/icons/bookmark';
@@ -7,6 +9,7 @@ import Box from 'lucide-react-native/icons/box';
 import Building2 from 'lucide-react-native/icons/building-2';
 import Calendar from 'lucide-react-native/icons/calendar';
 import Check from 'lucide-react-native/icons/check';
+import ChevronLeft from 'lucide-react-native/icons/chevron-left';
 import ChevronRight from 'lucide-react-native/icons/chevron-right';
 import ClipboardCheck from 'lucide-react-native/icons/clipboard-check';
 import Copy from 'lucide-react-native/icons/copy';
@@ -21,9 +24,11 @@ import Info from 'lucide-react-native/icons/info';
 import LayoutGrid from 'lucide-react-native/icons/layout-grid';
 import List from 'lucide-react-native/icons/list';
 import Lock from 'lucide-react-native/icons/lock';
+import LogOut from 'lucide-react-native/icons/log-out';
 import Map from 'lucide-react-native/icons/map';
 import MessageSquare from 'lucide-react-native/icons/message-square';
 import Minus from 'lucide-react-native/icons/minus';
+import Pencil from 'lucide-react-native/icons/pencil';
 import Pin from 'lucide-react-native/icons/pin';
 import Plus from 'lucide-react-native/icons/plus';
 import Search from 'lucide-react-native/icons/search';
@@ -64,6 +69,8 @@ const icons = {
   share: Share,
   pin: Pin,
   lock: Lock,
+  'log-out': LogOut,
+  pencil: Pencil,
   eye: Eye,
   'eye-off': EyeOff,
   sliders: SlidersHorizontal,
@@ -81,7 +88,10 @@ const icons = {
   x: X,
   alert: AlertTriangle,
   info: Info,
+  'arrow-up': ArrowUp,
+  'arrow-down': ArrowDown,
   'arrow-right': ArrowRight,
+  'chevron-left': ChevronLeft,
   'chevron-right': ChevronRight,
 } as const;
 

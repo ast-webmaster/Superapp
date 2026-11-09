@@ -1,8 +1,16 @@
 import { useState } from 'react';
-import { Alert as NativeAlert, Platform, View } from 'react-native';
+import { View } from 'react-native';
 
 import { toAppError } from '@/core/errors';
-import { Alert, AppText, Button, TextField, type AlertTone } from '@/shared/ui';
+import {
+  Alert,
+  AppText,
+  Button,
+  TextField,
+  useConfirm,
+  type AlertTone,
+  type IconName,
+} from '@/shared/ui';
 
 import { usePriceApprovalAction } from '../hooks/use-price-approval-action';
 import type { PriceApprovalAction, PriceApprovalDetail } from '../types';
@@ -10,19 +18,32 @@ import { statusBadge } from './status';
 
 const ACTIONS: Record<
   PriceApprovalAction,
-  { label: string; question: string; needsReason: boolean }
+  { label: string; question: string; needsReason: boolean; icon: IconName; destructive?: boolean }
 > = {
-  approve: { label: 'Approve', question: 'Approve this request?', needsReason: false },
-  reject: { label: 'Reject', question: 'Reject this request?', needsReason: true },
+  approve: {
+    label: 'Approve',
+    question: 'Approve this request?',
+    needsReason: false,
+    icon: 'check',
+  },
+  reject: {
+    label: 'Reject',
+    question: 'Reject this request?',
+    needsReason: true,
+    icon: 'alert',
+    destructive: true,
+  },
   pending: {
     label: 'Hold',
     question: 'Hold this request and send it back to the requester?',
     needsReason: true,
+    icon: 'info',
   },
   no_approval_needed: {
     label: 'Mark no approval needed',
     question: 'Close this request as needing no approval?',
     needsReason: false,
+    icon: 'info',
   },
 };
 
@@ -33,18 +54,6 @@ const ORDER: readonly PriceApprovalAction[] = [
   'pending',
   'no_approval_needed',
 ];
-
-/** Native confirm. react-native-web has no Alert.alert, so the web build uses window.confirm. */
-function confirm(question: string, confirmLabel: string, onConfirm: () => void) {
-  if (Platform.OS === 'web') {
-    if (globalThis.confirm?.(question)) onConfirm();
-    return;
-  }
-  NativeAlert.alert(question, undefined, [
-    { text: 'Cancel', style: 'cancel' },
-    { text: confirmLabel, onPress: onConfirm },
-  ]);
-}
 
 type ApprovalActionsProps = {
   detail: PriceApprovalDetail;
@@ -57,6 +66,7 @@ type ApprovalActionsProps = {
  */
 export function ApprovalActions({ detail, online }: ApprovalActionsProps) {
   const action = usePriceApprovalAction(detail.pa_uuid);
+  const confirm = useConfirm();
   const [remarks, setRemarks] = useState('');
   const [remarksError, setRemarksError] = useState<string>();
 
@@ -83,12 +93,18 @@ export function ApprovalActions({ detail, online }: ApprovalActionsProps) {
       return;
     }
     setRemarksError(undefined);
-    confirm(ACTIONS[name].question, ACTIONS[name].label, () =>
-      action.mutate(
-        { action: name, remarks: reason, updatedAt: detail.updated_at },
-        { onSuccess: () => setRemarks('') },
-      ),
-    );
+    const { question, label, icon, destructive } = ACTIONS[name];
+    confirm({
+      title: question,
+      confirmLabel: label,
+      icon,
+      destructive,
+      onConfirm: () =>
+        action.mutate(
+          { action: name, remarks: reason, updatedAt: detail.updated_at },
+          { onSuccess: () => setRemarks('') },
+        ),
+    });
   };
 
   return (

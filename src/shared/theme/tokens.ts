@@ -12,6 +12,7 @@ export const colors = {
   ink: '#0b0b1a',
   'ink-muted': '#5b6270',
   surface: '#ffffff',
+  ground: '#eceef7',
   'surface-gray': '#f4f5f7',
   border: '#e5e7eb',
   scrim: 'rgba(11, 11, 26, 0.4)',

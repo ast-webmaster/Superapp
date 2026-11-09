@@ -15,7 +15,8 @@ How this app reads, caches, keeps, syncs and changes server data. **Read this be
 | Data                                             | Lives in                                           | Persisted to disk | Notes                                                                                                           |
 | ------------------------------------------------ | -------------------------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------- |
 | Access token, expiry                             | `core/auth` → `core/storage` (SecureStore)         | Yes, encrypted    | Never in zustand state, never in the query cache. Web falls back to localStorage, which is for development only |
-| Session user, permissions                        | `core/auth` zustand store                          | No                | Reloaded from `/me` at startup                                                                                  |
+| Session user, roles, permissions                 | `core/auth` zustand store                          | No                | Reloaded from `/me` at startup                                                                                  |
+| Favorite apps (module ids, in order)             | `navigation/favorite-apps-store.ts` → `core/storage` | Yes, per user     | A device preference, not server data: a short list under `favorite_apps_<userId>`. Read after sign-in, dropped on sign-out. Ids of apps the user may no longer open are hidden, not deleted |
 | Server data (lists, details, counts)             | TanStack Query cache                               | **No**            | Memory only. See [Persistence](#persistence)                                                                    |
 | UI state (filter, tab, search text, draft input) | A small zustand store in the module, or `useState` | No                | Never a copy of server data                                                                                     |
 
@@ -137,6 +138,19 @@ When the auth status leaves `authenticated` (sign-out, 401, deactivated account)
 - `core/auth` drops the token from memory and SecureStore.
 - `query-client.ts` calls `queryClient.clear()`, so the next user sees none of the previous user's data.
 - Each module store holding user-specific UI state resets itself. Subscribe to `useAuthStore` in the store file (see `priceApprovalFilterStore.ts`).
+
+## Profile
+
+The signed-in user is `core/auth` state, so profile edits go through the auth store, not the query cache: `updateProfile({name, photo?})` and `changePassword(...)`. Both wait for the server. `updateProfile` replaces the session user with the server's copy, which carries the new `profile_photo_path` and `profile_photo_url`; the photo is not written to disk by the app (expo-image caches it, and a new upload gets a new path). Backend:
+
+- `POST /v1/me/profile`, multipart (`name`, optional `photo`: jpg/png, up to 2 MB). Answers `{user}`. It is POST because PHP does not fill uploaded files on PUT. The app checks the 2 MB limit on the device first.
+- `PUT /v1/me/password` (`current_password`, `password`, `password_confirmation`), throttled to 6 a minute. It signs out the user's other devices and keeps this one.
+
+A wrong field answers 422 with `errors`, which the screens show on the fields. `apiClient` sends a `FormData` body as multipart and sets no `Content-Type`.
+
+## Inbox
+
+The Inbox is the user's rows in the backend `notifications` table (documents waiting for them), read from `GET /v1/notifications?module=<slug,slug>&per_page=&page=` with the usual envelope and `meta`. `module` is the manifest id; a slug the backend does not know yet is ignored. Each item has `title` and `subtitle` resolved from the document (null when it is gone). Query keys start with `inbox`. The tab badge is `meta.total` of a one-item list; screens refetch stale inbox queries when shown again (`useRefreshInboxOnFocus`). A module opts in on the server (`ApiNotificationController::MODULES`) and in its manifest (`detailRoute`, so a tap opens the document).
 
 ## Backend contract
 

@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, userEvent } from '@testing-library/react-native';
-import { Alert as NativeAlert } from 'react-native';
+import { render, screen, userEvent, within } from '@testing-library/react-native';
+
+import { ConfirmProvider } from '@/shared/ui';
 
 import { priceApprovalApi } from '../api/priceApprovalApi';
 import type { PriceApprovalAction, PriceApprovalDetail } from '../types';
@@ -23,21 +24,21 @@ function renderActions(allowed: PriceApprovalAction[], online = true) {
   const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
   return render(
     <QueryClientProvider client={queryClient}>
-      <ApprovalActions detail={detail(allowed)} online={online} />
+      <ConfirmProvider>
+        <ApprovalActions detail={detail(allowed)} online={online} />
+      </ConfirmProvider>
     </QueryClientProvider>,
   );
 }
 
-// Presses the confirm button of the native dialog.
-const confirmSpy = jest
-  .spyOn(NativeAlert, 'alert')
-  .mockImplementation((_title, _message, buttons) => {
-    buttons?.[1]?.onPress?.();
-  });
+// Presses the confirm button of the dialog.
+async function confirmDialog(name: string) {
+  const dialog = screen.getByRole('alertdialog');
+  await userEvent.press(within(dialog).getByRole('button', { name }));
+}
 
 beforeEach(() => {
   actMock.mockReset();
-  confirmSpy.mockClear();
 });
 
 it('offers only the actions the server allows', async () => {
@@ -60,7 +61,7 @@ it('asks for a reason before rejecting, without calling the server', async () =>
   await userEvent.press(screen.getByRole('button', { name: 'Reject' }));
 
   expect(screen.getByText('Enter a reason to reject or hold this request.')).toBeOnTheScreen();
-  expect(confirmSpy).not.toHaveBeenCalled();
+  expect(screen.queryByRole('alertdialog')).not.toBeOnTheScreen();
   expect(actMock).not.toHaveBeenCalled();
 });
 
@@ -70,6 +71,7 @@ it('sends the reason and the updated_at the user saw, then shows the server stat
 
   await userEvent.type(screen.getByLabelText('Reason'), '  Price too low  ');
   await userEvent.press(screen.getByRole('button', { name: 'Reject' }));
+  await confirmDialog('Reject');
 
   expect(await screen.findByText('Saved. Status is now Rejected.')).toBeOnTheScreen();
   expect(actMock).toHaveBeenCalledWith('pa-1', {

@@ -1,16 +1,14 @@
 import { Stack } from 'expo-router/stack';
 
 import { colors } from '@/shared/theme/tokens';
+import { renderTopAppBar } from '@/shared/ui';
 
 export function PriceApprovalLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShadowVisible: false,
-        headerStyle: { backgroundColor: colors.surface },
-        headerTintColor: colors.ink,
-        headerTitleStyle: { fontFamily: 'RubikMedium' },
-        contentStyle: { backgroundColor: colors.surface },
+        header: renderTopAppBar,
+        contentStyle: { backgroundColor: colors.ground },
       }}>
       <Stack.Screen name="index" options={{ title: 'Price approval' }} />
       <Stack.Screen name="[id]" options={{ title: 'Request' }} />

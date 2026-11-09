@@ -6,7 +6,13 @@ import { secureStorage } from '@/core/storage';
 
 import { authApi } from './authApi';
 import { getDeviceName } from './deviceName';
-import type { AuthStatus, AuthUser, LoginCredentials } from './types';
+import type {
+  AuthStatus,
+  AuthUser,
+  ChangePasswordInput,
+  LoginCredentials,
+  UpdateProfileInput,
+} from './types';
 
 const TOKEN_KEY = 'auth_token';
 const EXPIRES_AT_KEY = 'auth_expires_at';
@@ -16,11 +22,15 @@ const RESTORE_TIMEOUT_MS = 8000;
 type AuthState = {
   status: AuthStatus;
   user: AuthUser | null;
+  roles: string[];
   permissions: string[];
   /** Load the stored token and validate it. Call once at startup. */
   restore: () => Promise<void>;
   signIn: (credentials: LoginCredentials) => Promise<void>;
   signOut: () => Promise<void>;
+  /** Change the name and/or photo. The session user becomes the server's copy. */
+  updateProfile: (input: UpdateProfileInput) => Promise<void>;
+  changePassword: (input: ChangePasswordInput) => Promise<void>;
   /** Drop the session locally (no server call). Used when the server rejects the token. */
   clearSession: () => Promise<void>;
 };
@@ -28,6 +38,7 @@ type AuthState = {
 export const useAuthStore = create<AuthState>((set) => ({
   status: 'restoring',
   user: null,
+  roles: [],
   permissions: [],
 
   restore: async () => {
@@ -46,8 +57,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), RESTORE_TIMEOUT_MS);
     try {
-      const { user, permissions } = await authApi.me(controller.signal);
-      set({ status: 'authenticated', user, permissions });
+      const { user, roles, permissions } = await authApi.me(controller.signal);
+      set({ status: 'authenticated', user, roles, permissions });
     } catch (error) {
       // 401 already wiped the session via the unauthorized handler. 403 means the account was
       // deactivated, so the token is dead too. Any other failure (offline, 5xx, timeout)
@@ -57,14 +68,14 @@ export const useAuthStore = create<AuthState>((set) => ({
         return;
       }
       setAccessToken(null);
-      set({ status: 'unauthenticated', user: null, permissions: [] });
+      set({ status: 'unauthenticated', user: null, roles: [], permissions: [] });
     } finally {
       clearTimeout(timeout);
     }
   },
 
   signIn: async (credentials) => {
-    const { token, expires_at, user, permissions } = await authApi.login(
+    const { token, expires_at, user, roles, permissions } = await authApi.login(
       credentials,
       await getDeviceName(),
     );
@@ -73,7 +84,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       secureStorage.set(EXPIRES_AT_KEY, expires_at),
     ]);
     setAccessToken(token);
-    set({ status: 'authenticated', user, permissions });
+    set({ status: 'authenticated', user, roles, permissions });
   },
 
   signOut: async () => {
@@ -82,9 +93,17 @@ export const useAuthStore = create<AuthState>((set) => ({
     await useAuthStore.getState().clearSession();
   },
 
+  updateProfile: async (input) => {
+    set({ user: await authApi.updateProfile(input) });
+  },
+
+  changePassword: async (input) => {
+    await authApi.changePassword(input);
+  },
+
   clearSession: async () => {
     setAccessToken(null);
-    set({ status: 'unauthenticated', user: null, permissions: [] });
+    set({ status: 'unauthenticated', user: null, roles: [], permissions: [] });
     await Promise.all([secureStorage.remove(TOKEN_KEY), secureStorage.remove(EXPIRES_AT_KEY)]);
   },
 }));
@@ -93,4 +112,5 @@ setUnauthorizedHandler(() => void useAuthStore.getState().clearSession());
 
 export const useAuthStatus = () => useAuthStore((state) => state.status);
 export const useCurrentUser = () => useAuthStore((state) => state.user);
+export const useRoles = () => useAuthStore((state) => state.roles);
 export const usePermissions = () => useAuthStore((state) => state.permissions);

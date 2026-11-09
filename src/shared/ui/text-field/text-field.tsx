@@ -50,8 +50,8 @@ export function TextField({
       <View
         className={clsx(
           'min-h-control flex-row items-center gap-3 rounded-lg border-2 px-4',
-          focused ? 'bg-surface' : 'bg-surface-gray',
-          error ? 'border-danger' : focused ? 'border-primary' : 'border-transparent',
+          'bg-surface',
+          error ? 'border-danger' : focused ? 'border-primary' : 'border-border',
         )}>
         {icon ? <Icon name={icon} color="ink" /> : null}
         <TextInput

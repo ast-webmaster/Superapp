@@ -31,16 +31,17 @@ All values are px, except line heights, which are unitless ratios with the px no
 | `lavender` | `#c9b4ff` | Selected filter chip, pressed soft surfaces, highlights |
 | `ink` | `#0b0b1a` | Headings and primary text |
 | `ink-muted` | `#5b6270` | Secondary text, captions, placeholders |
-| `surface` | `#ffffff` | Cards, headers, sheets, modals |
-| `surface-gray` | `#f4f5f7` | Inputs, unselected chips, neutral fills |
+| `ground` | `#eceef7` | The ground of every screen (`Screen`): a soft lavender-gray the white cards sit on |
+| `surface` | `#ffffff` | Cards, inputs, unselected chips, segmented control, round buttons, sheets, modals |
+| `surface-gray` | `#f4f5f7` | Neutral fills inside a white card: `neutral` badge, skeleton blocks, pressed rows |
 | `border` | `#e5e7eb` | Hairlines between rows |
-| `glass` | `rgba(255,255,255,0.7)` | Bottom nav surface |
+| `glass` | `rgba(255,255,255,0.7)` | Reference swatch on the design system board; the bottom nav no longer uses it |
 | `control-off` | `#868c98` | Toggle track when off |
 | `success` / `success-bg` | `#176a42` / `#e6f4ec` | Success text and fill |
 | `danger` / `danger-bg` | `#b42318` / `#fde8e8` | Errors, destructive |
 | `warning` / `warning-bg` | `#8a5a00` / `#fff4d6` | Warnings, waiting states |
 
-**Background rule.** The app background is `surface` (white). Inputs and unselected chips are `surface-gray`, so they stand out on it.
+**Background rule.** The app background is `ground`, never white. Cards, list groups and sheets are `surface` (white) with `shadow-card`. Controls that sit straight on the ground (inputs, unselected chips, the segmented control, round buttons) are `surface` too; an input inside a white card keeps its `border-border` hairline so it still reads. `surface-gray` is only for fills inside a white card.
 
 The app is light only. There is no dark palette.
 
@@ -50,6 +51,7 @@ Always through `AppText`. Defaults for the whole app: every bold style is weight
 
 | `variant` | Size / line, weight | Use |
 |---|---|---|
+| `avatar` | 32 / 40, 500 | Initials in the large `Avatar` only |
 | `display` | 20 / 22, 500 | Marketing or splash moments only |
 | `heading` | 17 / 22, 500 | Screen title |
 | `title` | 16 / 20, 500 | Section title, empty-state title, stepper value |
@@ -61,6 +63,7 @@ Always through `AppText`. Defaults for the whole app: every bold style is weight
 | `caption-strong` | 13 / 20, 500 | Dense card titles and totals, where `module-title` is too large |
 | `button` | 13 / 20, 500 | Button text (set by `Button`) |
 | `label` | 12 / 16, 500 | Field labels, nav labels |
+| `micro` | 10 / 12, 500 | Tags that must stay quiet, such as the role `Badge` (`size="xs"`). Not for anything the user must read to act |
 
 Dates and money are formatted only through `@/shared/utils/format`: `formatDate` ("1 Okt 2026"), `formatDateTime` ("1 Okt 2026 14:30") and `formatMoney` ("Rp 20,000", "Rp 20,000.50": always the Rp symbol, decimals only when present). Never format them per module.
 
@@ -89,19 +92,20 @@ Give a screen title `role="heading"`.
 | Utility | px | Use |
 |---|---|---|
 | `rounded-pill` | 999 | Buttons, chips, badges, bottom nav, icon buttons |
-| `rounded-xl` | 24 | Cards, list groups, screen headers (`rounded-b-xl`) |
+| `rounded-2xl` | 32 | The black Home header card |
+| `rounded-xl` | 24 | Cards, list groups, sheets |
 | `rounded-lg` | 16 | Inputs, info cards, alerts, module tiles |
 | `rounded-md` | 12 | Icon wells, pressable rows |
 | `rounded-sm` | 8 | Skeleton blocks |
 
-Shadows: `shadow-card` on a white card sitting on the white ground. `shadow-glass` is internal to `BottomNav`. A card inside another card gets no shadow.
+Shadows: `shadow-card` on a white card sitting on the white ground. `shadow-glass` is internal to `BottomNav`, which is solid `ink` with a `lavender` pill on the active item. A card inside another card gets no shadow.
 
 ## Layout rules
 
 - **Ground and width.** Every screen is wrapped in `Screen`: `surface` (white) ground, content held to `max-w-phone` (480) and centered on wide displays.
 - **Margins.** Content is inset `px-5`. Items in a stack are separated by `gap-4`. Use `gap`, not margins, for rhythm.
-- **Safe area.** The screen adds it, not the component. Under the app's own header, pad the top with `useSafeAreaInsets().top + sizes.screenTopGap`. Under a native stack header, add no top inset. Above the bottom nav, pad the bottom with `useBottomNavInset()`. Elsewhere pad with `bottom`.
-- **Screen header.** A `rounded-b-xl bg-surface px-5 pb-5` block holds the title, search and filters. That makes the white ground inputs and chips need.
+- **Safe area.** The screen adds it, not the component. `TopAppBar` pads the status bar itself, so a screen under it adds none; only a screen with no bar (Home) pads the top with `useSafeAreaInsets().top + sizes.screenTopGap`. Above the bottom nav, pad the bottom with `useBottomNavInset()`. Elsewhere pad with `bottom`.
+- **Screen header.** `TopAppBar`: a round back button on the left, the title centered, one round action on the right, straight on the `ground` (no white block). A tab has no back button. Search and filters sit under the bar, `px-5 pb-4`, also on the ground. Stacks use it as `header: renderTopAppBar`; tabs get it from `TabHeader`.
 - **Scrolling.** Use `ScrollView` for short content and `FlatList` for long or paged lists. Both take `contentContainerClassName`.
 - **Class names only reach React Native primitives** (`View`, `Text`, `Pressable`, `ScrollView`, `FlatList`, `TextInput`). Third-party components (`Animated.View`, `expo-image`, `GlassView`, safe-area views) take `style`, or wrap a plain `View`. The browser hides this bug; a native build shows it.
 - **`className` is for layout only** (width, flex, margin, alignment). Looks come from `variant` and `tone`. CSS order decides conflicts, not class order.
@@ -115,7 +119,8 @@ All from `@/shared/ui`.
 | Component | Use it for | Key props |
 |---|---|---|
 | `Screen` | The ground of every screen | `children`, `className` |
-| `Logo` | Brand mark. Minimum width 96 | `variant` (`dark` on light, `light` on `primary`), `width` |
+| `TopAppBar` | The bar at the top of a screen. `renderTopAppBar` is the ready-made stack `header` | `title`, `onBack`, `action` (`icon`, `label`, `onPress`) |
+| `Logo` | Brand wordmark. Minimum width 64. Files in `assets/brand/`: `astrindo-logo.png` / `astrindo-logo-white.png` (wordmark, 4000x888) and `astrindo-icon.png` / `astrindo-icon-white.png` (the symbol alone), all transparent | `variant` (`dark` on light, `light` on `primary`), `width` |
 | `BottomNav` | App navigation, up to 4 items. An item may carry `badge` (unread count, hidden at 0, `99+` above 99) | `items`, `activeKey`, `onChange`, `placement` |
 | `useBottomNavInset()` | Bottom padding so content clears the nav | |
 
@@ -126,18 +131,19 @@ All from `@/shared/ui`.
 | `AppText` | All text | `variant`, `tone` |
 | `ModuleCard` | A launchable module: tile, title, department, badges, meta, Open | `title`, `icon`, `department`, `badges`, `meta`, `favorite`, `onOpen`, or `loading` for the skeleton |
 | `InfoCard` | A tappable highlight, such as "3 approvals waiting" | `icon`, `title`, `description`, `onPress` |
-| `ListGroup` + `ListRow` | Settings and key-value rows, hairlines between | `label`, `icon`, `value`, `onPress` (adds a chevron) |
+| `ListGroup` + `ListRow` | Settings and key-value rows, hairlines between | `label`, `icon`, `value`, `onPress` (adds a chevron), `destructive` (danger color, no chevron: Sign out) |
+| `Avatar` | A person: their photo, or their initials on `lavender` when there is none. Named after the person for screen readers | `name`, `uri`, `size` (`md` 56, `xl` 128) |
 | `Badge` | Status or count. Always has a text label | `label`, `tone` (`neutral`, `info`, `success`, `danger`, `warning`), `icon` |
 | `Icon` | Glyphs. Decorative unless `label` is set | `name`, `size`, `color` (a color token), `filled` |
 
-Icon names: `home grid search bell user calendar settings building box wallet users chart truck clipboard doc chat heart bookmark share pin lock eye eye-off sliders list map cart star plus more copy download upload minus check x alert info arrow-right chevron-right`. Icons are Lucide, drawn at 24px, 1.75 stroke.
+Icon names: `home grid search bell user calendar settings building box wallet users chart truck clipboard doc chat heart bookmark share pin lock log-out pencil eye eye-off sliders list map cart star plus more copy download upload minus check x alert info arrow-up arrow-down arrow-right chevron-left chevron-right`. Icons are Lucide, drawn at 24px, 1.75 stroke.
 
 ### Actions and input
 
 | Component | Use it for | Key props |
 |---|---|---|
 | `Button` | Text actions | `variant` (`primary`, `secondary`, `soft`), `block`, `iconLeft`, `iconRight`, `loading`, `disabled`. Children is a string |
-| `IconButton` | Icon-only actions | `icon`, `label` (required), `active` |
+| `IconButton` | Icon-only actions | `icon`, `label` (required), `active`, `size` (`md` 56, or `sm`: a 40 circle in a 48 press area) |
 | `TextField` | Text input | `label`, `type` (`text`, `password`), `icon`, `help`, `error`, `trailing` |
 | `Chip` / `ChipGroup` | Single-select filters | `ChipGroup`: `label`, `options`, `value`, `onChange`. An option with an `icon` becomes a department switch |
 | `SegmentedControl` | Choose one of 2–4 views | `label`, `options`, `value`, `onChange` |
@@ -155,6 +161,7 @@ Button choice: `primary` is the one main action per screen. `secondary` (white w
 |---|---|---|
 | `Alert` | An inline message in the flow | `tone` (`success`, `danger`, `warning`, `info`), `message` (one sentence), `onDismiss` |
 | `useToast().show` | A short confirmation after an action | `{ tone, message }`. Needs `ToastProvider`, which today is mounted only in the design-system layout |
+| `useConfirm()` | A confirm dialog before an action that changes data. Replaces `Alert.alert` and `window.confirm`: icon in a soft circle, title, optional message, and a split Cancel / confirm footer | `confirm({ title, message?, confirmLabel, cancelLabel?, icon?, destructive?, onConfirm })`. Needs `ConfirmProvider`, mounted in `AppProviders` |
 | `EmptyState` | Nothing to show, or a failed load. Fills its space | `title`, `description`, `icon`, `children` for the next step |
 | `Loading` | Spinner for a short wait: a list footer, a small area | `label` |
 | `Skeleton` + `SkeletonGroup` | First load of a screen. Compose pulsing blocks in the shape of the real content; the group announces one loading state | `Skeleton`: `className` (size and shape). `SkeletonGroup`: `label` |
@@ -167,17 +174,19 @@ Each recipe is the layout. Copy the skeleton, swap the content.
 
 The app has four tabs: Home, Apps, Inbox (count badge), AI chat. Each tab screen starts with `TabHeader` (`src/navigation/tab-header.tsx`).
 
-- **Home**: header (`Logo`, account `IconButton`, `heading`) → `InfoCard` for the inbox. Reference: `src/navigation/home-screen.tsx`.
+- **Home**: a lavender-to-white `expo-linear-gradient` (`style`, not `className`) holding a top row (dark `Logo`, width 112, left; small (`size="sm"`) profile `IconButton` right) and a solid `bg-ink` card (`rounded-2xl`, `p-5`, `gap-2`) with the date, the user's name (`display`, `on-primary`) and a small role `Badge` (`size="xs"`, `info`, first role plus "+N") → "Favorite apps" (a 4-column grid of `FavoriteAppTile`, "Manage apps" link) → "Favorite inbox" (`InboxRow`s in a `ListGroup`, five newest from the favorite apps). Reference: `src/navigation/home-screen.tsx`.
+- **Manage apps**: stack screen (`/manage-apps`, stack header) with "Favorite apps" (move up, move down, remove) and "More apps" (add). Moving is by buttons, not drag, so it works with a screen reader. Reference: `src/navigation/manage-apps-screen.tsx`.
+- **Inbox**: `TabHeader` → `ListGroup` of `InboxRow`s, "Show more" when there are more pages. Reference: `src/navigation/inbox-screen.tsx`.
 - **Apps**: `TabHeader` with a search `TextField` → `ListGroup` of `ListRow`s, one per module the user may open (icon, title, chevron). Empty: `EmptyState icon="grid"`, no match: `icon="search"`. Reference: `src/navigation/apps-screen.tsx`. A new module appears here through its manifest.
-- Account is not a tab: it opens from the Home header as a stack screen.
+- Profile is not a tab: it opens from the Home header (`IconButton`, label "Profile") as a stack screen, see [Settings and account](#settings-and-account).
 
 ### List with filters
 
-Under a native stack header. `surface` block with a horizontal `ChipGroup` → list of cards, `gap-4 px-5 py-4`, pull to refresh, paged with `onEndReached` and a `Loading` footer. Reference: `src/modules/PriceApproval/screens/price-approval-list-screen.tsx`.
+Under the top app bar (stack header). A horizontal `ChipGroup` on the ground → list of cards, `gap-4 px-5 py-4`, pull to refresh, paged with `onEndReached` and a `Loading` footer. Reference: `src/modules/PriceApproval/screens/price-approval-list-screen.tsx`.
 
 ```tsx
 <Screen>
-  <View className="rounded-b-xl bg-surface pb-5 pt-4">{/* ChipGroup in a horizontal ScrollView, px-5 */}</View>
+  <View className="pb-4 pt-2">{/* ChipGroup in a horizontal ScrollView, px-5 */}</View>
   <FlatList contentContainerClassName="gap-4 px-5 py-4" … />
 </Screen>
 ```
@@ -196,7 +205,7 @@ Every module index starts with `ListToolbar`, on the white header block. Buttons
 
 ```tsx
 <Screen>
-  <View className="rounded-b-xl bg-surface pb-5 pt-4">
+  <View className="pb-4 pt-2">
     <ListToolbar search={{ value, onChange }} onFilter={openFilter} actions={actions}>
       <StatusFilter … />
     </ListToolbar>
@@ -214,11 +223,15 @@ Reference: `price-approval-list-screen.tsx` (search and chips only).
 
 ### Settings and account
 
-`heading` → `ListGroup` of `ListRow`s (`ListRow` has no trailing slot: a setting with a `Toggle` is a hand-built row inside the `ListGroup`) → destructive or exit action as `Button variant="secondary" block`. Keep long values (emails) out of `ListRow value`: they do not wrap. Put them in a card as in `account-screen.tsx`.
+**Profile** (`/profile`, stack header "Profile", `src/modules/Auth/screens/profile-screen.tsx`): a centered `Avatar size="xl"` with the dark pencil dot (`AvatarEditButton`, opens Edit profile) → the name (`display`, `role="heading"`) → the role `Badge` (`size="xs"`, `info`, same text as Home) → a `label` muted "Account" over a `ListGroup`: Edit profile, Change password, and Sign out as a `destructive` row. Sign out asks first (`useConfirm` from `@/shared/ui`).
+
+Its sub-screens are Form recipes under the stack header: **Edit profile** (`/edit-profile`: the avatar with a pencil dot that opens the photo library, a card with the name `TextField` and the email and role as plain label-and-value text, because only the name and photo can change, then "Save changes", disabled until something changed) and **Change password** (`/change-password`: a card of three password `TextField`s, then "Change password"). Both show the result in an `Alert` and the server's field errors on the fields.
+
+For a plain settings list: `heading` → `ListGroup` of `ListRow`s (`ListRow` has no trailing slot: a setting with a `Toggle` is a hand-built row inside the `ListGroup`) → a destructive exit as a `destructive` `ListRow`, or `Button variant="secondary" block` when it stands alone. Keep long values (emails) out of `ListRow value`: they do not wrap. Put them in a card, as Edit profile does.
 
 ### Detail
 
-Native stack header → `ScrollView` (`gap-4 px-5`, pull to refresh, `keyboardShouldPersistTaps="handled"`) → stale/offline `Alert` → `surface` summary card (`module-title` + `Badge`, `body` subject, `caption muted` meta ending in "Updated 10:42") → `ListGroup` of key-value rows → sections with a `title` heading over a `ListGroup` → the decision card at the bottom: one `primary` `Button block` for the main action, `soft` for the rest, only the actions the server allows. Reference: `src/modules/PriceApproval/screens/price-approval-detail-screen.tsx` and `components/approval-actions.tsx`. Data rules for actions: [data-management.md](data-management.md#writing-actions).
+Top app bar (stack header) → `ScrollView` (`gap-4 px-5`, pull to refresh, `keyboardShouldPersistTaps="handled"`) → stale/offline `Alert` → `surface` summary card (`module-title` + `Badge`, `body` subject, `caption muted` meta ending in "Updated 10:42") → `ListGroup` of key-value rows → sections with a `title` heading over a `ListGroup` → the decision card at the bottom: one `primary` `Button block` for the main action, `soft` for the rest, only the actions the server allows. Reference: `src/modules/PriceApproval/screens/price-approval-detail-screen.tsx` and `components/approval-actions.tsx`. Data rules for actions: [data-management.md](data-management.md#writing-actions).
 
 A tappable list card is a `Pressable` with `role="button"`, an `aria-label`, `active:bg-surface-gray` and `focusRing` (exported from `@/shared/ui`). Reference: `price-approval-card.tsx`.
 
@@ -259,7 +272,7 @@ Before a screen is done:
 - [ ] No raw hex, no arbitrary value, no `StyleSheet.create` for looks. Native props read `tokens.ts`.
 - [ ] All text is `AppText`, titles have `role="heading"`.
 - [ ] Wrapped in `Screen`; margins `px-5`; stack gap `gap-4`; safe-area and nav insets handled.
-- [ ] Inputs and unselected chips sit on a white surface.
+- [ ] The screen sits on `ground`; cards are `surface`; the top app bar is used, not a white header block.
 - [ ] One `primary` action at most; `soft` used on white cards.
 - [ ] Loading, empty, error, offline and stale states exist.
 - [ ] Touch targets ≥ 48, labels on icon-only controls, status not color only.

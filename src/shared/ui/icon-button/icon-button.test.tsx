@@ -26,4 +26,13 @@ describe('IconButton', () => {
 
     expect(onPress).not.toHaveBeenCalled();
   });
+
+  it('keeps a 48 press area when small', async () => {
+    const onPress = jest.fn();
+    await render(<IconButton size="sm" icon="user" label="Profile" onPress={onPress} />);
+
+    await userEvent.press(screen.getByRole('button', { name: 'Profile' }));
+
+    expect(onPress).toHaveBeenCalledTimes(1);
+  });
 });

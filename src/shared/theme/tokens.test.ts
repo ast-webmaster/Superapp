@@ -23,6 +23,7 @@ describe('design tokens', () => {
   // on native. Line heights must be unitless ratios; this checks each one still lands on its px.
   it('writes line heights as ratios that resolve to the intended px', () => {
     const intendedPx: Record<string, number> = {
+      avatar: 40,
       display: 22,
       heading: 22,
       title: 20,
@@ -34,6 +35,7 @@ describe('design tokens', () => {
       'caption-strong': 20,
       button: 20,
       label: 16,
+      micro: 12,
     };
     const found: Record<string, number> = {};
     for (const [, name, ratio] of css.matchAll(/--text-([a-z-]+)--line-height:\s*([^;]+);/g)) {

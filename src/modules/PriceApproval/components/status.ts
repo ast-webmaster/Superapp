@@ -1,5 +1,5 @@
 import type { BadgeProps } from '@/shared/ui';
-import { formatMoney } from '@/shared/utils/format';
+import { formatMoney, sentenceCase } from '@/shared/utils/format';
 
 import type { PriceApprovalLine, PriceApprovalStatus } from '../types';
 
@@ -38,12 +38,6 @@ const stepTones: Record<string, NonNullable<BadgeProps['tone']>> = {
   'NO APPROVAL NEEDED': 'success',
   REJECTED: 'danger',
 };
-
-/** "PRODUCT MANAGER" -> "Product manager". Tier and step names arrive in capitals. */
-export function sentenceCase(value: string) {
-  const lower = value.toLowerCase();
-  return lower.charAt(0).toUpperCase() + lower.slice(1);
-}
 
 /** Badge for one step of the approval chain. "SUBMITED" is how the backend spells it. */
 export function stepBadge(status: string): Pick<BadgeProps, 'label' | 'tone'> {

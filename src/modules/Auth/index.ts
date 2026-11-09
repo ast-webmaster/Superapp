@@ -1,3 +1,5 @@
-// UI for signing in and managing the account. The session mechanics live in core/auth.
-export { AccountScreen } from './screens/account-screen';
+// UI for signing in and managing the profile. The session mechanics live in core/auth.
+export { ChangePasswordScreen } from './screens/change-password-screen';
+export { EditProfileScreen } from './screens/edit-profile-screen';
 export { LoginScreen } from './screens/login-screen';
+export { ProfileScreen } from './screens/profile-screen';

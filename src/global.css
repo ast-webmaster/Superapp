@@ -22,6 +22,7 @@
   --color-ink: #0b0b1a;
   --color-ink-muted: #5b6270;
   --color-surface: #ffffff;
+  --color-ground: #eceef7;
   --color-surface-gray: #f4f5f7;
   --color-border: #e5e7eb;
   --color-scrim: rgba(11, 11, 26, 0.4);
@@ -43,6 +44,9 @@
   --text-display--line-height: 1.1; /* 22px */
   --text-display--font-weight: 500;
   --text-display--letter-spacing: -0.4px;
+  --text-avatar: 32px;
+  --text-avatar--line-height: 1.25; /* 40px */
+  --text-avatar--font-weight: 500;
   --text-heading: 17px;
   --text-heading--line-height: 1.2941176; /* 22px */
   --text-heading--font-weight: 500;
@@ -73,6 +77,9 @@
   --text-label: 12px;
   --text-label--line-height: 1.3333333; /* 16px */
   --text-label--font-weight: 500;
+  --text-micro: 10px;
+  --text-micro--line-height: 1.2; /* 12px */
+  --text-micro--font-weight: 500;
 
   /* 4px base, so p-1 = 4, p-4 = 16 (card gap), p-5 = 20 (screen margin), p-10 = 40. */
   --spacing: 4px;
@@ -86,6 +93,7 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
+  --radius-2xl: 32px;
   --radius-pill: 999px;
 
   --shadow-*: initial;
@@ -95,5 +103,6 @@
   --blur-glass: 20px;
 
   --container-phone: 480px;
+  --container-dialog: 320px;
   --container-board: 1440px;
 }

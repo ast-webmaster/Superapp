@@ -2,9 +2,8 @@ import { router, usePathname, type Href } from 'expo-router';
 import { TabList, TabSlot, TabTrigger, Tabs } from 'expo-router/ui';
 import { View } from 'react-native';
 
+import { useInboxTotal } from '@/modules/Inbox';
 import { BottomNav } from '@/shared/ui';
-
-import { useInboxCount } from './use-inbox-count';
 
 // On Windows, Expo's typed-routes generator keeps "/index" on nested index routes, so the
 // generated Href union has no "/" even though the route exists. Cast to Href to link it.
@@ -17,7 +16,7 @@ const tabs = [
 
 export default function AppTabs() {
   const pathname = usePathname();
-  const inboxCount = useInboxCount();
+  const inboxCount = useInboxTotal();
   const active = tabs.find((tab) => tab.href !== '/' && pathname.startsWith(tab.href)) ?? tabs[0];
 
   const [home, apps, inbox, aiChat] = tabs;

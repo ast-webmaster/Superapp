@@ -2,6 +2,7 @@
 export { Alert, type AlertProps, type AlertTone } from './alert/alert';
 export { focusRing } from './focus';
 export { ToastProvider, useToast } from './alert/toast';
+export { Avatar, type AvatarProps } from './avatar/avatar';
 export { Badge, type BadgeProps } from './badge/badge';
 export {
   BottomNav,
@@ -11,6 +12,7 @@ export {
 } from './bottom-nav/bottom-nav';
 export { Button, type ButtonProps } from './button/button';
 export { Chip, ChipGroup, type ChipGroupProps, type ChipProps } from './chip/chip';
+export { ConfirmProvider, useConfirm, type ConfirmOptions } from './dialog/dialog';
 export { EmptyState, type EmptyStateProps } from './empty-state/empty-state';
 export { Fab, type FabProps } from './fab/fab';
 export { IconButton, type IconButtonProps } from './icon-button/icon-button';
@@ -41,3 +43,9 @@ export { Stepper, type StepperProps } from './stepper/stepper';
 export { TextField, type TextFieldProps } from './text-field/text-field';
 export { AppText, type AppTextProps } from './text/text';
 export { Toggle, type ToggleProps } from './toggle/toggle';
+export {
+  renderTopAppBar,
+  TopAppBar,
+  type TopAppBarAction,
+  type TopAppBarProps,
+} from './top-app-bar/top-app-bar';

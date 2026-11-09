@@ -2,6 +2,7 @@ import { clsx } from 'clsx';
 import { Text, type TextProps } from 'react-native';
 
 const textVariants = {
+  avatar: 'text-avatar',
   display: 'text-display',
   heading: 'text-heading',
   title: 'text-title',
@@ -13,6 +14,7 @@ const textVariants = {
   'caption-strong': 'text-caption-strong',
   button: 'text-button',
   label: 'text-label',
+  micro: 'text-micro',
 } as const;
 
 const textTones = {
