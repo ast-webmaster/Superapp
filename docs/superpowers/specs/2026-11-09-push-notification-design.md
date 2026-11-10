@@ -1,6 +1,6 @@
 # Push notification: catatan desain (draft diskusi)
 
-Status: **draft hasil diskusi, belum disetujui sebagai desain final, belum ada kode.**
+Status: **diimplementasikan (Android, modul PriceApproval).** Tes di perangkat (Task 8) masih menunggu user; iOS ditunda sampai Apple Developer Program dibeli.
 Tanggal: 2026-11-09. Untuk lanjut di sesi baru: baca file ini, lalu minta Claude melanjutkan dari bagian "Langkah berikutnya".
 
 ## Tujuan
@@ -92,3 +92,20 @@ User menegaskan push harus **setelah email** terkirim. Dicek di backend: modul p
 1. User menyelesaikan item persiapan 1 sampai 4.
 2. Jawab pertanyaan terbuka (Claude bisa cek backend untuk dua yang pertama).
 3. Claude menyelesaikan desain tertulis ini, lalu membuat rencana implementasi (skill `superpowers:writing-plans`).
+
+## Hasil implementasi (2026-11-10)
+
+Backend (`digitalapproval`):
+
+- Tabel dan model `device_tokens`; `POST` dan `DELETE /me/device-tokens`; token dihapus saat logout.
+- `App\Services\PushNotifier::notify()` men-dispatch `SendPushNotificationJob` (Expo Push API); `CheckPushReceiptsJob` menghapus token yang dijawab `DeviceNotRegistered`.
+- `PriceApprovalJob` memanggil `PushNotifier` setelah email, dengan data `{module: 'price-approval', doc_uuid}`.
+
+App (`Superapp`):
+
+- `src/core/notifications`: `pushApi` dan `registerForPushNotifications` (izin, channel Android, token Expo).
+- `src/navigation/use-push-notifications.ts` (dipasang di root navigator): daftar token saat login, invalidate `inboxKeys.all` saat push masuk, buka `detailRoute` saat diketuk.
+- `src/navigation/notification-route.ts`: payload ke rute lewat manifest. `inboxKeys` diekspor dari `@/modules/Inbox`.
+- Pola dicatat di `docs/data-management.md` (bagian Inbox).
+
+Belum: tes di HP Android fisik (Task 8, oleh user), iOS (kredensial APNs), modul selain PriceApproval.

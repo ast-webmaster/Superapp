@@ -83,7 +83,7 @@ export const priceApprovalKeys = {
 | After an action               | The mutation's `onSuccess` / `onError`                   |
 | User pulls down               | `refetch()` from `RefreshControl` / `FlatList onRefresh` |
 
-There is no polling. Push notifications or WebSocket, when added, call the same module invalidation functions and change nothing else.
+There is no polling. Push notifications (see Inbox) call the same module invalidation functions and change nothing else. A WebSocket, if added, would do the same.
 
 ## Writing (actions)
 
@@ -151,6 +151,15 @@ A wrong field answers 422 with `errors`, which the screens show on the fields. `
 ## Inbox
 
 The Inbox is the user's rows in the backend `notifications` table (documents waiting for them), read from `GET /v1/notifications?module=<slug,slug>&per_page=&page=` with the usual envelope and `meta`. `module` is the manifest id; a slug the backend does not know yet is ignored. Each item has `title` and `subtitle` resolved from the document (null when it is gone). Query keys start with `inbox`. The tab badge is `meta.total` of a one-item list; screens refetch stale inbox queries when shown again (`useRefreshInboxOnFocus`). A module opts in on the server (`ApiNotificationController::MODULES`) and in its manifest (`detailRoute`, so a tap opens the document).
+
+### Push notifications
+
+The backend sends a push (Expo Push API, payload data `{ module, doc_uuid }`) right after it emails a document. The app side lives in `usePushNotifications` (`navigation/use-push-notifications.ts`, mounted in the root navigator):
+
+- **Registration.** Once per sign-in it calls `registerForPushNotifications` (`core/notifications`), which asks permission and posts the Expo token to `POST /v1/me/device-tokens`. Best effort: it never throws and never blocks sign-in. The backend drops the token on logout or when Expo reports it dead.
+- **Received while the app is open.** Invalidates `inboxKeys.all` (exported from `@/modules/Inbox`), so the badge and list refetch.
+- **Tapped.** Invalidates `inboxKeys.all`, then `resolveNotificationRoute` (`navigation/notification-route.ts`) finds the manifest whose `id` equals `module` and pushes its `detailRoute(doc_uuid)`. A tap is handled once per notification, including a cold start, and only after the session is known. A module without `detailRoute` just opens the app.
+- **Adding a module to push.** Call `PushNotifier::notify()` in its backend email job and give its manifest a `detailRoute`.
 
 ## Backend contract
 
