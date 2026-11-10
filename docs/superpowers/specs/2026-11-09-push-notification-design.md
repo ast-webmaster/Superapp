@@ -107,5 +107,6 @@ App (`Superapp`):
 - `src/navigation/use-push-notifications.ts` (dipasang di root navigator): daftar token saat login, invalidate `inboxKeys.all` saat push masuk, buka `detailRoute` saat diketuk.
 - `src/navigation/notification-route.ts`: payload ke rute lewat manifest. `inboxKeys` diekspor dari `@/modules/Inbox`.
 - Pola dicatat di `docs/data-management.md` (bagian Inbox).
+- Pembersihan token saat sign-out dilakukan di server, bukan di `query-client.ts` seperti usulan awal spek ini: `POST /logout` menghapus device token milik access token itu, begitu juga ganti password (token lain) dan login ulang dengan `device_name` yang sama. App tidak pernah memanggil `DELETE /me/device-tokens`.
 
 Belum: tes di HP Android fisik (Task 8, oleh user), iOS (kredensial APNs), modul selain PriceApproval.

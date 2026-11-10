@@ -157,7 +157,7 @@ The Inbox is the user's rows in the backend `notifications` table (documents wai
 The backend sends a push (Expo Push API, payload data `{ module, doc_uuid }`) right after it emails a document. The app side lives in `usePushNotifications` (`navigation/use-push-notifications.ts`, mounted in the root navigator):
 
 - **Registration.** Once per sign-in it calls `registerForPushNotifications` (`core/notifications`), which asks permission and posts the Expo token to `POST /v1/me/device-tokens`. Best effort: it never throws and never blocks sign-in. The backend drops the token on logout or when Expo reports it dead.
-- **Received while the app is open.** Invalidates `inboxKeys.all` (exported from `@/modules/Inbox`), so the badge and list refetch.
+- **Received while the app is open.** Invalidates `inboxKeys.all` (exported from `@/modules/Inbox`), so the badge and list refetch. This only happens while the app is in the foreground; a push that arrives in the background relies on the normal focus refetch.
 - **Tapped.** Invalidates `inboxKeys.all`, then `resolveNotificationRoute` (`navigation/notification-route.ts`) finds the manifest whose `id` equals `module` and pushes its `detailRoute(doc_uuid)`. A tap is handled once per notification, including a cold start, and only after the session is known. A module without `detailRoute` just opens the app.
 - **Adding a module to push.** Call `PushNotifier::notify()` in its backend email job and give its manifest a `detailRoute`.
 
