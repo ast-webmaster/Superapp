@@ -1,10 +1,18 @@
 import { clsx } from 'clsx';
 import { useState } from 'react';
-import { FlatList, View } from 'react-native';
+import { View } from 'react-native';
 
 import { toAppError } from '@/core/errors';
 import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
-import { Alert, Button, EmptyState, ListToolbar, Loading, Screen } from '@/shared/ui';
+import {
+  Alert,
+  Button,
+  EmptyState,
+  ListToolbar,
+  Loading,
+  Screen,
+  StackedList,
+} from '@/shared/ui';
 
 import { formatSyncedAt } from '../components/format';
 import { PriceApprovalCard } from '../components/price-approval-card';
@@ -78,7 +86,7 @@ export function PriceApprovalListScreen() {
               className="mx-5 mt-4"
             />
           ) : null}
-          <FlatList
+          <StackedList
             data={data}
             keyExtractor={(item) => item.pa_uuid}
             renderItem={({ item }) => <PriceApprovalCard item={item} />}

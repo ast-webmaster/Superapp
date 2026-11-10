@@ -39,6 +39,7 @@ export {
   type SegmentedControlProps,
 } from './segmented-control/segmented-control';
 export { Sheet, type SheetProps } from './sheet/sheet';
+export { StackedList, type StackedListProps } from './stacked-list/stacked-list';
 export { Stepper, type StepperProps } from './stepper/stepper';
 export { TextField, type TextFieldProps } from './text-field/text-field';
 export { AppText, type AppTextProps } from './text/text';

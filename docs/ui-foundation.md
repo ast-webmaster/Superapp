@@ -132,6 +132,7 @@ All from `@/shared/ui`.
 | `ModuleCard` | A launchable module: tile, title, department, badges, meta, Open | `title`, `icon`, `department`, `badges`, `meta`, `favorite`, `onOpen`, or `loading` for the skeleton |
 | `InfoCard` | A tappable highlight, such as "3 approvals waiting" | `icon`, `title`, `description`, `onPress` |
 | `ListGroup` + `ListRow` | Settings and key-value rows, hairlines between | `label`, `icon`, `value`, `onPress` (adds a chevron), `destructive` (danger color, no chevron: Sign out) |
+| `StackedList` | A scrolling list of cards (a `FlatList` with the same props, minus `onScroll`). A card pins at the top and shrinks to 0.94 while the next one slides over it. Keep the `py-4` list padding (the pin offset is 16), give cards the same width, and note that reduce motion turns the effect off. Reference: `PriceApproval/screens/price-approval-list-screen.tsx` | `FlatList` props |
 | `Avatar` | A person: their photo, or their initials on `lavender` when there is none. Named after the person for screen readers | `name`, `uri`, `size` (`md` 56, `xl` 128) |
 | `Badge` | Status or count. Always has a text label | `label`, `tone` (`neutral`, `info`, `success`, `danger`, `warning`), `icon` |
 | `Icon` | Glyphs. Decorative unless `label` is set | `name`, `size`, `color` (a color token), `filled` |

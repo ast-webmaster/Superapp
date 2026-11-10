@@ -1,19 +1,24 @@
 {
   "expo": {
     "name": "Superapp",
-    "slug": "Superapp",
+    "slug": "superapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "superapp",
     "userInterfaceStyle": "light",
     "android": {
+      "package": "com.gustierlsteam.superapp",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#000000",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "output": "server",
@@ -30,14 +35,28 @@
         }
       ],
       "expo-secure-store",
+      ["expo-notifications", { "defaultChannel": "default" }],
       [
         "expo-image-picker",
-        { "photosPermission": "Allow Superapp to access your photos so you can set a profile photo." }
+        {
+          "photosPermission": "Allow Superapp to access your photos so you can set a profile photo."
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "42bc6a00-1f3e-403f-b1c3-9196da677ecf"
+      }
+    },
+    "owner": "gustierls-team"
   }
 }
