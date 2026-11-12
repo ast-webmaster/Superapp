@@ -69,7 +69,7 @@ export function InboxRow({ item, icon = 'bell', onPress }: InboxRowProps) {
 /** Placeholder rows for the first load, shaped like `InboxRow` inside a card. */
 export function InboxRowsSkeleton({ rows = 3 }: { rows?: number }) {
   return (
-    <SkeletonGroup label="Loading inbox" className="rounded-xl bg-surface px-4 shadow-card">
+    <SkeletonGroup label="Loading inbox" className="rounded-xl bg-surface px-4 border border-border">
       {Array.from({ length: rows }, (_, index) => (
         <View key={index} className="min-h-control flex-row items-center gap-3 py-3">
           <Skeleton className="size-touch rounded-md" />

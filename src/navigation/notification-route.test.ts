@@ -4,7 +4,7 @@ import { resolveNotificationRoute } from './notification-route';
 
 const withDetail: ModuleManifest = {
   id: 'price-approval',
-  title: 'Price approval',
+  title: 'Price Approval',
   description: '',
   route: '/price-approval',
   detailRoute: (uuid) => `/price-approval/${uuid}`,

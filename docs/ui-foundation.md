@@ -41,7 +41,7 @@ All values are px, except line heights, which are unitless ratios with the px no
 | `danger` / `danger-bg` | `#b42318` / `#fde8e8` | Errors, destructive |
 | `warning` / `warning-bg` | `#8a5a00` / `#fff4d6` | Warnings, waiting states |
 
-**Background rule.** The app background is `ground`, never white. Cards, list groups and sheets are `surface` (white) with `shadow-card`. Controls that sit straight on the ground (inputs, unselected chips, the segmented control, round buttons) are `surface` too; an input inside a white card keeps its `border-border` hairline so it still reads. `surface-gray` is only for fills inside a white card.
+**Background rule.** The app background is `ground`, never white. Cards, list groups and sheets are `surface` (white) with a thin `border border-border` (no shadow). Controls that sit straight on the ground (inputs, unselected chips, the segmented control, round buttons) are `surface` too; an input inside a white card keeps its `border-border` hairline so it still reads. `surface-gray` is only for fills inside a white card.
 
 The app is light only. There is no dark palette.
 
@@ -98,7 +98,7 @@ Give a screen title `role="heading"`.
 | `rounded-md` | 12 | Icon wells, pressable rows |
 | `rounded-sm` | 8 | Skeleton blocks |
 
-Shadows: `shadow-card` on a white card sitting on the white ground. `shadow-glass` is internal to `BottomNav`, which is solid `ink` with a `lavender` pill on the active item. A card inside another card gets no shadow.
+Shadows: Cards use `border border-border` (1px gray hairline) instead of a shadow. `shadow-glass` is internal to `BottomNav`, which is solid `ink` with a `lavender` pill on the active item. A card inside another card gets no shadow.
 
 ## Layout rules
 
@@ -162,7 +162,7 @@ Button choice: `primary` is the one main action per screen. `secondary` (white w
 |---|---|---|
 | `Alert` | An inline message in the flow | `tone` (`success`, `danger`, `warning`, `info`), `message` (one sentence), `onDismiss` |
 | `useToast().show` | A short confirmation after an action | `{ tone, message }`. Needs `ToastProvider`, which today is mounted only in the design-system layout |
-| `useConfirm()` | A confirm dialog before an action that changes data. Replaces `Alert.alert` and `window.confirm`: icon in a soft circle, title, optional message, and a split Cancel / confirm footer | `confirm({ title, message?, confirmLabel, cancelLabel?, icon?, destructive?, onConfirm })`. Needs `ConfirmProvider`, mounted in `AppProviders` |
+| `useConfirm()` | A confirm dialog before an action that changes data. Replaces `Alert.alert` and `window.confirm`: icon in a soft circle, title, optional message, and a split Cancel / confirm footer | `confirm({ title, message?, confirmLabel, cancelLabel?, icon?, destructive?, reason?: { label, required, maxLength?, requiredMessage? }, onConfirm(reason) })`. `reason` adds a text field in the dialog and blocks confirm while a required one is empty. Needs `ConfirmProvider`, mounted in `AppProviders` |
 | `EmptyState` | Nothing to show, or a failed load. Fills its space | `title`, `description`, `icon`, `children` for the next step |
 | `Loading` | Spinner for a short wait: a list footer, a small area | `label` |
 | `Skeleton` + `SkeletonGroup` | First load of a screen. Compose pulsing blocks in the shape of the real content; the group announces one loading state | `Skeleton`: `className` (size and shape). `SkeletonGroup`: `label` |
@@ -192,7 +192,7 @@ Under the top app bar (stack header). A horizontal `ChipGroup` on the ground →
 </Screen>
 ```
 
-A list card is `rounded-xl bg-surface p-4 shadow-card gap-2`: `module-title` + `Badge` on the first row, `body` for the subject, `caption muted` for meta. Reference: `price-approval-card.tsx`.
+A list card is `rounded-xl bg-surface p-4 border border-border gap-2`: `module-title` + `Badge` on the first row, `body` for the subject, `caption muted` for meta. Reference: `price-approval-card.tsx`.
 
 ### Module index (list with toolbar)
 
@@ -220,7 +220,7 @@ Reference: `price-approval-list-screen.tsx` (search and chips only).
 
 ### Form
 
-`Screen` → `ScrollView` (`gap-6 px-5`, `keyboardShouldPersistTaps="handled"`) → `Logo` (sign-in only) and `heading` → a `surface` card (`gap-4 rounded-xl p-5 shadow-card`) holding the `TextField`s → `Alert` for a form-level error → `Button block`. Field errors go on the field with `error`. Reference: `src/modules/Auth/screens/login-screen.tsx`.
+`Screen` → `ScrollView` (`gap-6 px-5`, `keyboardShouldPersistTaps="handled"`) → `Logo` (sign-in only) and `heading` → a `surface` card (`gap-4 rounded-xl p-5 border border-border`) holding the `TextField`s → `Alert` for a form-level error → `Button block`. Field errors go on the field with `error`. Reference: `src/modules/Auth/screens/login-screen.tsx`.
 
 ### Settings and account
 

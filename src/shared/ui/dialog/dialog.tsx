@@ -1,10 +1,11 @@
 import { clsx } from 'clsx';
 import { createContext, use, useMemo, useState, type ReactNode } from 'react';
-import { Modal, Pressable, View } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, Pressable, View } from 'react-native';
 
 import { focusRing } from '../focus';
 import { Icon, type IconName } from '../icon/icon';
 import { AppText } from '../text/text';
+import { TextField } from '../text-field/text-field';
 
 export interface ConfirmOptions {
   title: string;
@@ -14,7 +15,9 @@ export interface ConfirmOptions {
   icon?: IconName;
   /** Colors the icon and the confirm action red, for an action that is hard to undo. */
   destructive?: boolean;
-  onConfirm: () => void;
+  /** Adds a text field to the dialog. `onConfirm` receives the trimmed text. */
+  reason?: { label: string; required: boolean; maxLength?: number; requiredMessage?: string };
+  onConfirm: (reason: string) => void;
 }
 
 const ConfirmContext = createContext<((options: ConfirmOptions) => void) | null>(null);
@@ -39,9 +42,9 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
         <ConfirmDialog
           {...pending}
           onCancel={close}
-          onConfirm={() => {
+          onConfirm={(reason) => {
             close();
-            pending.onConfirm();
+            pending.onConfirm(reason);
           }}
         />
       ) : null}
@@ -49,8 +52,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
   );
 }
 
-interface ConfirmDialogProps extends Omit<ConfirmOptions, 'onConfirm'> {
-  onConfirm: () => void;
+interface ConfirmDialogProps extends ConfirmOptions {
   onCancel: () => void;
 }
 
@@ -61,12 +63,27 @@ function ConfirmDialog({
   cancelLabel = 'Cancel',
   icon = 'info',
   destructive = false,
+  reason,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  const [text, setText] = useState('');
+  const [error, setError] = useState<string>();
+
+  const submit = () => {
+    const trimmed = text.trim();
+    if (reason?.required && !trimmed) {
+      setError(reason.requiredMessage ?? 'Enter a reason.');
+      return;
+    }
+    onConfirm(trimmed);
+  };
+
   return (
     <Modal transparent visible animationType="fade" statusBarTranslucent onRequestClose={onCancel}>
-      <View className="flex-1 items-center justify-center bg-scrim px-5">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        className="flex-1 items-center justify-center bg-scrim px-5">
         <Pressable
           aria-hidden
           importantForAccessibility="no-hide-descendants"
@@ -78,7 +95,7 @@ function ConfirmDialog({
           role="alertdialog"
           aria-modal
           aria-label={title}
-          className="w-full max-w-dialog overflow-hidden rounded-xl bg-surface shadow-card">
+          className="w-full max-w-dialog overflow-hidden rounded-xl bg-surface border border-border">
           <View className="items-center gap-3 px-6 pb-6 pt-8">
             <View
               className={clsx(
@@ -95,6 +112,20 @@ function ConfirmDialog({
                 {message}
               </AppText>
             ) : null}
+            {reason ? (
+              <TextField
+                label={reason.label}
+                value={text}
+                onChangeText={(value) => {
+                  setText(value);
+                  setError(undefined);
+                }}
+                error={error}
+                multiline
+                maxLength={reason.maxLength}
+                className="mt-2 self-stretch"
+              />
+            ) : null}
           </View>
           <View className="flex-row bg-primary-soft">
             <DialogAction label={cancelLabel} onPress={onCancel} />
@@ -102,11 +133,11 @@ function ConfirmDialog({
             <DialogAction
               label={confirmLabel}
               tone={destructive ? 'danger' : 'primary'}
-              onPress={onConfirm}
+              onPress={submit}
             />
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

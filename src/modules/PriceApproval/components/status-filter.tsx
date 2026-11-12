@@ -4,7 +4,7 @@ import type { PriceApprovalFilter } from '../types';
 import { statusLabels } from './status';
 
 const OPTIONS = [
-  ...Object.entries(statusLabels).map(([value, label]) => ({ value, label })),
+  { value: 'AWAITING', label: statusLabels.AWAITING },
   { value: 'all', label: 'All' },
 ];
 

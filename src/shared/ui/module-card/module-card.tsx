@@ -32,7 +32,7 @@ interface ModuleCardContentProps extends ModuleCardBaseProps {
 
 export type ModuleCardProps = ModuleCardLoadingProps | ModuleCardContentProps;
 
-const cardStyle = 'flex-row gap-4 rounded-xl bg-surface p-3 shadow-card';
+const cardStyle = 'flex-row gap-4 rounded-xl bg-surface p-3 border border-border';
 
 export function ModuleCard(props: ModuleCardProps) {
   if (props.loading) return <ModuleCardSkeleton className={props.className} />;

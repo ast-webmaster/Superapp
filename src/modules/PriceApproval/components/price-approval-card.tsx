@@ -17,7 +17,7 @@ export function PriceApprovalCard({ item }: { item: PriceApprovalListItem }) {
       aria-label={`Open ${item.pa_no}`}
       onPress={() => router.push(priceApprovalRoutes.detail(item.pa_uuid) as Href)}
       className={clsx(
-        'gap-4 rounded-xl bg-surface p-4 shadow-card active:bg-surface-gray',
+        'gap-4 rounded-xl bg-surface p-4 border border-border active:bg-surface-gray',
         focusRing,
       )}>
       <View className="gap-1">

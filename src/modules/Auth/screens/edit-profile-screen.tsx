@@ -101,7 +101,7 @@ export function EditProfileScreen() {
         ) : null}
         {formError ? <Alert tone="danger" message={formError} /> : null}
 
-        <View className="gap-4 rounded-xl bg-surface p-5 shadow-card">
+        <View className="gap-4 rounded-xl bg-surface p-5 border border-border">
           <TextField
             label="Name"
             value={name}

@@ -22,7 +22,7 @@ jest.mock('./registry', () => ({
   moduleManifests: [
     {
       id: 'price-approval',
-      title: 'Price approval',
+      title: 'Price Approval',
       description: '',
       route: '/price-approval',
       detailRoute: (uuid: string) => `/price-approval/${uuid}`,

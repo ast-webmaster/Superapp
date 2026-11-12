@@ -46,7 +46,6 @@ it('offers only the actions the server allows', async () => {
 
   expect(screen.getByRole('button', { name: 'Approve' })).toBeOnTheScreen();
   expect(screen.queryByRole('button', { name: 'Reject' })).not.toBeOnTheScreen();
-  expect(screen.queryByLabelText('Reason')).not.toBeOnTheScreen();
 });
 
 it('renders nothing when the user has no action and nothing to report', async () => {
@@ -55,13 +54,14 @@ it('renders nothing when the user has no action and nothing to report', async ()
   expect(screen.toJSON()).toBeNull();
 });
 
-it('asks for a reason before rejecting, without calling the server', async () => {
+it('asks for a reason in the dialog before rejecting, without calling the server', async () => {
   await renderActions(['approve', 'reject', 'pending']);
 
   await userEvent.press(screen.getByRole('button', { name: 'Reject' }));
+  await confirmDialog('Reject');
 
   expect(screen.getByText('Enter a reason to reject or hold this request.')).toBeOnTheScreen();
-  expect(screen.queryByRole('alertdialog')).not.toBeOnTheScreen();
+  expect(screen.getByRole('alertdialog')).toBeOnTheScreen();
   expect(actMock).not.toHaveBeenCalled();
 });
 
@@ -69,14 +69,29 @@ it('sends the reason and the updated_at the user saw, then shows the server stat
   actMock.mockResolvedValueOnce({ ...detail([]), status: 'REJECTED' });
   await renderActions(['approve', 'reject']);
 
-  await userEvent.type(screen.getByLabelText('Reason'), '  Price too low  ');
   await userEvent.press(screen.getByRole('button', { name: 'Reject' }));
+  await userEvent.type(screen.getByLabelText('Reason'), '  Price too low  ');
   await confirmDialog('Reject');
 
   expect(await screen.findByText('Saved. Status is now Rejected.')).toBeOnTheScreen();
   expect(actMock).toHaveBeenCalledWith('pa-1', {
     action: 'reject',
     remarks: 'Price too low',
+    updatedAt: '2026-11-08T10:00:00+07:00',
+  });
+});
+
+it('lets the user add an optional reason when approving', async () => {
+  actMock.mockResolvedValueOnce({ ...detail([]), status: 'APPROVED' });
+  await renderActions(['approve', 'reject']);
+
+  await userEvent.press(screen.getByRole('button', { name: 'Approve' }));
+  await userEvent.type(screen.getByLabelText('Reason (optional)'), 'Looks fine');
+  await confirmDialog('Approve');
+
+  expect(actMock).toHaveBeenCalledWith('pa-1', {
+    action: 'approve',
+    remarks: 'Looks fine',
     updatedAt: '2026-11-08T10:00:00+07:00',
   });
 });

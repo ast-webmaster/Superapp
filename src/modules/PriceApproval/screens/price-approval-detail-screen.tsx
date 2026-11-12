@@ -72,7 +72,9 @@ export function PriceApprovalDetailScreen() {
         contentContainerClassName="gap-4 px-5"
         contentContainerStyle={{
           paddingTop: sizes.screenTopGap,
-          paddingBottom: bottom + sizes.screenTopGap,
+          // The decision bar owns the bottom inset when it is shown.
+          paddingBottom:
+            data.allowed_actions.length > 0 ? sizes.screenTopGap : bottom + sizes.screenTopGap,
         }}
         refreshControl={
           <RefreshControl
@@ -90,8 +92,8 @@ export function PriceApprovalDetailScreen() {
         <InfoSection detail={data} />
         <ItemsSection detail={data} />
         <HistorySection detail={data} />
-        <ApprovalActions detail={data} online={online} />
       </ScrollView>
+      <ApprovalActions detail={data} online={online} />
     </Screen>
   );
 }

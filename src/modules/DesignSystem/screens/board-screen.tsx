@@ -129,7 +129,7 @@ export default function BoardScreen() {
         <BoardCard number="01" title="Brand" span={4}>
           <Logo width={240} />
           <AppText variant="title" tone="muted">
-            One superapp for every department. Access anywhere, anytime.
+            One Superapp for every department. Access anywhere, anytime.
           </AppText>
         </BoardCard>
         <BoardCard number="02" title="Color palette" span={8}>
@@ -239,7 +239,7 @@ export default function BoardScreen() {
           <ModuleCard loading />
           <SkeletonGroup
             label="Loading request"
-            className="gap-2 rounded-xl bg-surface p-4 shadow-card">
+            className="gap-2 rounded-xl bg-surface p-4 border border-border">
             <Skeleton className="h-6 w-1/2" />
             <Skeleton className="h-5 w-3/4" />
             <Skeleton className="h-4 w-1/3" />

@@ -1,10 +1,11 @@
+import { clsx } from 'clsx';
 import type { ReactNode } from 'react';
 import { View } from 'react-native';
 
-import { AppText, Badge } from '@/shared/ui';
-import { formatDate, formatDateTime, formatMoney, sentenceCase } from '@/shared/utils/format';
+import { AppText, Badge, Icon } from '@/shared/ui';
+import { formatDate, formatDateTime, formatMoney } from '@/shared/utils/format';
 
-import type { PriceApprovalDetail, PriceApprovalLine } from '../types';
+import type { PriceApprovalDetail, PriceApprovalLine, PriceApprovalStep } from '../types';
 import { CopyButton } from './copy-button';
 import { RequesterPill } from './requester-pill';
 import { discountBadge, statusBadge, stepBadge } from './status';
@@ -14,7 +15,7 @@ const divider = <View role="separator" className="h-px bg-border" />;
 /** One card of the detail screen. The screen spaces the cards with `gap-4`. */
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl bg-surface p-4 shadow-card">
+    <View className="gap-3 rounded-xl bg-surface p-4 border border-border">
       {title ? (
         <AppText variant="caption-strong" role="heading">
           {title}
@@ -166,27 +167,67 @@ export function ItemsSection({ detail }: { detail: PriceApprovalDetail }) {
   );
 }
 
+type StepState = 'done' | 'rejected' | 'current' | 'upcoming';
+
+function stepState(step: PriceApprovalStep): StepState {
+  if (step.status === 'REJECTED') return 'rejected';
+  if (step.action_at) return 'done';
+  return step.status === 'PENDING' || step.status === 'AWAITING' ? 'current' : 'upcoming';
+}
+
+/** The 20px column left of a step: the state marker and the line down to the next step. */
+function StepMarker({ state, last }: { state: StepState; last: boolean }) {
+  return (
+    <View className="w-5 items-center">
+      <View className="h-5 items-center justify-center">
+        {state === 'done' ? <Icon name="check" size={18} color="success" /> : null}
+        {state === 'rejected' ? <Icon name="x" size={18} color="danger" /> : null}
+        {state === 'current' ? <View className="size-3 rounded-pill bg-primary" /> : null}
+        {state === 'upcoming' ? (
+          <View className="size-3 rounded-pill border border-ink-muted bg-surface" />
+        ) : null}
+      </View>
+      {last ? null : <View className="mt-1 w-px flex-1 bg-border" />}
+    </View>
+  );
+}
+
+/** Newest step first: the chain comes oldest first, so the list is shown reversed. */
 export function HistorySection({ detail }: { detail: PriceApprovalDetail }) {
   if (detail.approvements.length === 0) return null;
 
+  const steps = [...detail.approvements].reverse();
+
   return (
     <Section title="Approval history">
-      {detail.approvements.map((step, index) => (
-        <View key={`${step.tier}-${index}`} className="gap-1">
-          <View className="flex-row items-center justify-between gap-4">
-            <AppText variant="caption" className="min-w-0 flex-1">
-              {sentenceCase(step.tier)}
-            </AppText>
-            <Badge size="sm" {...stepBadge(step.status)} />
-          </View>
-          <AppText variant="label" tone="muted">
-            {[step.user_name, step.action_at ? formatDateTime(step.action_at) : null]
-              .filter(Boolean)
-              .join(' · ') || 'Not acted on yet'}
-          </AppText>
-          {step.remarks ? <AppText variant="caption">{step.remarks}</AppText> : null}
-        </View>
-      ))}
+      <View>
+        {steps.map((step, index) => {
+          const state = stepState(step);
+          const last = index === steps.length - 1;
+
+          return (
+            <View key={`${step.tier}-${index}`} className="flex-row gap-3">
+              <StepMarker state={state} last={last} />
+              <View className={clsx('min-w-0 flex-1 gap-1', !last && 'pb-5')}>
+                {step.action_at ? (
+                  <AppText variant="caption" tone={state === 'rejected' ? 'danger' : 'success'}>
+                    {formatDateTime(step.action_at)}
+                  </AppText>
+                ) : null}
+                <View className="flex-row items-center gap-2">
+                  {step.user_name ? (
+                    <AppText variant="caption" tone="muted" className="min-w-0 shrink">
+                      {step.user_name}
+                    </AppText>
+                  ) : null}
+                  <Badge size="sm" {...stepBadge(step.status)} />
+                </View>
+                {step.remarks ? <AppText variant="label">{step.remarks}</AppText> : null}
+              </View>
+            </View>
+          );
+        })}
+      </View>
     </Section>
   );
 }

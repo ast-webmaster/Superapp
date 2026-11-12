@@ -10,7 +10,7 @@ export function PriceApprovalLayout() {
         header: renderTopAppBar,
         contentStyle: { backgroundColor: colors.ground },
       }}>
-      <Stack.Screen name="index" options={{ title: 'Price approval' }} />
+      <Stack.Screen name="index" options={{ title: 'Price Approval' }} />
       <Stack.Screen name="[id]" options={{ title: 'Request' }} />
     </Stack>
   );
