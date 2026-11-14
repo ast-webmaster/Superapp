@@ -53,7 +53,7 @@
         {
           "photosPermission": "Allow Superapp to access your photos and documents so you can attach files and set a profile photo.",
           "cameraPermission": "Allow Superapp to use your camera so you can take photos and scan documents.",
-          "microphonePermission": false
+          "microphonePermission": "Allow Superapp to use the microphone so you can speak your messages to AI chat."
         }
       ],
       [

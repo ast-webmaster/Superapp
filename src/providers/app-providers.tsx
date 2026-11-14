@@ -3,7 +3,7 @@ import { DefaultTheme, ThemeProvider } from 'expo-router';
 import type { ReactNode } from 'react';
 
 import { colors } from '@/shared/theme/tokens';
-import { ConfirmProvider } from '@/shared/ui';
+import { ConfirmProvider, ToastProvider } from '@/shared/ui';
 
 import { queryClient } from './query-client';
 
@@ -25,7 +25,10 @@ export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={navigationTheme}>
-        <ConfirmProvider>{children}</ConfirmProvider>
+        {/* App-wide feedback: any screen can show a toast or ask to confirm. */}
+        <ToastProvider>
+          <ConfirmProvider>{children}</ConfirmProvider>
+        </ToastProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

@@ -57,6 +57,21 @@ it('sends the text', async () => {
   expect(onSend).toHaveBeenCalled();
 });
 
+it('leaves the whole send button to one press handler', async () => {
+  await renderComposer({ value: 'Hi' });
+
+  // On native, NativeWind turns a View with an `active:` class into a Pressable of its own, which
+  // takes the tap on the arrow and never calls onSend. Jest does not run NativeWind, so check the
+  // classes: press feedback belongs on the Pressable, not on the circle inside it.
+  type Node = { props: { className?: string }; children: (Node | string)[] };
+  const classesInside = (node: Node): string[] =>
+    node.children.flatMap((child) =>
+      typeof child === 'string' ? [] : [child.props.className ?? '', ...classesInside(child)],
+    );
+  const send = screen.getByRole('button', { name: 'Send' }) as unknown as Node;
+  expect(classesInside(send).filter((name) => /\bactive:/.test(name))).toEqual([]);
+});
+
 it('can send files without text', async () => {
   await renderComposer({ files: [file('a.pdf')] });
 

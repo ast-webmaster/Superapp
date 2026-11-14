@@ -101,13 +101,18 @@ export function Composer({
             disabled={!canSend}
             onPress={onSend}
             className={clsx('size-touch items-center justify-center rounded-pill', focusRing)}>
-            <View
-              className={clsx(
-                'size-10 items-center justify-center rounded-pill bg-primary active:bg-primary-pressed',
-                !canSend && 'opacity-50',
-              )}>
-              <Icon name="arrow-up" size={20} color="on-primary" />
-            </View>
+            {/* Pressed fill from the Pressable's state: an `active:` class on this View would make
+                NativeWind turn it into a second pressable that takes the tap from onSend. */}
+            {({ pressed }) => (
+              <View
+                className={clsx(
+                  'size-10 items-center justify-center rounded-pill',
+                  pressed ? 'bg-primary-pressed' : 'bg-primary',
+                  !canSend && 'opacity-50',
+                )}>
+                <Icon name="arrow-up" size={20} color="on-primary" />
+              </View>
+            )}
           </Pressable>
         ) : (
           mic

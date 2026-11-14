@@ -13,25 +13,34 @@ export interface TopAppBarAction {
   /** What the button does, for screen readers. */
   label: string;
   onPress: () => void;
+  /** On, such as search while a query is set. */
+  active?: boolean;
+  disabled?: boolean;
 }
 
 export interface TopAppBarProps {
   title: string;
   /** Shows the round back button on the left. Leave it out on a screen that is a tab. */
   onBack?: () => void;
-  /** One round button on the right, such as a filter. */
-  action?: TopAppBarAction;
-  /** A custom right slot, such as a button with its own state. Wins over `action`. */
+  /**
+   * Round buttons on the right, such as history and new chat. The bar draws them at the header
+   * size (`IconButton size="sm"`: a 40 circle in a 48 press area), so every screen matches.
+   */
+  actions?: readonly TopAppBarAction[];
+  /**
+   * A custom right slot, for a stack's `headerRight`. Wins over `actions`. Buttons in it use
+   * `IconButton size="sm"`, the same as `actions`.
+   */
   right?: ReactNode;
 }
 
 /**
- * The bar at the top of every screen: a round back button, the title centered, one round action
+ * The bar at the top of every screen: a round back button, the title centered, round actions
  * on the right. It sits straight on the screen ground, not on a white block, and pads the status
  * bar itself. Both side slots are at least 48 wide and the left one grows to match the right, so
  * the title stays centered whether the right holds nothing, one button or several.
  */
-export function TopAppBar({ title, onBack, action, right }: TopAppBarProps) {
+export function TopAppBar({ title, onBack, actions = [], right }: TopAppBarProps) {
   const { top } = useSafeAreaInsets();
   // The left slot copies the right one's width so the title stays centered with two buttons.
   const [rightWidth, setRightWidth] = useState(0);
@@ -56,14 +65,17 @@ export function TopAppBar({ title, onBack, action, right }: TopAppBarProps) {
         className="min-h-touch min-w-touch flex-row items-center justify-end"
         onLayout={(event) => setRightWidth(event.nativeEvent.layout.width)}>
         {right ??
-          (action ? (
+          actions.map((action) => (
             <IconButton
+              key={action.label}
               size="sm"
               icon={action.icon}
               label={action.label}
+              active={action.active}
+              disabled={action.disabled}
               onPress={action.onPress}
             />
-          ) : null)}
+          ))}
       </View>
     </View>
   );

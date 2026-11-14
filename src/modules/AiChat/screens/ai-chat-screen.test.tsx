@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import { requireOptionalNativeModule } from 'expo';
+import { Keyboard, Platform, StyleSheet } from 'react-native';
 
 import { ConfirmProvider, ToastProvider } from '@/shared/ui';
 
@@ -22,6 +23,12 @@ jest.mock('@/core/api', () => ({
 jest.mock('@/core/storage', () => ({
   secureStorage: { get: jest.fn(), set: jest.fn(), remove: jest.fn() },
 }));
+// Passes its props through, so a test can read which behavior the screen chose.
+jest.mock('react-native/Libraries/Components/Keyboard/KeyboardAvoidingView', () => {
+  const { View } = jest.requireActual('react-native');
+  const Avoider = (props: object) => <View testID="keyboard-avoider" {...props} />;
+  return { __esModule: true, default: Avoider };
+});
 jest.mock('@/shared/hooks/use-is-online', () => ({ useIsOnline: () => true }));
 jest.mock('../api/aiChatApi', () => ({
   aiChatApi: { messages: jest.fn(), progress: jest.fn(), sessions: jest.fn() },
@@ -117,4 +124,34 @@ it('waits for the chat to load before a message can be sent', async () => {
   await fireEvent.changeText(screen.getByLabelText('Message'), 'Hi');
 
   expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
+});
+
+describe('keyboard', () => {
+  const os = Platform.OS;
+  afterEach(() => {
+    Platform.OS = os;
+  });
+
+  it('lifts the composer above the keyboard on Android, which no longer resizes the window', async () => {
+    Platform.OS = 'android';
+    await renderScreen();
+
+    expect(screen.getByTestId('keyboard-avoider').props.behavior).toBe('padding');
+  });
+
+  it('drops the bottom-nav gap as the keyboard starts to open on iOS', async () => {
+    const handlers: Record<string, (() => void)[]> = {};
+    const listen = jest.spyOn(Keyboard, 'addListener').mockImplementation((event, handler) => {
+      (handlers[event] ??= []).push(handler as () => void);
+      return { remove: jest.fn() } as never;
+    });
+    await renderScreen();
+    const dock = () => StyleSheet.flatten(screen.getByTestId('composer-dock').props.style);
+    expect(dock().paddingBottom).toBeGreaterThan(8);
+
+    await act(() => (handlers.keyboardWillShow ?? []).forEach((handler) => handler()));
+
+    expect(dock().paddingBottom).toBe(8);
+    listen.mockRestore();
+  });
 });

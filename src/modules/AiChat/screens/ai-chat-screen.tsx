@@ -7,7 +7,6 @@ import {
   Alert,
   Button,
   EmptyState,
-  IconButton,
   Screen,
   Skeleton,
   SkeletonGroup,
@@ -68,11 +67,20 @@ function syncedAt(timestamp: number) {
   return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
+/**
+ * Whether the keyboard is up. iOS announces it before it moves, so the composer can drop the
+ * bottom-nav gap in step with it; Android only reports once it is there.
+ */
 function useKeyboardVisible() {
   const [visible, setVisible] = useState(false);
   useEffect(() => {
-    const show = Keyboard.addListener('keyboardDidShow', () => setVisible(true));
-    const hide = Keyboard.addListener('keyboardDidHide', () => setVisible(false));
+    const ios = Platform.OS === 'ios';
+    const show = Keyboard.addListener(ios ? 'keyboardWillShow' : 'keyboardDidShow', () =>
+      setVisible(true),
+    );
+    const hide = Keyboard.addListener(ios ? 'keyboardWillHide' : 'keyboardDidHide', () =>
+      setVisible(false),
+    );
     return () => {
       show.remove();
       hide.remove();
@@ -224,30 +232,28 @@ export function AiChatScreen() {
 
   return (
     <Screen>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        className="flex-1">
+      {/* Both platforms: an edge-to-edge Android window no longer resizes for the keyboard. */}
+      <KeyboardAvoidingView behavior="padding" className="flex-1">
         <TopAppBar
           title="AI chat"
-          right={
-            <View className="flex-row gap-2">
-              <IconButton
-                icon="history"
-                label="Chat history"
-                disabled={isPending}
-                onPress={() => setHistoryOpen(true)}
-              />
-              <IconButton
-                icon="pencil"
-                label="New chat"
-                disabled={isPending || (activeUuid === null && !failedDraft)}
-                onPress={() => setActiveSession(null)}
-              />
-            </View>
-          }
+          actions={[
+            {
+              icon: 'history',
+              label: 'Chat history',
+              disabled: isPending,
+              onPress: () => setHistoryOpen(true),
+            },
+            {
+              icon: 'pencil',
+              label: 'New chat',
+              disabled: isPending || (activeUuid === null && !failedDraft),
+              onPress: () => setActiveSession(null),
+            },
+          ]}
         />
         {body}
         <View
+          testID="composer-dock"
           className="px-5 pt-2"
           style={{ paddingBottom: keyboardVisible ? KEYBOARD_GAP : navInset }}>
           <Composer
