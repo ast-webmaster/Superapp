@@ -26,7 +26,7 @@ import { priceApprovalRoutes } from '../navigation/routes';
 import { PriceApprovalCard } from '../components/price-approval-card';
 import { PriceApprovalListSkeleton } from '../components/price-approval-skeletons';
 import { StatusFilter } from '../components/status-filter';
-import { useIsOnline } from '../hooks/use-is-online';
+import { useIsOnline } from '@/shared/hooks/use-is-online';
 import { usePriceApprovals } from '../hooks/use-price-approvals';
 import { hasSheetFilters, usePriceApprovalFilter } from '../store/priceApprovalFilterStore';
 

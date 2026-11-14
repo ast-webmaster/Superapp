@@ -38,16 +38,16 @@ The visual reference is the screenshot the user supplied: a conversation on the 
 All under `/v1/ai-chat`, behind `auth:sanctum`, `user.active` and `permission:` any one of:
 `read_aichat`, `read_all_aichat`, `approve_product_borrowing_as_product_manager`, `approve_product_borrowing_as_manager`, `process_product_borrowing`, `process_product_borrowing_as_logistic` (`AiChatConversationService::READ_PERMISSIONS`). The standard envelope `{success, message, data, meta}` applies.
 
-| Call | Answer `data` |
-| --- | --- |
-| `GET /sessions` | the 20 newest sessions: `[{uuid, title, created_at}]` |
-| `POST /sessions` | `{uuid, title}` (title "Chat baru") |
-| `GET /sessions/{uuid}/messages` | `{session: {uuid, title}, messages: [{uuid, role: 'user' \| 'assistant', message, meta: {type, suggestions, assumptions, exportable}, created_at, attachments: [{uuid, name, extension, size, url}]}]}`, `meta.total_tokens` |
+| Call                             | Answer `data`                                                                                                                                                                                                                                                                                                      |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `GET /sessions`                  | the 20 newest sessions: `[{uuid, title, created_at}]`                                                                                                                                                                                                                                                              |
+| `POST /sessions`                 | `{uuid, title}` (title "Chat baru")                                                                                                                                                                                                                                                                                |
+| `GET /sessions/{uuid}/messages`  | `{session: {uuid, title}, messages: [{uuid, role: 'user' \| 'assistant', message, meta: {type, suggestions, assumptions, exportable}, created_at, attachments: [{uuid, name, extension, size, url}]}]}`, `meta.total_tokens`                                                                                       |
 | `POST /sessions/{uuid}/messages` | multipart or JSON: `message` (≤ 2000, optional when files are attached), `trace_id` (uuid, client-made), `attachments[]`. Synchronous, can take tens of seconds. Answers `{reply, message_uuid, meta, tokens, title, attachments}`. 422 for unreadable files or validation; 500 "Gagal menghubungi AI. Coba lagi." |
-| `GET /progress/{trace_id}` | `{steps: [{key, label, status: 'running' \| 'success' \| 'error'}], done}`. Labels are Indonesian sentences from the server; show them as they are |
-| `DELETE /sessions/{uuid}` | `null` |
-| `GET /attachments/{uuid}` | the file bytes |
-| `GET /messages/{uuid}/export` | an `.xlsx` (404 when the answer has no data) |
+| `GET /progress/{trace_id}`       | `{steps: [{key, label, status: 'running' \| 'success' \| 'error'}], done}`. Labels are Indonesian sentences from the server; show them as they are                                                                                                                                                                 |
+| `DELETE /sessions/{uuid}`        | `null`                                                                                                                                                                                                                                                                                                             |
+| `GET /attachments/{uuid}`        | the file bytes                                                                                                                                                                                                                                                                                                     |
+| `GET /messages/{uuid}/export`    | an `.xlsx` (404 when the answer has no data)                                                                                                                                                                                                                                                                       |
 
 Another user's session answers 404. Files: max 10 MB each, images max 5 MB.
 
@@ -65,7 +65,7 @@ Another user's session answers 404. Files: max 10 MB each, images max 5 MB.
 - New module `src/modules/AiChat/` with the usual folders: `api/` (`aiChatApi.ts`, `aiChatKeys.ts`), `types/`, `hooks/`, `components/`, `screens/`, `store/`, `index.ts`.
 - `index.ts` exports `AiChatScreen` and `AI_CHAT_PERMISSIONS` (the six names above).
 - `src/navigation/ai-chat-screen.tsx` stays the tab's screen: `useCan()(AI_CHAT_PERMISSIONS)` ? `<AiChatScreen />` : today's coming-soon page, unchanged. A permission lost while the tab is open swaps back on the next session refresh.
-- *Builder's call recorded here:* no `manifest.ts` and no registry entry. The registry feeds the Home and Apps launchers, and the chat already has its own tab. AGENTS.md's "add a manifest" rule is for launcher modules; note this in the doc update.
+- _Builder's call recorded here:_ no `manifest.ts` and no registry entry. The registry feeds the Home and Apps launchers, and the chat already has its own tab. AGENTS.md's "add a manifest" rule is for launcher modules; note this in the doc update.
 
 ### Data (follow `docs/data-management.md`)
 

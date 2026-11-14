@@ -15,7 +15,7 @@ import {
   SummarySection,
 } from '../components/price-approval-detail-sections';
 import { PriceApprovalDetailSkeleton } from '../components/price-approval-skeletons';
-import { useIsOnline } from '../hooks/use-is-online';
+import { useIsOnline } from '@/shared/hooks/use-is-online';
 import { usePriceApproval } from '../hooks/use-price-approval';
 
 export function PriceApprovalDetailScreen() {

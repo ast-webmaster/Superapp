@@ -22,7 +22,7 @@ import {
   type StepKey,
 } from '../create/draft';
 import { useCreatePriceApproval } from '../hooks/use-create-price-approval';
-import { useIsOnline } from '../hooks/use-is-online';
+import { useIsOnline } from '@/shared/hooks/use-is-online';
 import { priceApprovalRoutes } from '../navigation/routes';
 import type { DraftItem, PriceApprovalDraft } from '../types';
 

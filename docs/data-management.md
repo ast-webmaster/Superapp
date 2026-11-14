@@ -177,6 +177,18 @@ The backend sends a push (Expo Push API, payload data `{ module, doc_uuid }`) ri
 - **Tapped.** Invalidates `inboxKeys.all`, then `resolveNotificationRoute` (`navigation/notification-route.ts`) finds the manifest whose `id` equals `module` and pushes its `detailRoute(doc_uuid)`. A tap is handled once per notification, including a cold start, and only after the session is known. A module without `detailRoute` just opens the app.
 - **Adding a module to push.** Call `PushNotifier::notify()` in its backend email job and give its manifest a `detailRoute`.
 
+## AI chat
+
+The AI chat tab (`src/modules/AiChat`) talks to `v1/ai-chat` (`digitalapproval/Modules/AiChat`). It is reached from its own tab, so it has no manifest; `navigation/ai-chat-screen.tsx` shows it when `useCan()` passes `AI_CHAT_PERMISSIONS` (the backend's `AiChatConversationService::READ_PERMISSIONS`) and the coming-soon page otherwise.
+
+- **Keys:** `aiChatKeys.sessions()` (loaded only while the history sheet is open) and `aiChatKeys.messages(uuid)`.
+- **Active chat and the message on its way are module state** (`store/aiChatStore.ts`, reset on sign-out), not the query cache. The in-flight message is shown as a bubble from that state and disappears once the server's history has it. It lives outside the screen so a send survives the screen going away.
+- **Lazy session:** a new chat creates its session (`POST /sessions`) only when the first message is sent.
+- **Send** waits for the AI, which can take minutes, so it gets `timeoutMs: 180_000`. On success the messages are refetched (awaited) and the session list invalidated. A 422 gives the message back with the server's reason. A timeout, lost connection or 5xx refetches the history; only if it has no new messages is the message offered back ("Edit and resend"). It is never resent automatically.
+- **Progress polling** is the one exception to "There is no polling": while a send waits, `useChatProgress` asks `GET /progress/{trace_id}` every 700 ms for ten polls, then every 1800 ms, and stops when the send settles. Errors are ignored.
+- **Files:** attachments (at most 3, 10 MB, images 5 MB, pdf/png/jpg/docx/xlsx/xls) are checked on the device first and sent as multipart `attachments[]`. Downloads and the Excel export go through `apiClient.getFile` and `shareFile`; the absolute `url` the server sends for an attachment is not used.
+- **Voice** (`expo-speech-recognition`, needs a development build) turns speech into text on the device in `id-ID`; nothing is sent to the server until the user presses send.
+
 ## Backend contract
 
 What a module's v1 API must provide for this to work. `PriceApproval` (`digitalapproval/Modules/PriceApproval`) is the reference.

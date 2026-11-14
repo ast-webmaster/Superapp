@@ -138,7 +138,7 @@ All from `@/shared/ui`.
 | `Badge`                 | Status or count. Always has a text label                                                                                                                                                                                                                                                                                                                          | `label`, `tone` (`neutral`, `info`, `success`, `danger`, `warning`), `icon`                              |
 | `Icon`                  | Glyphs. Decorative unless `label` is set                                                                                                                                                                                                                                                                                                                          | `name`, `size`, `color` (a color token), `filled`                                                        |
 
-Icon names: `home grid search bell user calendar settings building box wallet users chart truck clipboard doc chat heart bookmark share pin lock log-out pencil eye eye-off sliders list map cart star plus more copy download upload minus check x alert info arrow-up arrow-down arrow-right chevron-left chevron-right`. Icons are Lucide, drawn at 24px, 1.75 stroke.
+Icon names: `home grid search bell user calendar settings building box wallet users chart truck clipboard doc chat heart bookmark share pin lock log-out pencil eye eye-off sliders list history mic map cart star plus more copy download upload minus check x alert info arrow-up arrow-down arrow-right chevron-left chevron-right`. Icons are Lucide, drawn at 24px, 1.75 stroke.
 
 ### Actions and input
 
@@ -237,6 +237,18 @@ For a plain settings list: `heading` → `ListGroup` of `ListRow`s (`ListRow` ha
 Top app bar (stack header) → `ScrollView` (`gap-4 px-5`, pull to refresh, `keyboardShouldPersistTaps="handled"`) → stale/offline `Alert` → `surface` summary card (`module-title` + `Badge`, `body` subject, `caption muted` meta ending in "Updated 10:42") → `ListGroup` of key-value rows → sections with a `title` heading over a `ListGroup` → the decision bar at the bottom (`ActionBar`): one `primary` `Button block` for the main action, `secondary` for the rest, only the actions the server allows. Reference: `src/modules/PriceApproval/screens/price-approval-detail-screen.tsx` and `components/approval-actions.tsx`. Data rules for actions: [data-management.md](data-management.md#writing-actions).
 
 A tappable list card is a `Pressable` with `role="button"`, an `aria-label`, `active:bg-surface-gray` and `focusRing` (exported from `@/shared/ui`). Reference: `price-approval-card.tsx`.
+
+### Chat
+
+The AI chat tab (`src/modules/AiChat`, reference `screens/ai-chat-screen.tsx`).
+
+- `TopAppBar` with two round actions on the right: history (`history` icon, opens a `Sheet` of past chats) and new chat (`pencil`). Both are disabled while a message is on its way.
+- The conversation is a `FlatList` (`gap-4 px-5`) that scrolls to the newest message. A muted `caption` with the day and time ("Today · 14:42") sits centered above the first message of each day.
+- **User message:** right-aligned, `bg-primary-soft`, `ink` text, `rounded-xl` with a small lower-right corner, no border or shadow, kept off the left edge with `pl-12`. Files show as chips above the text.
+- **AI answer:** a white card (`bg-surface border border-border rounded-xl p-4`) with a 24 `primary` circle and the `ai` icon at its lower left. The text is the server's light markdown rendered with `AppText` (never as HTML); a table sits in a `surface-gray` `rounded-lg` block that scrolls sideways. Assumptions are muted captions. An exportable answer gets a `soft` "Download Excel" button under the card. The server's suggestions are not shown.
+- **Waiting:** the same card lists the server's progress steps (`check` in `success` for done, a spinner for running, `x` in `danger` for failed), "Thinking" before the first.
+- **Composer:** floats above the bottom nav (`useBottomNavInset()`; a small gap while the keyboard is up). A white `rounded-xl` bar with `shadow-card`: `plus` to attach, a multiline field "Message AI…", and on the right the `mic` while the field is empty or a round `primary` send (`arrow-up`) once there is something to send. Picked files show as removable chips above it.
+- A message that may not have arrived shows a danger caption and "Edit and resend" under the conversation; nothing is resent by itself.
 
 ## States
 
