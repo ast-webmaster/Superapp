@@ -10,6 +10,7 @@ jest.mock('@/core/api', () => ({
   apiClient: {},
   setAccessToken: jest.fn(),
   setUnauthorizedHandler: jest.fn(),
+  setForbiddenHandler: jest.fn(),
 }));
 
 jest.mock('@/core/storage', () => ({

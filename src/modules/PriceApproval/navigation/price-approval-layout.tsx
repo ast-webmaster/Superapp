@@ -12,6 +12,7 @@ export function PriceApprovalLayout() {
       }}>
       <Stack.Screen name="index" options={{ title: 'Price Approval' }} />
       <Stack.Screen name="[id]" options={{ title: 'Request' }} />
+      <Stack.Screen name="new" options={{ title: 'New request' }} />
     </Stack>
   );
 }

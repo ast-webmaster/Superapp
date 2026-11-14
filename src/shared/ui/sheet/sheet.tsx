@@ -1,3 +1,4 @@
+import { clsx } from 'clsx';
 import type { ReactNode } from 'react';
 import { Modal, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,12 +11,21 @@ export interface SheetProps {
   title: string;
   onClose: () => void;
   children: ReactNode;
+  /** Fills the screen height under the safe area, so a short list does not shrink the sheet. */
+  fullHeight?: boolean;
   /** Pinned under the scrolling content, such as an "Apply" button. */
   footer?: ReactNode;
 }
 
 /** A bottom sheet over a dimmed screen. Tapping the dim area or the close button closes it. */
-export function Sheet({ visible, title, onClose, children, footer }: SheetProps) {
+export function Sheet({
+  visible,
+  title,
+  onClose,
+  children,
+  footer,
+  fullHeight = false,
+}: SheetProps) {
   const { top, bottom } = useSafeAreaInsets();
 
   return (
@@ -36,7 +46,10 @@ export function Sheet({ visible, title, onClose, children, footer }: SheetProps)
           role="dialog"
           aria-modal
           aria-label={title}
-          className="max-h-full w-full max-w-phone rounded-t-xl bg-surface"
+          className={clsx(
+            'w-full max-w-phone rounded-t-xl bg-surface',
+            fullHeight ? 'h-full' : 'max-h-full',
+          )}
           style={{ paddingBottom: bottom }}>
           <View className="flex-row items-center gap-3 px-5 py-4">
             <IconButton icon="x" label="Close" onPress={onClose} />
@@ -46,7 +59,7 @@ export function Sheet({ visible, title, onClose, children, footer }: SheetProps)
           </View>
           <ScrollView
             keyboardShouldPersistTaps="handled"
-            className="shrink"
+            className={fullHeight ? 'flex-1' : 'shrink'}
             contentContainerClassName="gap-4 px-5 pb-4">
             {children}
           </ScrollView>

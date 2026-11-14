@@ -7,9 +7,12 @@ import { ListToolbar } from './list-toolbar';
 
 function Searchable({ onChange }: { onChange?: (value: string) => void }) {
   const [value, setValue] = useState('');
+  const [open, setOpen] = useState(true);
   return (
     <ListToolbar
       search={{
+        open,
+        onClose: () => setOpen(false),
         value,
         onChange: (next) => {
           setValue(next);
@@ -25,7 +28,6 @@ describe('ListToolbar', () => {
   it('shows only the buttons it is given', async () => {
     await render(<ListToolbar />);
 
-    expect(screen.queryByRole('button', { name: 'Search' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Filter' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Actions' })).toBeNull();
   });
@@ -50,24 +52,17 @@ describe('ListToolbar', () => {
     expect(onFilter).toHaveBeenCalledTimes(1);
   });
 
-  it('opens a search field, and Cancel clears it and brings the buttons back', async () => {
+  it('shows the search field while open, and Cancel clears it and closes it', async () => {
     const onChange = jest.fn();
     await render(<Searchable onChange={onChange} />);
 
-    await userEvent.press(screen.getByRole('button', { name: 'Search' }));
     await userEvent.type(screen.getByPlaceholderText('Search requests'), 'PA-1');
     expect(onChange).toHaveBeenLastCalledWith('PA-1');
 
     await userEvent.press(screen.getByRole('button', { name: 'Cancel search' }));
 
     expect(onChange).toHaveBeenLastCalledWith('');
-    expect(screen.getByRole('button', { name: 'Search' })).toBeOnTheScreen();
-  });
-
-  it('lights the search button while a query is applied', async () => {
-    await render(<ListToolbar search={{ value: 'PA-1', onChange: jest.fn() }} />);
-
-    expect(screen.getByRole('button', { name: 'Search' })).toBeSelected();
+    expect(screen.queryByPlaceholderText('Search requests')).toBeNull();
   });
 
   it('lists the actions in a menu and runs the one chosen', async () => {

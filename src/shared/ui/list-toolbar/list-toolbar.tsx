@@ -18,8 +18,17 @@ export interface ListToolbarAction {
 }
 
 export interface ListToolbarProps {
-  /** Shows the search button. The module decides what the text matches. */
-  search?: { value: string; onChange: (value: string) => void; placeholder?: string };
+  /**
+   * The search field, shown while `open`. The button that opens it lives in the top app bar
+   * (`headerRight`), so the module owns `open`. The module decides what the text matches.
+   */
+  search?: {
+    open: boolean;
+    onClose: () => void;
+    value: string;
+    onChange: (value: string) => void;
+    placeholder?: string;
+  };
   /** Shows the filter button. The module opens its own `Sheet` from this. */
   onFilter?: () => void;
   /** Lit while any filter is applied. */
@@ -32,9 +41,9 @@ export interface ListToolbarProps {
 }
 
 /**
- * The top of a module's index screen: search, filter and actions buttons, then the module's own
- * chips on the same row. Each button appears only when its prop is passed, so a module shows
- * just what it supports. Create is not here: use `Fab`.
+ * The top of a module's index screen: filter and actions buttons, then the module's own chips on
+ * the same row; the search field replaces the row while open. Each button appears only when its
+ * prop is passed, so a module shows just what it supports. Create is not here: use `Fab`.
  */
 export function ListToolbar({
   search,
@@ -44,10 +53,9 @@ export function ListToolbar({
   children,
   className,
 }: ListToolbarProps) {
-  const [searching, setSearching] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  if (search && searching) {
+  if (search?.open) {
     return (
       <View className={clsx('flex-row items-center gap-3 px-5', className)}>
         <TextField
@@ -59,7 +67,7 @@ export function ListToolbar({
           returnKeyType="search"
           autoCapitalize="none"
           autoCorrect={false}
-          onSubmitEditing={() => setSearching(false)}
+          onSubmitEditing={search.onClose}
           className="min-w-0 flex-1"
         />
         <Pressable
@@ -68,7 +76,7 @@ export function ListToolbar({
           className={clsx('min-h-touch justify-center rounded-pill px-1', focusRing)}
           onPress={() => {
             search.onChange('');
-            setSearching(false);
+            search.onClose();
           }}>
           <AppText variant="body-strong">Cancel</AppText>
         </Pressable>
@@ -78,14 +86,6 @@ export function ListToolbar({
 
   return (
     <View className={clsx('flex-row items-center gap-3 pl-5', className)}>
-      {search ? (
-        <IconButton
-          icon="search"
-          label="Search"
-          active={search.value !== ''}
-          onPress={() => setSearching(true)}
-        />
-      ) : null}
       {onFilter ? (
         <IconButton icon="sliders" label="Filter" active={filterActive} onPress={onFilter} />
       ) : null}

@@ -1,8 +1,15 @@
 import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { toAppError } from '@/core/errors';
-import { Alert, AppText, Button, useConfirm, type AlertTone, type IconName } from '@/shared/ui';
+import {
+  ActionBar,
+  Alert,
+  AppText,
+  Button,
+  useConfirm,
+  type AlertTone,
+  type IconName,
+} from '@/shared/ui';
 
 import { usePriceApprovalAction } from '../hooks/use-price-approval-action';
 import type { PriceApprovalAction, PriceApprovalDetail } from '../types';
@@ -65,7 +72,6 @@ type ApprovalActionsProps = {
 export function ApprovalActions({ detail, online }: ApprovalActionsProps) {
   const action = usePriceApprovalAction(detail.pa_uuid);
   const confirm = useConfirm();
-  const { bottom } = useSafeAreaInsets();
 
   const available = ORDER.filter((name) => detail.allowed_actions.includes(name));
   const failure = action.error ? toAppError(action.error) : undefined;
@@ -115,9 +121,7 @@ export function ApprovalActions({ detail, online }: ApprovalActionsProps) {
   );
 
   return (
-    <View
-      className="gap-3 bg-ground px-5 pt-3"
-      style={{ paddingBottom: Math.max(bottom, 12) }}>
+    <ActionBar>
       {outcome ? (
         <Alert tone={outcome.tone} message={outcome.message} onDismiss={action.reset} />
       ) : null}
@@ -134,7 +138,7 @@ export function ApprovalActions({ detail, online }: ApprovalActionsProps) {
           Connect to the internet to act on this request.
         </AppText>
       ) : null}
-    </View>
+    </ActionBar>
   );
 }
 

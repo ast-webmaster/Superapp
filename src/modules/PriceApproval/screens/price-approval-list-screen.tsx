@@ -1,32 +1,44 @@
 import { clsx } from 'clsx';
+import { router } from 'expo-router';
+import { Stack } from 'expo-router/stack';
 import { useState } from 'react';
 import { View } from 'react-native';
 
 import { toAppError } from '@/core/errors';
+import { useCan } from '@/core/permissions';
 import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
 import {
   Alert,
   Button,
   EmptyState,
+  Fab,
+  IconButton,
   ListToolbar,
   Loading,
   Screen,
   StackedList,
 } from '@/shared/ui';
 
+import { ExportSheet } from '../components/export-sheet';
+import { FilterSheet } from '../components/filter-sheet';
 import { formatSyncedAt } from '../components/format';
+import { priceApprovalRoutes } from '../navigation/routes';
 import { PriceApprovalCard } from '../components/price-approval-card';
 import { PriceApprovalListSkeleton } from '../components/price-approval-skeletons';
 import { StatusFilter } from '../components/status-filter';
 import { useIsOnline } from '../hooks/use-is-online';
 import { usePriceApprovals } from '../hooks/use-price-approvals';
-import { usePriceApprovalFilter } from '../store/priceApprovalFilterStore';
+import { hasSheetFilters, usePriceApprovalFilter } from '../store/priceApprovalFilterStore';
 
 export function PriceApprovalListScreen() {
   const [query, setQuery] = useState('');
+  const [searching, setSearching] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const search = useDebouncedValue(query.trim());
-  const filter = usePriceApprovalFilter((state) => state.filter);
-  const setFilter = usePriceApprovalFilter((state) => state.setFilter);
+  const filters = usePriceApprovalFilter((state) => state.filters);
+  const setFilters = usePriceApprovalFilter((state) => state.setFilters);
+  const [filtering, setFiltering] = useState(false);
+  const can = useCan();
   const online = useIsOnline();
   const {
     data,
@@ -38,7 +50,7 @@ export function PriceApprovalListScreen() {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = usePriceApprovals(filter, search);
+  } = usePriceApprovals(filters, search);
 
   const retry = (
     <Button variant="soft" onPress={() => refetch()}>
@@ -48,9 +60,41 @@ export function PriceApprovalListScreen() {
 
   return (
     <Screen>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <>
+              <IconButton
+                size="sm"
+                icon="download"
+                label="Export"
+                onPress={() => setExporting(true)}
+              />
+              <IconButton
+                size="sm"
+                icon="search"
+                label="Search"
+                active={searching || query !== ''}
+                onPress={() => setSearching(true)}
+              />
+            </>
+          ),
+        }}
+      />
+      <FilterSheet visible={filtering} onClose={() => setFiltering(false)} />
+      <ExportSheet visible={exporting} onClose={() => setExporting(false)} />
       <View className="pb-4 pt-2">
-        <ListToolbar search={{ value: query, onChange: setQuery, placeholder: 'Search requests' }}>
-          <StatusFilter value={filter} onChange={setFilter} />
+        <ListToolbar
+          search={{
+            open: searching,
+            onClose: () => setSearching(false),
+            value: query,
+            onChange: setQuery,
+            placeholder: 'Search requests',
+          }}
+          onFilter={() => setFiltering(true)}
+          filterActive={hasSheetFilters(filters)}>
+          <StatusFilter value={filters.status} onChange={(status) => setFilters({ status })} />
         </ListToolbar>
       </View>
       {data === undefined ? (
@@ -97,13 +141,13 @@ export function PriceApprovalListScreen() {
                 description={
                   search
                     ? 'No requests match your search.'
-                    : filter === 'all'
+                    : filters.status === 'all'
                       ? 'No price requests yet.'
                       : 'No requests with this status.'
                 }
               />
             }
-            contentContainerClassName={clsx('gap-4 px-5 py-4', data.length === 0 && 'grow')}
+            contentContainerClassName={clsx('gap-4 px-5 pb-28 pt-4', data.length === 0 && 'grow')}
             refreshing={isRefetching && !isFetchingNextPage}
             onRefresh={() => refetch()}
             onEndReached={() => {
@@ -115,6 +159,12 @@ export function PriceApprovalListScreen() {
           />
         </>
       )}
+      {can('create_priceapproval') ? (
+        <Fab
+          label="New price request"
+          onPress={() => router.push(priceApprovalRoutes.create as never)}
+        />
+      ) : null}
     </Screen>
   );
 }

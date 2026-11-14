@@ -7,11 +7,14 @@ import { colors } from '@/shared/theme/tokens';
 import { announce } from '../announce';
 import { focusRing } from '../focus';
 import { Icon, type IconName } from '../icon/icon';
+import { FieldLabel } from '../field-label/field-label';
 import { AppText } from '../text/text';
 
 export interface TextFieldProps extends Omit<TextInputProps, 'style' | 'secureTextEntry'> {
   /** Visible label. Without it, set `aria-label` so screen readers can still name the field. */
   label?: string;
+  /** Marks the label with a red asterisk. Leave it off for an optional field. */
+  required?: boolean;
   type?: 'text' | 'password';
   icon?: IconName;
   help?: string;
@@ -23,6 +26,7 @@ export interface TextFieldProps extends Omit<TextInputProps, 'style' | 'secureTe
 
 export function TextField({
   label,
+  required,
   type = 'text',
   icon,
   help,
@@ -46,7 +50,7 @@ export function TextField({
 
   return (
     <View className={clsx('gap-1', className)}>
-      {label ? <AppText variant="label">{label}</AppText> : null}
+      {label ? <FieldLabel required={required}>{label}</FieldLabel> : null}
       <View
         className={clsx(
           'min-h-control flex-row items-center gap-3 rounded-lg border-2 px-4',

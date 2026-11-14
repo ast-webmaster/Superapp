@@ -1,3 +1,4 @@
+import Constants from 'expo-constants';
 import { router, type Href } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
@@ -87,6 +88,10 @@ export function ProfileScreen() {
             />
           </ListGroup>
         </View>
+
+        <AppText variant="caption" tone="muted" className="text-center">
+          Version {Constants.expoConfig?.version}
+        </AppText>
       </ScrollView>
     </Screen>
   );

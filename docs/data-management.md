@@ -12,13 +12,13 @@ How this app reads, caches, keeps, syncs and changes server data. **Read this be
 
 ## Who owns what
 
-| Data                                             | Lives in                                           | Persisted to disk | Notes                                                                                                           |
-| ------------------------------------------------ | -------------------------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------- |
-| Access token, expiry                             | `core/auth` → `core/storage` (SecureStore)         | Yes, encrypted    | Never in zustand state, never in the query cache. Web falls back to localStorage, which is for development only |
-| Session user, roles, permissions                 | `core/auth` zustand store                          | No                | Reloaded from `/me` at startup                                                                                  |
+| Data                                             | Lives in                                             | Persisted to disk | Notes                                                                                                                                                                                       |
+| ------------------------------------------------ | ---------------------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Access token, expiry                             | `core/auth` → `core/storage` (SecureStore)           | Yes, encrypted    | Never in zustand state, never in the query cache. Web falls back to localStorage, which is for development only                                                                             |
+| Session user, roles, permissions                 | `core/auth` zustand store                            | No                | Reloaded from `/me` at startup and refreshed while signed in. See [Session refresh](#session-refresh)                                                                                       |
 | Favorite apps (module ids, in order)             | `navigation/favorite-apps-store.ts` → `core/storage` | Yes, per user     | A device preference, not server data: a short list under `favorite_apps_<userId>`. Read after sign-in, dropped on sign-out. Ids of apps the user may no longer open are hidden, not deleted |
-| Server data (lists, details, counts)             | TanStack Query cache                               | **No**            | Memory only. See [Persistence](#persistence)                                                                    |
-| UI state (filter, tab, search text, draft input) | A small zustand store in the module, or `useState` | No                | Never a copy of server data                                                                                     |
+| Server data (lists, details, counts)             | TanStack Query cache                                 | **No**            | Memory only. See [Persistence](#persistence)                                                                                                                                                |
+| UI state (filter, tab, search text, draft input) | A small zustand store in the module, or `useState`   | No                | Never a copy of server data                                                                                                                                                                 |
 
 ## The pieces
 
@@ -35,17 +35,17 @@ How this app reads, caches, keeps, syncs and changes server data. **Read this be
 
 `apiClient` throws only `AppError`. A cancelled request rethrows the raw abort error, so React Query can see it as a cancellation.
 
-| `code`         | From                                  | Retried by queries | Show                                                        |
-| -------------- | ------------------------------------- | ------------------ | ----------------------------------------------------------- |
-| `network`      | No response                           | Yes                | Offline or retry state                                      |
-| `timeout`      | No answer within `REQUEST_TIMEOUT_MS` | Yes                | Same as `network`                                           |
-| `server`       | 5xx                                   | Yes                | "Try again"                                                 |
-| `unauthorized` | 401 with a token                      | No                 | Session cleared, so the user lands on sign-in automatically |
-| `forbidden`    | 403                                   | No                 | No access. Hide the entry via the manifest `permission`     |
-| `not_found`    | 404                                   | No                 | "Not found". Records the user may not see also answer 404   |
-| `conflict`     | 409                                   | No                 | "This changed, review the latest version", and refetch      |
-| `validation`   | 422                                   | No                 | `fieldErrors` on the fields                                 |
-| `rate_limited` | 429                                   | No                 | Message                                                     |
+| `code`         | From                                  | Retried by queries | Show                                                                                                     |
+| -------------- | ------------------------------------- | ------------------ | -------------------------------------------------------------------------------------------------------- |
+| `network`      | No response                           | Yes                | Offline or retry state                                                                                   |
+| `timeout`      | No answer within `REQUEST_TIMEOUT_MS` | Yes                | Same as `network`                                                                                        |
+| `server`       | 5xx                                   | Yes                | "Try again"                                                                                              |
+| `unauthorized` | 401 with a token                      | No                 | Session cleared, so the user lands on sign-in automatically. Also what an inactive account gets          |
+| `forbidden`    | 403                                   | No                 | No access. Hide the entry via the manifest `permission`. A 403 with a token also reloads the permissions |
+| `not_found`    | 404                                   | No                 | "Not found". Records the user may not see also answer 404                                                |
+| `conflict`     | 409                                   | No                 | "This changed, review the latest version", and refetch                                                   |
+| `validation`   | 422                                   | No                 | `fieldErrors` on the fields                                                                              |
+| `rate_limited` | 429                                   | No                 | Message                                                                                                  |
 
 ## Query keys
 
@@ -55,8 +55,8 @@ Every module has one key factory. Its first segment is the manifest `id`, so two
 export const priceApprovalKeys = {
   all: ['price-approval'] as const,
   lists: () => [...priceApprovalKeys.all, 'list'] as const,
-  list: (filter: PriceApprovalFilter, search: string) =>
-    [...priceApprovalKeys.lists(), filter, search] as const,
+  list: (filters: PriceApprovalListFilters, search: string) =>
+    [...priceApprovalKeys.lists(), filters, search] as const,
   details: () => [...priceApprovalKeys.all, 'detail'] as const,
   detail: (uuid: string) => [...priceApprovalKeys.details(), uuid] as const,
 };
@@ -70,6 +70,7 @@ export const priceApprovalKeys = {
 - `useQuery` / `useInfiniteQuery` with the key factory and `signal` passed to the api function, so leaving a screen cancels its request.
 - Default `staleTime` is 60 s. Set `staleTime: 0` on a detail whose actions depend on its current status, so opening the screen always asks again while the cached copy shows.
 - Search text goes to the server (`search` query param) through the key, debounced with `useDebouncedValue`, with `placeholderData: keepPreviousData` so rows stay while the next result loads. Never filter loaded pages on the client: paging makes that incomplete.
+- Filters go to the server the same way. `PriceApprovalListFilters` (status, tier, date range, grand total) sits in the zustand filter store, is part of the list key, and each field is a query param (`status`, `last_updated_tier`, `date_from`/`date_to`, `min_total`/`max_total`). The filter sheet edits a draft and writes the store only on Apply.
 - Paged lists that are sorted newest first de-duplicate rows by id in `select`, because a new record shifts rows into the next page.
 - Keep `status` as `string` in the types and show unknown values as they are. The backend adds statuses without warning.
 
@@ -83,7 +84,22 @@ export const priceApprovalKeys = {
 | After an action               | The mutation's `onSuccess` / `onError`                   |
 | User pulls down               | `refetch()` from `RefreshControl` / `FlatList onRefresh` |
 
-There is no polling. Push notifications (see Inbox) call the same module invalidation functions and change nothing else. A WebSocket, if added, would do the same.
+There is no polling.
+
+### Session refresh
+
+An account deactivated or a permission changed on the web reaches the app without a restart. `useAuthStore.refreshSession()` reloads `/me` and replaces the user, roles and permissions:
+
+| Moment                          | Call                                                               |
+| ------------------------------- | ------------------------------------------------------------------ |
+| App returns to the foreground   | `useSessionRefresh` (`navigation/`), on React Query's focus signal |
+| A signed-in request answers 403 | `apiClient`'s forbidden handler, `{ force: true }`                 |
+| User pulls down on the Apps tab | `AppsScreen`, `{ force: true }`                                    |
+
+- Without `force`, a refresh is skipped within `SESSION_REFRESH_INTERVAL_MS` (60 s) of the last load (sign-in, startup or refresh). Overlapping calls share one request. It costs the server one small request per foreground at most, not a poll.
+- `/me` answering 401 (token revoked, account inactive) or 403 ends the session. Offline, timeout and 5xx keep it, and the next focus tries again.
+- New permissions show a module on Home and Apps (`useAvailableModules`). Lost permissions close it: `AppStack` (`navigation/app-stack.tsx`) wraps each module's route in `Stack.Protected` with the manifest `permission`, so an open module screen goes home and links into it (push, inbox) are refused.
+- The server is still the guard. The app only stops offering what the server would refuse. Push notifications (see Inbox) call the same module invalidation functions and change nothing else. A WebSocket, if added, would do the same.
 
 ## Writing (actions)
 
@@ -179,6 +195,8 @@ What a module's v1 API must provide for this to work. `PriceApproval` (`digitala
     - `422` for invalid input;
     - `404` when the record is outside the user's scope.
 - **Never `200 {result: false}`.**
+- **Inactive account:** every API route sits behind `auth:sanctum` + `user.active`. For `api/*`, `user.active` revokes all the user's tokens and answers **401** (`auth.suspend`), so the app signs out. 403 on the API means a missing permission only. Deactivating a user on the web also revokes the tokens (`UserController::update`).
+- **Permissions:** guard each endpoint with `permission:` middleware, the same names as the manifest `permission`. Spatie clears its permission cache when a role or permission changes, so the next request already sees the change.
 
 ## Adding data to a new module
 
@@ -192,3 +210,14 @@ What a module's v1 API must provide for this to work. `PriceApproval` (`digitala
    - the action hook (success writes the server copy; conflict keeps the cache and refetches; validation refetches nothing);
    - the action component (only allowed actions, input validation, offline disabled).
 8. Backend: list, detail with `updated_at` + `allowed_actions`, and the action endpoint, with feature tests covering double submission (409) and a stale `updated_at` (409).
+
+## Creating a record
+
+`PriceApproval` create (`/price-approval/new`) is the reference for a multi-step form.
+
+- **The draft is `useState` in the screen**, not a store and not the query cache: it is UI state, lost on leaving. Leaving with work in it asks first (`usePreventRemove` + `useConfirm`).
+- **Pickers** (customers, products, product managers) are server searches through `priceApprovalKeys.lookups()`, enabled only while their sheet is open. The server limits each answer to 50 rows.
+- **Validation** lives in `create/draft.ts`, per step, and runs again for every step on submit. Errors show only after the user presses Next.
+- **Submit** is confirmed, disabled offline, and sent once as multipart (`api/buildCreateForm.ts`). No optimistic update: on `201` the screen stores the server's detail under `detail(uuid)`, invalidates `lists()` and replaces itself with the detail screen. A 422 changes nothing; a timeout or lost connection may have saved it, so the lists refresh and the user is told to check before sending again.
+- **Totals** are previewed with `create/calculate-line.ts`, the same formula as the server's `PriceApprovalLineCalculator`. The server's figure wins.
+- **Files** come from `core/files` (`pickFile`, `toUploadBlob`; `expo-document-picker`, needs a development build).

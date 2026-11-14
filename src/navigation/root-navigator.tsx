@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { useAuthStatus, useAuthStore } from '@/core/auth';
 
 import { usePushNotifications } from './use-push-notifications';
+import { useSessionRefresh } from './use-session-refresh';
+import { useStartupPermissions } from './use-startup-permissions';
 
 export function RootNavigator() {
   const status = useAuthStatus();
@@ -14,6 +16,8 @@ export function RootNavigator() {
   }, [restore]);
 
   usePushNotifications();
+  useSessionRefresh();
+  useStartupPermissions();
 
   // Do not pick a screen from a session we have not loaded yet: that would flash the
   // login screen at a signed-in user and misroute deep links. The splash overlay covers

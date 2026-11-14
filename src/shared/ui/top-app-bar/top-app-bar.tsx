@@ -1,3 +1,4 @@
+import { useState, type ReactNode } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -20,21 +21,28 @@ export interface TopAppBarProps {
   onBack?: () => void;
   /** One round button on the right, such as a filter. */
   action?: TopAppBarAction;
+  /** A custom right slot, such as a button with its own state. Wins over `action`. */
+  right?: ReactNode;
 }
 
 /**
  * The bar at the top of every screen: a round back button, the title centered, one round action
  * on the right. It sits straight on the screen ground, not on a white block, and pads the status
- * bar itself. Both side slots are 48 wide, so the title stays centered whether or not they are used.
+ * bar itself. Both side slots are at least 48 wide and the left one grows to match the right, so
+ * the title stays centered whether the right holds nothing, one button or several.
  */
-export function TopAppBar({ title, onBack, action }: TopAppBarProps) {
+export function TopAppBar({ title, onBack, action, right }: TopAppBarProps) {
   const { top } = useSafeAreaInsets();
+  // The left slot copies the right one's width so the title stays centered with two buttons.
+  const [rightWidth, setRightWidth] = useState(0);
 
   return (
     <View
       className="flex-row items-center gap-2 px-5 pb-4"
       style={{ paddingTop: top + sizes.screenTopGap }}>
-      <View className="size-touch">
+      <View
+        className="min-h-touch min-w-touch"
+        style={rightWidth ? { width: rightWidth } : undefined}>
         {onBack ? <IconButton size="sm" icon="chevron-left" label="Back" onPress={onBack} /> : null}
       </View>
       <AppText
@@ -44,10 +52,18 @@ export function TopAppBar({ title, onBack, action }: TopAppBarProps) {
         className="min-w-0 flex-1 text-center">
         {title}
       </AppText>
-      <View className="size-touch">
-        {action ? (
-          <IconButton size="sm" icon={action.icon} label={action.label} onPress={action.onPress} />
-        ) : null}
+      <View
+        className="min-h-touch min-w-touch flex-row items-center justify-end"
+        onLayout={(event) => setRightWidth(event.nativeEvent.layout.width)}>
+        {right ??
+          (action ? (
+            <IconButton
+              size="sm"
+              icon={action.icon}
+              label={action.label}
+              onPress={action.onPress}
+            />
+          ) : null)}
       </View>
     </View>
   );
@@ -55,7 +71,10 @@ export function TopAppBar({ title, onBack, action }: TopAppBarProps) {
 
 /** The parts of a stack header's props that `renderTopAppBar` reads, so shared/ui needs no navigation types. */
 interface StackHeaderProps {
-  options: { title?: string };
+  options: {
+    title?: string;
+    headerRight?: (props: { canGoBack: boolean; tintColor?: string }) => ReactNode;
+  };
   /** Set when there is a screen to go back to. */
   back?: unknown;
   navigation: { goBack: () => void };
@@ -64,6 +83,10 @@ interface StackHeaderProps {
 /** Use as a stack's `header` option: every pushed screen gets the same bar, with back when it can. */
 export function renderTopAppBar({ options, back, navigation }: StackHeaderProps) {
   return (
-    <TopAppBar title={options.title ?? ''} onBack={back ? () => navigation.goBack() : undefined} />
+    <TopAppBar
+      title={options.title ?? ''}
+      onBack={back ? () => navigation.goBack() : undefined}
+      right={options.headerRight?.({ canGoBack: Boolean(back) })}
+    />
   );
 }

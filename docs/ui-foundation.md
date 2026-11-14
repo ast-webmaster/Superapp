@@ -22,24 +22,24 @@ All values are px, except line heights, which are unitless ratios with the px no
 
 ### Color
 
-| Token | Value | Use |
-|---|---|---|
-| `primary` | `#130066` | Primary actions, active states, module tiles |
-| `primary-pressed` | `#0c0044` | Pressed primary |
-| `on-primary` | `#ffffff` | Text and icons on `primary` |
-| `primary-soft` | `#eeeafb` | Soft buttons, info cards, icon wells, `info` badge |
-| `lavender` | `#c9b4ff` | Selected filter chip, pressed soft surfaces, highlights |
-| `ink` | `#0b0b1a` | Headings and primary text |
-| `ink-muted` | `#5b6270` | Secondary text, captions, placeholders |
-| `ground` | `#eceef7` | The ground of every screen (`Screen`): a soft lavender-gray the white cards sit on |
-| `surface` | `#ffffff` | Cards, inputs, unselected chips, segmented control, round buttons, sheets, modals |
-| `surface-gray` | `#f4f5f7` | Neutral fills inside a white card: `neutral` badge, skeleton blocks, pressed rows |
-| `border` | `#e5e7eb` | Hairlines between rows |
-| `glass` | `rgba(255,255,255,0.7)` | Reference swatch on the design system board; the bottom nav no longer uses it |
-| `control-off` | `#868c98` | Toggle track when off |
-| `success` / `success-bg` | `#176a42` / `#e6f4ec` | Success text and fill |
-| `danger` / `danger-bg` | `#b42318` / `#fde8e8` | Errors, destructive |
-| `warning` / `warning-bg` | `#8a5a00` / `#fff4d6` | Warnings, waiting states |
+| Token                    | Value                   | Use                                                                                |
+| ------------------------ | ----------------------- | ---------------------------------------------------------------------------------- |
+| `primary`                | `#130066`               | Primary actions, active states, module tiles                                       |
+| `primary-pressed`        | `#0c0044`               | Pressed primary                                                                    |
+| `on-primary`             | `#ffffff`               | Text and icons on `primary`                                                        |
+| `primary-soft`           | `#eeeafb`               | Soft buttons, info cards, icon wells, `info` badge                                 |
+| `lavender`               | `#c9b4ff`               | Selected filter chip, pressed soft surfaces, highlights                            |
+| `ink`                    | `#0b0b1a`               | Headings and primary text                                                          |
+| `ink-muted`              | `#5b6270`               | Secondary text, captions, placeholders                                             |
+| `ground`                 | `#eceef7`               | The ground of every screen (`Screen`): a soft lavender-gray the white cards sit on |
+| `surface`                | `#ffffff`               | Cards, inputs, unselected chips, segmented control, round buttons, sheets, modals  |
+| `surface-gray`           | `#f4f5f7`               | Neutral fills inside a white card: `neutral` badge, skeleton blocks, pressed rows  |
+| `border`                 | `#e5e7eb`               | Hairlines between rows                                                             |
+| `glass`                  | `rgba(255,255,255,0.7)` | Reference swatch on the design system board; the bottom nav no longer uses it      |
+| `control-off`            | `#868c98`               | Toggle track when off                                                              |
+| `success` / `success-bg` | `#176a42` / `#e6f4ec`   | Success text and fill                                                              |
+| `danger` / `danger-bg`   | `#b42318` / `#fde8e8`   | Errors, destructive                                                                |
+| `warning` / `warning-bg` | `#8a5a00` / `#fff4d6`   | Warnings, waiting states                                                           |
 
 **Background rule.** The app background is `ground`, never white. Cards, list groups and sheets are `surface` (white) with a thin `border border-border` (no shadow). Controls that sit straight on the ground (inputs, unselected chips, the segmented control, round buttons) are `surface` too; an input inside a white card keeps its `border-border` hairline so it still reads. `surface-gray` is only for fills inside a white card.
 
@@ -49,21 +49,21 @@ The app is light only. There is no dark palette.
 
 Always through `AppText`. Defaults for the whole app: every bold style is weight 500 (Rubik Medium; the app loads only Regular 400 and Medium 500, each as its own family: `font-rubik` and `font-rubik-medium`, because native ignores `font-weight` for custom fonts; `AppText` picks the family: Regular for `body` and any `tone="muted"` text, Medium for the rest), and sizes sit two steps below the old scale, floored at 13 for text and 12 for labels. Bottom navigation (`label`) and the Price Approval list and detail screens were already at 13/12 and did not change size. Native text does not inherit the font from a parent `View`.
 
-| `variant` | Size / line, weight | Use |
-|---|---|---|
-| `avatar` | 32 / 40, 500 | Initials in the large `Avatar` only |
-| `display` | 20 / 22, 500 | Marketing or splash moments only |
-| `heading` | 17 / 22, 500 | Screen title |
-| `title` | 16 / 20, 500 | Section title, empty-state title, stepper value |
-| `module-title` | 13 / 20, 500 | Card title |
-| `info-title` | 13 / 20, 500 | Title inside an `InfoCard` |
-| `body` | 13 / 20, 400 | Default text |
-| `body-strong` | 13 / 20, 500 | Row labels, emphasized body |
-| `caption` | 13 / 20, 500 | Meta, helper text, timestamps |
-| `caption-strong` | 13 / 20, 500 | Dense card titles and totals, where `module-title` is too large |
-| `button` | 13 / 20, 500 | Button text (set by `Button`) |
-| `label` | 12 / 16, 500 | Field labels, nav labels |
-| `micro` | 10 / 12, 500 | Tags that must stay quiet, such as the role `Badge` (`size="xs"`). Not for anything the user must read to act |
+| `variant`        | Size / line, weight | Use                                                                                                           |
+| ---------------- | ------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `avatar`         | 32 / 40, 500        | Initials in the large `Avatar` only                                                                           |
+| `display`        | 20 / 22, 500        | Marketing or splash moments only                                                                              |
+| `heading`        | 17 / 22, 500        | Screen title                                                                                                  |
+| `title`          | 16 / 20, 500        | Section title, empty-state title, stepper value                                                               |
+| `module-title`   | 13 / 20, 500        | Card title                                                                                                    |
+| `info-title`     | 13 / 20, 500        | Title inside an `InfoCard`                                                                                    |
+| `body`           | 13 / 20, 400        | Default text                                                                                                  |
+| `body-strong`    | 13 / 20, 500        | Row labels, emphasized body                                                                                   |
+| `caption`        | 13 / 20, 500        | Meta, helper text, timestamps                                                                                 |
+| `caption-strong` | 13 / 20, 500        | Dense card titles and totals, where `module-title` is too large                                               |
+| `button`         | 13 / 20, 500        | Button text (set by `Button`)                                                                                 |
+| `label`          | 12 / 16, 500        | Field labels, nav labels                                                                                      |
+| `micro`          | 10 / 12, 500        | Tags that must stay quiet, such as the role `Badge` (`size="xs"`). Not for anything the user must read to act |
 
 Dates and money are formatted only through `@/shared/utils/format`: `formatDate` ("1 Okt 2026"), `formatDateTime` ("1 Okt 2026 14:30") and `formatMoney` ("Rp 20,000", "Rp 20,000.50": always the Rp symbol, decimals only when present). Never format them per module.
 
@@ -73,30 +73,30 @@ Give a screen title `role="heading"`.
 
 ### Spacing
 
-| Utility | px | Use |
-|---|---|---|
-| `p-5` / `px-5` | 20 | **Screen margin**: the side padding of every screen |
-| `gap-4` | 16 | Between cards and between sections |
-| `p-4` | 16 | Card padding (`p-3` inside `ModuleCard`) |
-| `gap-3` | 12 | Between a control's icon and label |
-| `gap-1`–`gap-2` | 4–8 | Between a title and its meta |
-| `size-touch` | 48 | Minimum touch target |
-| `min-h-control` / `size-control` | 56 | Buttons, inputs, list rows, icon buttons |
-| `h-tabbar` | 72 | Bottom nav |
-| `size-tile` | 112 | Module card tile |
+| Utility                          | px  | Use                                                 |
+| -------------------------------- | --- | --------------------------------------------------- |
+| `p-5` / `px-5`                   | 20  | **Screen margin**: the side padding of every screen |
+| `gap-4`                          | 16  | Between cards and between sections                  |
+| `p-4`                            | 16  | Card padding (`p-3` inside `ModuleCard`)            |
+| `gap-3`                          | 12  | Between a control's icon and label                  |
+| `gap-1`–`gap-2`                  | 4–8 | Between a title and its meta                        |
+| `size-touch`                     | 48  | Minimum touch target                                |
+| `min-h-control` / `size-control` | 56  | Buttons, inputs, list rows, icon buttons            |
+| `h-tabbar`                       | 72  | Bottom nav                                          |
+| `size-tile`                      | 112 | Module card tile                                    |
 
 `sizes.screenTopGap` (16) is the gap between the safe-area top and the first content.
 
 ### Radius and shadow
 
-| Utility | px | Use |
-|---|---|---|
+| Utility        | px  | Use                                              |
+| -------------- | --- | ------------------------------------------------ |
 | `rounded-pill` | 999 | Buttons, chips, badges, bottom nav, icon buttons |
-| `rounded-2xl` | 32 | The black Home header card |
-| `rounded-xl` | 24 | Cards, list groups, sheets |
-| `rounded-lg` | 16 | Inputs, info cards, alerts, module tiles |
-| `rounded-md` | 12 | Icon wells, pressable rows |
-| `rounded-sm` | 8 | Skeleton blocks |
+| `rounded-2xl`  | 32  | The black Home header card                       |
+| `rounded-xl`   | 24  | Cards, list groups, sheets                       |
+| `rounded-lg`   | 16  | Inputs, info cards, alerts, module tiles         |
+| `rounded-md`   | 12  | Icon wells, pressable rows                       |
+| `rounded-sm`   | 8   | Skeleton blocks                                  |
 
 Shadows: Cards use `border border-border` (1px gray hairline) instead of a shadow. `shadow-glass` is internal to `BottomNav`, which is solid `ink` with a `lavender` pill on the active item. A card inside another card gets no shadow.
 
@@ -116,56 +116,58 @@ All from `@/shared/ui`.
 
 ### Structure
 
-| Component | Use it for | Key props |
-|---|---|---|
-| `Screen` | The ground of every screen | `children`, `className` |
-| `TopAppBar` | The bar at the top of a screen. `renderTopAppBar` is the ready-made stack `header` | `title`, `onBack`, `action` (`icon`, `label`, `onPress`) |
-| `Logo` | Brand wordmark. Minimum width 64. Files in `assets/brand/`: `astrindo-logo.png` / `astrindo-logo-white.png` (wordmark, 4000x888) and `astrindo-icon.png` / `astrindo-icon-white.png` (the symbol alone), all transparent | `variant` (`dark` on light, `light` on `primary`), `width` |
-| `BottomNav` | App navigation, up to 4 items. An item may carry `badge` (unread count, hidden at 0, `99+` above 99) | `items`, `activeKey`, `onChange`, `placement` |
-| `useBottomNavInset()` | Bottom padding so content clears the nav | |
+| Component             | Use it for                                                                                                                                                                                                                                             | Key props                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| `ActionBar`           | The bar pinned to the bottom of a screen with actions: on the `ground`, no card or hairline, safe area below. In a row, the main `primary` button is `flex-2` and the rest `secondary` with `flex-1 px-2`. Reference: Price Approval detail and create | `children`                                                 |
+| `Screen`              | The ground of every screen                                                                                                                                                                                                                             | `children`, `className`                                    |
+| `TopAppBar`           | The bar at the top of a screen. `renderTopAppBar` is the ready-made stack `header`                                                                                                                                                                     | `title`, `onBack`, `action` (`icon`, `label`, `onPress`)   |
+| `Logo`                | Brand wordmark. Minimum width 64. Files in `assets/brand/`: `astrindo-logo.png` / `astrindo-logo-white.png` (wordmark, 4000x888) and `astrindo-icon.png` / `astrindo-icon-white.png` (the symbol alone), all transparent                               | `variant` (`dark` on light, `light` on `primary`), `width` |
+| `BottomNav`           | App navigation, up to 4 items. An item may carry `badge` (unread count, hidden at 0, `99+` above 99)                                                                                                                                                   | `items`, `activeKey`, `onChange`, `placement`              |
+| `useBottomNavInset()` | Bottom padding so content clears the nav                                                                                                                                                                                                               |                                                            |
 
 ### Content
 
-| Component | Use it for | Key props |
-|---|---|---|
-| `AppText` | All text | `variant`, `tone` |
-| `ModuleCard` | A launchable module: tile, title, department, badges, meta, Open | `title`, `icon`, `department`, `badges`, `meta`, `favorite`, `onOpen`, or `loading` for the skeleton |
-| `InfoCard` | A tappable highlight, such as "3 approvals waiting" | `icon`, `title`, `description`, `onPress` |
-| `ListGroup` + `ListRow` | Settings and key-value rows, hairlines between | `label`, `icon`, `value`, `onPress` (adds a chevron), `destructive` (danger color, no chevron: Sign out) |
-| `StackedList` | A scrolling list of cards (a `FlatList` with the same props, minus `onScroll`). A card pins at the top and shrinks to 0.94 while the next one slides over it. Keep the `py-4` list padding (the pin offset is 16), give cards the same width, and note that reduce motion turns the effect off. Reference: `PriceApproval/screens/price-approval-list-screen.tsx` | `FlatList` props |
-| `Avatar` | A person: their photo, or their initials on `lavender` when there is none. Named after the person for screen readers | `name`, `uri`, `size` (`md` 56, `xl` 128) |
-| `Badge` | Status or count. Always has a text label | `label`, `tone` (`neutral`, `info`, `success`, `danger`, `warning`), `icon` |
-| `Icon` | Glyphs. Decorative unless `label` is set | `name`, `size`, `color` (a color token), `filled` |
+| Component               | Use it for                                                                                                                                                                                                                                                                                                                                                        | Key props                                                                                                |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `AppText`               | All text                                                                                                                                                                                                                                                                                                                                                          | `variant`, `tone`                                                                                        |
+| `ModuleCard`            | A launchable module: tile, title, department, badges, meta, Open                                                                                                                                                                                                                                                                                                  | `title`, `icon`, `department`, `badges`, `meta`, `favorite`, `onOpen`, or `loading` for the skeleton     |
+| `InfoCard`              | A tappable highlight, such as "3 approvals waiting"                                                                                                                                                                                                                                                                                                               | `icon`, `title`, `description`, `onPress`                                                                |
+| `ListGroup` + `ListRow` | Settings and key-value rows, hairlines between                                                                                                                                                                                                                                                                                                                    | `label`, `icon`, `value`, `onPress` (adds a chevron), `destructive` (danger color, no chevron: Sign out) |
+| `StackedList`           | A scrolling list of cards (a `FlatList` with the same props, minus `onScroll`). A card pins at the top and shrinks to 0.94 while the next one slides over it. Keep the `py-4` list padding (the pin offset is 16), give cards the same width, and note that reduce motion turns the effect off. Reference: `PriceApproval/screens/price-approval-list-screen.tsx` | `FlatList` props                                                                                         |
+| `Avatar`                | A person: their photo, or their initials on `lavender` when there is none. Named after the person for screen readers                                                                                                                                                                                                                                              | `name`, `uri`, `size` (`md` 56, `xl` 128)                                                                |
+| `Badge`                 | Status or count. Always has a text label                                                                                                                                                                                                                                                                                                                          | `label`, `tone` (`neutral`, `info`, `success`, `danger`, `warning`), `icon`                              |
+| `Icon`                  | Glyphs. Decorative unless `label` is set                                                                                                                                                                                                                                                                                                                          | `name`, `size`, `color` (a color token), `filled`                                                        |
 
 Icon names: `home grid search bell user calendar settings building box wallet users chart truck clipboard doc chat heart bookmark share pin lock log-out pencil eye eye-off sliders list map cart star plus more copy download upload minus check x alert info arrow-up arrow-down arrow-right chevron-left chevron-right`. Icons are Lucide, drawn at 24px, 1.75 stroke.
 
 ### Actions and input
 
-| Component | Use it for | Key props |
-|---|---|---|
-| `Button` | Text actions | `variant` (`primary`, `secondary`, `soft`), `block`, `iconLeft`, `iconRight`, `loading`, `disabled`. Children is a string |
-| `IconButton` | Icon-only actions | `icon`, `label` (required), `active`, `size` (`md` 56, or `sm`: a 40 circle in a 48 press area) |
-| `TextField` | Text input | `label`, `type` (`text`, `password`), `icon`, `help`, `error`, `trailing` |
-| `Chip` / `ChipGroup` | Single-select filters | `ChipGroup`: `label`, `options`, `value`, `onChange`. An option with an `icon` becomes a department switch |
-| `SegmentedControl` | Choose one of 2–4 views | `label`, `options`, `value`, `onChange` |
-| `Toggle` | On/off setting | `label`, `value`, `onValueChange` |
-| `ListToolbar` | Top row of a module index: search, filter, actions buttons plus the module chips. See the recipe | `search`, `onFilter`, `filterActive`, `actions`, `children` |
-| `Fab` | Create button, floats bottom right. Last child of `Screen`, only with the create permission | `label`, `icon` |
-| `Sheet` | Bottom sheet: filter form, action menu | `visible`, `title`, `onClose`, `footer` |
-| `Stepper` | A small number, such as a quantity | `label`, `value`, `min`, `max`, `onChange` |
+| Component            | Use it for                                                                                                                                                             | Key props                                                                                                                                                                                                   |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Button`             | Text actions                                                                                                                                                           | `variant` (`primary`, `secondary`, `soft`), `block`, `iconLeft`, `iconRight`, `loading`, `disabled`. Children is a string                                                                                   |
+| `IconButton`         | Icon-only actions                                                                                                                                                      | `icon`, `label` (required), `active`, `size` (`md` 56, `sm`: a 40 circle in a 48 press area, or `xs`: a 32 lavender circle with a 16 icon in a 48 press area, for card row actions such as edit and remove) |
+| `TextField`          | Text input                                                                                                                                                             | `label`, `type` (`text`, `password`), `icon`, `help`, `error`, `trailing`                                                                                                                                   |
+| `Chip` / `ChipGroup` | Single-select filters                                                                                                                                                  | `ChipGroup`: `label`, `options`, `value`, `onChange`. An option with an `icon` becomes a department switch                                                                                                  |
+| `SegmentedControl`   | Choose one of 2–4 views                                                                                                                                                | `label`, `options`, `value`, `onChange`                                                                                                                                                                     |
+| `Toggle`             | On/off setting                                                                                                                                                         | `label`, `value`, `onValueChange`                                                                                                                                                                           |
+| `ListToolbar`        | Top row of a module index: filter, actions buttons plus the module chips, and the search field while open (its button is in the top app bar). See the recipe           | `search`, `onFilter`, `filterActive`, `actions`, `children`                                                                                                                                                 |
+| `DateRangePicker`    | Month calendar to pick a start and end day (Monday first, same day twice for one day). Days are `YYYY-MM-DD` strings. JS only, so it works on web and needs no rebuild | `value: { from, to }`, `onChange`, `initialMonth`                                                                                                                                                           |
+| `Fab`                | Create button, floats bottom right. Last child of `Screen`, only with the create permission                                                                            | `label`, `icon`                                                                                                                                                                                             |
+| `Sheet`              | Bottom sheet: filter form, action menu                                                                                                                                 | `visible`, `title`, `onClose`, `footer`, `fullHeight` (keeps full height with few rows: a searchable picker)                                                                                                |
+| `Stepper`            | A small number, such as a quantity                                                                                                                                     | `label`, `value`, `min`, `max`, `onChange`                                                                                                                                                                  |
 
-Button choice: `primary` is the one main action per screen. `secondary` (white with shadow) is only a subtle lift on the white ground. Prefer `soft` on white, because `secondary` nearly disappears. Buttons stretch with `block` in forms and stay content-width elsewhere.
+Pinned bottom actions always use `ActionBar` (never a white bar with a hairline). Button choice: `primary` is the one main action per screen. `secondary` (white with shadow) is only a subtle lift on the white ground. Prefer `soft` on white, because `secondary` nearly disappears. Buttons stretch with `block` in forms and stay content-width elsewhere.
 
 ### Feedback
 
-| Component | Use it for | Key props |
-|---|---|---|
-| `Alert` | An inline message in the flow | `tone` (`success`, `danger`, `warning`, `info`), `message` (one sentence), `onDismiss` |
-| `useToast().show` | A short confirmation after an action | `{ tone, message }`. Needs `ToastProvider`, which today is mounted only in the design-system layout |
-| `useConfirm()` | A confirm dialog before an action that changes data. Replaces `Alert.alert` and `window.confirm`: icon in a soft circle, title, optional message, and a split Cancel / confirm footer | `confirm({ title, message?, confirmLabel, cancelLabel?, icon?, destructive?, reason?: { label, required, maxLength?, requiredMessage? }, onConfirm(reason) })`. `reason` adds a text field in the dialog and blocks confirm while a required one is empty. Needs `ConfirmProvider`, mounted in `AppProviders` |
-| `EmptyState` | Nothing to show, or a failed load. Fills its space | `title`, `description`, `icon`, `children` for the next step |
-| `Loading` | Spinner for a short wait: a list footer, a small area | `label` |
-| `Skeleton` + `SkeletonGroup` | First load of a screen. Compose pulsing blocks in the shape of the real content; the group announces one loading state | `Skeleton`: `className` (size and shape). `SkeletonGroup`: `label` |
+| Component                    | Use it for                                                                                                                                                                            | Key props                                                                                                                                                                                                                                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Alert`                      | An inline message in the flow                                                                                                                                                         | `tone` (`success`, `danger`, `warning`, `info`), `message` (one sentence), `onDismiss`                                                                                                                                                                                                                        |
+| `useToast().show`            | A short confirmation after an action                                                                                                                                                  | `{ tone, message }`. Needs `ToastProvider`, which today is mounted only in the design-system layout                                                                                                                                                                                                           |
+| `useConfirm()`               | A confirm dialog before an action that changes data. Replaces `Alert.alert` and `window.confirm`: icon in a soft circle, title, optional message, and a split Cancel / confirm footer | `confirm({ title, message?, confirmLabel, cancelLabel?, icon?, destructive?, reason?: { label, required, maxLength?, requiredMessage? }, onConfirm(reason) })`. `reason` adds a text field in the dialog and blocks confirm while a required one is empty. Needs `ConfirmProvider`, mounted in `AppProviders` |
+| `EmptyState`                 | Nothing to show, or a failed load. Fills its space                                                                                                                                    | `title`, `description`, `icon`, `children` for the next step                                                                                                                                                                                                                                                  |
+| `Loading`                    | Spinner for a short wait: a list footer, a small area                                                                                                                                 | `label`                                                                                                                                                                                                                                                                                                       |
+| `Skeleton` + `SkeletonGroup` | First load of a screen. Compose pulsing blocks in the shape of the real content; the group announces one loading state                                                                | `Skeleton`: `className` (size and shape). `SkeletonGroup`: `label`                                                                                                                                                                                                                                            |
 
 ## Screen recipes
 
@@ -196,9 +198,9 @@ A list card is `rounded-xl bg-surface p-4 border border-border gap-2`: `module-t
 
 ### Module index (list with toolbar)
 
-Every module index starts with `ListToolbar`, on the white header block. Buttons, left to right: search, filter, actions (`more`), then the module chips, which scroll beside them. A button shows only when its prop is passed, so each module declares what it supports:
+Every module index starts with `ListToolbar`, on the screen ground. Buttons, left to right: filter, actions (`more`), then the module chips, which scroll beside them. A button shows only when its prop is passed, so each module declares what it supports:
 
-- `search`: the button opens a field with Cancel. The module decides what the text matches (a server param when the API has one).
+- Search: the button sits at the right of the top app bar. The screen sets it with `<Stack.Screen options={{ headerRight }} />` (an `IconButton size="sm" icon="search"`, `active` while searching or a query is set) and owns `searching` state. `search={{ open, onClose, value, onChange }}` shows the field with Cancel in place of the toolbar row while `open`. The module decides what the text matches (a server param when the API has one).
 - `onFilter`: the module opens its own `Sheet` (title "Filter", sections, `footer` with a primary "Apply" button).
 - `actions`: a list such as Export and Import. Pass only what the module supports, each gated with `useCan()`. An empty list hides the button.
 - Create: `<Fab label="New …" onPress={…} />` as the last child of `Screen`, rendered only when `useCan()` allows the module's create permission.
@@ -207,7 +209,7 @@ Every module index starts with `ListToolbar`, on the white header block. Buttons
 ```tsx
 <Screen>
   <View className="pb-4 pt-2">
-    <ListToolbar search={{ value, onChange }} onFilter={openFilter} actions={actions}>
+    <ListToolbar search={{ open, onClose, value, onChange }} onFilter={openFilter} actions={actions}>
       <StatusFilter … />
     </ListToolbar>
   </View>
@@ -232,7 +234,7 @@ For a plain settings list: `heading` → `ListGroup` of `ListRow`s (`ListRow` ha
 
 ### Detail
 
-Top app bar (stack header) → `ScrollView` (`gap-4 px-5`, pull to refresh, `keyboardShouldPersistTaps="handled"`) → stale/offline `Alert` → `surface` summary card (`module-title` + `Badge`, `body` subject, `caption muted` meta ending in "Updated 10:42") → `ListGroup` of key-value rows → sections with a `title` heading over a `ListGroup` → the decision card at the bottom: one `primary` `Button block` for the main action, `soft` for the rest, only the actions the server allows. Reference: `src/modules/PriceApproval/screens/price-approval-detail-screen.tsx` and `components/approval-actions.tsx`. Data rules for actions: [data-management.md](data-management.md#writing-actions).
+Top app bar (stack header) → `ScrollView` (`gap-4 px-5`, pull to refresh, `keyboardShouldPersistTaps="handled"`) → stale/offline `Alert` → `surface` summary card (`module-title` + `Badge`, `body` subject, `caption muted` meta ending in "Updated 10:42") → `ListGroup` of key-value rows → sections with a `title` heading over a `ListGroup` → the decision bar at the bottom (`ActionBar`): one `primary` `Button block` for the main action, `secondary` for the rest, only the actions the server allows. Reference: `src/modules/PriceApproval/screens/price-approval-detail-screen.tsx` and `components/approval-actions.tsx`. Data rules for actions: [data-management.md](data-management.md#writing-actions).
 
 A tappable list card is a `Pressable` with `role="button"`, an `aria-label`, `active:bg-surface-gray` and `focusRing` (exported from `@/shared/ui`). Reference: `price-approval-card.tsx`.
 
@@ -240,16 +242,16 @@ A tappable list card is a `Pressable` with `role="button"`, an `aria-label`, `ac
 
 Every data screen has all of these. Do not flash "empty" during the first load.
 
-| State | Show |
-|---|---|
-| First load | Skeletons shaped like the content (`SkeletonGroup` + `Skeleton`, `ModuleCard loading`). Reference: `PriceApproval/components/price-approval-skeletons.tsx`. Pulse stops with reduce motion |
-| Empty | `EmptyState` with a task icon and one short line of why |
-| Error, no data | `EmptyState icon="alert"`, the message, `Button variant="soft"` "Try again" |
-| Offline, no data | `EmptyState icon="alert"` "You are offline" plus retry |
-| Error, have data | Keep the list. `Alert tone="warning"` "Could not refresh. Showing data from 10:42." |
-| Offline, have data | Keep the list. `Alert tone="warning"` "You are offline. Showing data from 10:42." Actions disabled with a caption saying why |
-| Action result | `Alert` by the actions: success with the server's new status, warning on a conflict, danger when the outcome is unknown |
-| Loading more | `Loading` as the list footer |
+| State              | Show                                                                                                                                                                                       |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| First load         | Skeletons shaped like the content (`SkeletonGroup` + `Skeleton`, `ModuleCard loading`). Reference: `PriceApproval/components/price-approval-skeletons.tsx`. Pulse stops with reduce motion |
+| Empty              | `EmptyState` with a task icon and one short line of why                                                                                                                                    |
+| Error, no data     | `EmptyState icon="alert"`, the message, `Button variant="soft"` "Try again"                                                                                                                |
+| Offline, no data   | `EmptyState icon="alert"` "You are offline" plus retry                                                                                                                                     |
+| Error, have data   | Keep the list. `Alert tone="warning"` "Could not refresh. Showing data from 10:42."                                                                                                        |
+| Offline, have data | Keep the list. `Alert tone="warning"` "You are offline. Showing data from 10:42." Actions disabled with a caption saying why                                                               |
+| Action result      | `Alert` by the actions: success with the server's new status, warning on a conflict, danger when the outcome is unknown                                                                    |
+| Loading more       | `Loading` as the list footer                                                                                                                                                               |
 
 ## Accessibility
 
@@ -293,3 +295,15 @@ Add to the system only when a real screen needs it and two or more modules will 
 3. **New icon:** import it in `src/shared/ui/icon/icon.tsx` and add it to the `icons` map and the list above.
 4. **Show it on the board:** add a card to `src/modules/DesignSystem/screens/board-screen.tsx`, so the reference stays complete.
 5. **Update this document** in the same change.
+
+### Multi-step form
+
+A long create flow (reference: `PriceApproval/screens/price-approval-create-screen.tsx`): `Screen` → a step indicator (module-local `StepIndicator`: the step name as `title` and "Step 2 of 4" above one bar per step) → `ScrollView` (`gap-4 px-5`) holding the current step → a pinned `ActionBar` with a `secondary` Back and a `primary` Next, which becomes "Submit request" on the last step. Fields sit straight on the `ground` (white inputs and chips), grouped under `title` headings. A choice of a few options is a `ChipGroup` with no preselection; a long list is a `PickerField` that opens a searchable `Sheet`. A repeated record (items) is a card list with Edit and Remove, edited in place of the list with Save and Cancel. The last step summarises everything in cards with an edit button per section, and a total.
+
+### Required and optional fields
+
+A required field's label ends with a red asterisk (`required` on `TextField`, or `FieldLabel required` when you build a field by hand; module pickers pass it through). An optional field gets no mark and no "(optional)" text: unmarked means optional. The asterisk is hidden from screen readers; the field's error says what is missing. `FieldLabel` is the only place a field label is drawn.
+
+### Money inputs
+
+A rupiah field shows thousands grouped with commas while the user types ("100,000", decimals with a point), the same as `formatMoney`. Keep the raw value as plain digits in state and group only for display (`groupThousands` and `sanitizeMoney`, reference: `PriceApproval/create/calculate-line.ts`).

@@ -2,7 +2,13 @@ import { fetch } from 'expo/fetch';
 
 import { AppError } from '@/core/errors';
 
-import { apiClient, REQUEST_TIMEOUT_MS, setAccessToken, setUnauthorizedHandler } from './apiClient';
+import {
+  apiClient,
+  REQUEST_TIMEOUT_MS,
+  setAccessToken,
+  setForbiddenHandler,
+  setUnauthorizedHandler,
+} from './apiClient';
 
 jest.mock('expo/fetch', () => ({ fetch: jest.fn() }));
 jest.mock('@/core/config', () => ({ env: { apiUrl: 'https://example.test/api' } }));
@@ -17,6 +23,7 @@ beforeEach(() => {
   fetchMock.mockReset();
   setAccessToken(null);
   setUnauthorizedHandler(undefined);
+  setForbiddenHandler(undefined);
 });
 
 describe('apiClient', () => {
@@ -73,6 +80,20 @@ describe('apiClient', () => {
     respond(401, { success: false, message: 'Unauthenticated.', errors: null });
     await expect(apiClient.get('/me')).rejects.toMatchObject({ code: 'unauthorized' });
     expect(onUnauthorized).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports a 403 on a signed-in request, so permissions can be reloaded', async () => {
+    const onForbidden = jest.fn();
+    setForbiddenHandler(onForbidden);
+
+    respond(403, { success: false, message: 'Forbidden', errors: null });
+    await expect(apiClient.post('/login', {})).rejects.toMatchObject({ code: 'forbidden' });
+    expect(onForbidden).not.toHaveBeenCalled();
+
+    setAccessToken('tok');
+    respond(403, { success: false, message: 'Forbidden', errors: null });
+    await expect(apiClient.get('/price-approval')).rejects.toMatchObject({ code: 'forbidden' });
+    expect(onForbidden).toHaveBeenCalledTimes(1);
   });
 
   it('maps 409 to conflict', async () => {

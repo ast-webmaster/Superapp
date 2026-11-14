@@ -1,5 +1,6 @@
 // Route paths this module owns. The matching files live in src/app/(app)/price-approval/.
 export const priceApprovalRoutes = {
   list: '/price-approval',
+  create: '/price-approval/new',
   detail: (uuid: string) => `/price-approval/${uuid}`,
 } as const;

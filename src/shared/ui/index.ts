@@ -1,4 +1,5 @@
 // Public interface of the Astrindo design system. Other code imports only from here.
+export { ActionBar, type ActionBarProps } from './action-bar/action-bar';
 export { Alert, type AlertProps, type AlertTone } from './alert/alert';
 export { focusRing } from './focus';
 export { ToastProvider, useToast } from './alert/toast';
@@ -15,6 +16,7 @@ export { Chip, ChipGroup, type ChipGroupProps, type ChipProps } from './chip/chi
 export { ConfirmProvider, useConfirm, type ConfirmOptions } from './dialog/dialog';
 export { EmptyState, type EmptyStateProps } from './empty-state/empty-state';
 export { Fab, type FabProps } from './fab/fab';
+export { FieldLabel, type FieldLabelProps } from './field-label/field-label';
 export { IconButton, type IconButtonProps } from './icon-button/icon-button';
 export { Icon, type IconName, type IconProps } from './icon/icon';
 export { InfoCard, type InfoCardProps } from './info-card/info-card';
@@ -38,6 +40,11 @@ export {
   SegmentedControl,
   type SegmentedControlProps,
 } from './segmented-control/segmented-control';
+export {
+  DateRangePicker,
+  type DateRange,
+  type DateRangePickerProps,
+} from './date-range-picker/date-range-picker';
 export { Sheet, type SheetProps } from './sheet/sheet';
 export { StackedList, type StackedListProps } from './stacked-list/stacked-list';
 export { Stepper, type StepperProps } from './stepper/stepper';

@@ -1,7 +1,9 @@
 import { router, type Href } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 
+import { useAuthStore } from '@/core/auth';
+import { colors } from '@/shared/theme/tokens';
 import { EmptyState, ListGroup, ListRow, Screen, TextField, useBottomNavInset } from '@/shared/ui';
 
 import { TabHeader } from './tab-header';
@@ -11,6 +13,14 @@ export function AppsScreen() {
   const modules = useAvailableModules();
   const bottomInset = useBottomNavInset();
   const [query, setQuery] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Pulling down reloads the permissions, so an app granted on the web appears without a restart.
+  const refresh = async () => {
+    setRefreshing(true);
+    await useAuthStore.getState().refreshSession({ force: true });
+    setRefreshing(false);
+  };
 
   const needle = query.trim().toLowerCase();
   const matches = modules.filter(
@@ -23,6 +33,9 @@ export function AppsScreen() {
     <Screen>
       <ScrollView
         keyboardShouldPersistTaps="handled"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={colors.primary} />
+        }
         contentContainerClassName="grow gap-4"
         contentContainerStyle={{ paddingBottom: bottomInset }}>
         <TabHeader title="Apps">
@@ -37,7 +50,11 @@ export function AppsScreen() {
           />
         </TabHeader>
         {modules.length === 0 ? (
-          <EmptyState icon="grid" title="No apps yet" description="Your account has no access to any app." />
+          <EmptyState
+            icon="grid"
+            title="No apps yet"
+            description="Your account has no access to any app."
+          />
         ) : matches.length === 0 ? (
           <EmptyState icon="search" title="No apps found" description="Try a different name." />
         ) : (
