@@ -1,8 +1,10 @@
 import {
+  formatCompactMoney,
   formatDate,
   formatDateTime,
   formatMoney,
   formatRoles,
+  formatShortDate,
   formatWeekdayDate,
   sentenceCase,
 } from './format';
@@ -51,6 +53,34 @@ describe('formatMoney', () => {
 
   it('keeps the minus sign', () => {
     expect(formatMoney(-14000)).toBe('-Rp 14,000');
+  });
+});
+
+describe('formatShortDate', () => {
+  it('writes the day and month without the year', () => {
+    expect(formatShortDate('2026-10-01')).toBe('1 Okt');
+    expect(formatShortDate('2026-05-30 08:00:00')).toBe('30 Mei');
+    expect(formatShortDate('not a date')).toBe('not a date');
+  });
+});
+
+describe('formatCompactMoney', () => {
+  it('shortens large amounts to one decimal', () => {
+    expect(formatCompactMoney(950)).toBe('Rp 950');
+    expect(formatCompactMoney(1500)).toBe('Rp 1.5K');
+    expect(formatCompactMoney(1250000)).toBe('Rp 1.3M');
+    expect(formatCompactMoney(12000000)).toBe('Rp 12M');
+    expect(formatCompactMoney(250000000)).toBe('Rp 250M');
+    expect(formatCompactMoney(3400000000)).toBe('Rp 3.4B');
+    expect(formatCompactMoney(0)).toBe('Rp 0');
+  });
+
+  it('moves to the next unit instead of writing 1000', () => {
+    expect(formatCompactMoney(999960)).toBe('Rp 1M');
+  });
+
+  it('keeps the minus sign', () => {
+    expect(formatCompactMoney(-700000)).toBe('-Rp 700K');
   });
 });
 

@@ -23,6 +23,12 @@ export function formatDate(value: string): string {
   return parts(value)?.date ?? value;
 }
 
+/** "2026-10-01" -> "1 Okt". For chart axes and other places where the year is already known. */
+export function formatShortDate(value: string): string {
+  const found = parts(value);
+  return found ? found.date.slice(0, found.date.lastIndexOf(' ')) : value;
+}
+
 /** "2026-10-01 14:30:00" -> "1 Okt 2026 14:30". A value without a time is just the date. */
 export function formatDateTime(value: string): string {
   const found = parts(value);
@@ -36,6 +42,33 @@ export function formatMoney(value: number): string {
   const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   const sign = value < 0 && (whole !== '0' || decimals !== '00') ? '-' : '';
   return `${sign}Rp ${grouped}${decimals === '00' ? '' : `.${decimals}`}`;
+}
+
+const COMPACT_UNITS = [
+  { size: 1e3, unit: 'K' },
+  { size: 1e6, unit: 'M' },
+  { size: 1e9, unit: 'B' },
+  { size: 1e12, unit: 'T' },
+] as const;
+
+/**
+ * 1250000 -> "Rp 1.3M", 950 -> "Rp 950". For chart axes and labels where the full amount does
+ * not fit; the full amount (`formatMoney`) stays in the text beside the chart.
+ */
+export function formatCompactMoney(value: number): string {
+  const abs = Math.abs(value);
+  const sign = value < 0 && Math.round(abs) !== 0 ? '-' : '';
+  for (let index = COMPACT_UNITS.length - 1; index >= 0; index -= 1) {
+    const { size, unit } = COMPACT_UNITS[index]!;
+    if (abs < size) continue;
+    const scaled = abs / size;
+    const rounded = scaled >= 100 ? Math.round(scaled) : Math.round(scaled * 10) / 10;
+    // 999,960 rounds to "1000K"; the next unit up reads "1M".
+    const next = COMPACT_UNITS[index + 1];
+    if (rounded >= 1000 && next) return `${sign}Rp 1${next.unit}`;
+    return `${sign}Rp ${rounded}${unit}`;
+  }
+  return `${sign}Rp ${Math.round(abs)}`;
 }
 
 /** A `Date` as "Sen, 9 Nov", in the phone's own time zone: it is for "today", not for stored data. */
@@ -54,4 +87,18 @@ export function formatRoles(roles: string[]): string | null {
   const [first, ...others] = roles;
   if (!first) return null;
   return others.length > 0 ? `${first} +${others.length}` : first;
+}
+
+const clock = new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit' });
+
+const pad = (value: number) => String(value).padStart(2, '0');
+
+/** When the data on screen came from the server: time only today, date and time before. */
+export function formatSyncedAt(timestamp: number): string {
+  const date = new Date(timestamp);
+  return date.toDateString() === new Date().toDateString()
+    ? clock.format(date)
+    : formatDateTime(
+        `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`,
+      );
 }

@@ -7,6 +7,7 @@ import { View } from 'react-native';
 import { toAppError } from '@/core/errors';
 import { useCan } from '@/core/permissions';
 import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
+import { formatSyncedAt } from '@/shared/utils/format';
 import {
   Alert,
   Button,
@@ -21,7 +22,6 @@ import {
 
 import { ExportSheet } from '../components/export-sheet';
 import { FilterSheet } from '../components/filter-sheet';
-import { formatSyncedAt } from '../components/format';
 import { priceApprovalRoutes } from '../navigation/routes';
 import { PriceApprovalCard } from '../components/price-approval-card';
 import { PriceApprovalListSkeleton } from '../components/price-approval-skeletons';

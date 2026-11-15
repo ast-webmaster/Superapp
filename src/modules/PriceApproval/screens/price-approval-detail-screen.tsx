@@ -5,9 +5,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { toAppError } from '@/core/errors';
 import { colors, sizes } from '@/shared/theme/tokens';
 import { Alert, Button, EmptyState, Screen } from '@/shared/ui';
+import { formatSyncedAt } from '@/shared/utils/format';
 
 import { ApprovalActions } from '../components/approval-actions';
-import { formatSyncedAt } from '../components/format';
 import {
   HistorySection,
   InfoSection,

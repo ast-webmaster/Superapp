@@ -189,6 +189,40 @@ The AI chat tab (`src/modules/AiChat`) talks to `v1/ai-chat` (`digitalapproval/M
 - **Files:** attachments (at most 3, 10 MB, images 5 MB, pdf/png/jpg/docx/xlsx/xls) are checked on the device first and sent as multipart `attachments[]`. Downloads and the Excel export go through `apiClient.getFile` and `shareFile`; the absolute `url` the server sends for an attachment is not used.
 - **Voice** (`expo-speech-recognition`, needs a development build) turns speech into text on the device in `id-ID`; nothing is sent to the server until the user presses send.
 
+## Stock Penjualan
+
+The Stock Penjualan module (`src/modules/StockPenjualan`) is read-only and talks to `v1/stock-esales` (`digitalapproval/Modules/StockEsales`). Manifest `permission` is `read_stock_esales` or `read_all_stock_esales`, the same either-or the backend middleware uses.
+
+- **The server picks the row shape.** `meta.view` is `sales` (holders of `read_stock_esales`: price, HQ, own office, in transit) or `all` (stock per office and a total). The api tags each row with `kind`, so a card follows the row, not a guess. The app never derives the view from permissions.
+- **No exact HQ figure from 100 up.** The server sends `stock_hq: null` and `stock_hq_over_100: true`; the card shows "> 100". Do not try to recover the number.
+- **Keys:** `stockPenjualanKeys.list(filters, search)` and `categories()` (loaded only while the filter sheet is open). Filters (category, stock type) sit in `store/stockPenjualanFilterStore.ts` and reset on sign-out. The stock type chips show only in the `all` view; the server ignores `type` in `sales`.
+- **Search and category go to the server** (`search`, `category_code`), paged 15 at a time, rows de-duplicated by `product_code`.
+- **Export** (`GET /export`) is an unfiltered `.xlsx` that the server picks by permission. It goes through `apiClient.getFile` and `shareFile`, from the toolbar actions menu. Nothing is cached.
+- **Freshness:** `meta.last_updated_at` is the time of the last stock import, shown above the list as "Stock as of …". It is separate from the offline notice, which uses `dataUpdatedAt`.
+
+## Purchase Request
+
+The Purchase Request module (`src/modules/PurchaseRequest`) talks to `v1/purchase-request` (`digitalapproval/Modules/PurchaseRequest`). It follows `PriceApproval` (list, detail with `allowed_actions`, action, create, export). Manifest `permission` is `read_purchase_request`; the create button and the lookups need `create_purchase_request`.
+
+- **Actions:** `approve`, `process` (purchasing admin's forward step), `revise`, `reject`. The server decides which the user may do. `revise` and `reject` need a reason of at most 191 characters, checked on the device first.
+- **Keys:** `purchaseRequestKeys.list(filters, search)`, `detail(uuid)` and `lookups()` (vendors, offices, items; each enabled only while its sheet is open). Filters (status, date range) sit in `store/purchaseRequestFilterStore.ts` and reset on sign-out. Search goes to the server.
+- **Offices are not searched on the server.** `GET /offices` answers every office, so `useOfficeOptions` narrows them on the device. Vendors and items are server searches of at most 50 rows.
+- **Create** (`/purchase-request/new`) has no draft on the server: the request is saved and submitted in one call, as multipart (`api/buildCreateForm.ts`). An item is a registered one (`item_code`) or a new name (`item_name`), never both. TRADE and EVENT items need a supporting document (10 MB); attachments are up to 10 files of 20 MB, each with a description. The same registered item cannot appear twice. The total is a preview (quantity times unit price); the server's figure wins. A 422 can carry a business reason (for example goods received late and not yet confirmed), which the screen shows as it is.
+- **Files:** attachments and item documents are fetched with `apiClient.getFile` from `/{uuid}/attachments/{id}/download` and `/{uuid}/items/{id}/document` and handed to `shareFile`. The absolute `download_url` the server sends is not used.
+- **Export** (`GET /export`) is an `.xlsx` of a date range of at most 31 days (the sheet allows 30), without drafts. Nothing is cached.
+- **Inbox and push:** the module id is `purchase-request`, the slug the backend notifies with, and `detailRoute` opens the request.
+
+## Laporan Penjualan
+
+The Laporan Penjualan module (`src/modules/LaporanPenjualan`) is read-only and talks to `v1/wall-report` (`digitalapproval/Modules/WallReport`). Manifest `permission` is any of `read_all_wallreport`, `read_wallreport_by_group`, `create_wallreport`, `read_wallreport_by_branch`, `read_wallreport_by_brand`, the same either-or the backend controller uses. The server scopes the figures (branch, brand) by permission; the app never filters them.
+
+- **Period:** `store/laporanPenjualanPeriodStore.ts` holds the chosen `YYYY-MM`, or `null` for the server's default; it resets on sign-out. The period sheet loads `GET /periods` only while open. The summary keeps the previous period on screen while the next loads (`keepPreviousData`).
+- **Keys:** `laporanPenjualanKeys.summary(period)`, `group(period, name)` and `periods()`.
+- **Group detail** (`/laporan-penjualan/[group]`, name URI-encoded) reads `GET /group?group=&period=`; a group outside the period or the user's scope answers 404, shown as "Group not found".
+- **Levels** (`below`, `near`, `achieved`) come from the server and show as a `Badge`; an unknown level shows as sent.
+- **Expected by now** (the tick on each meter) is a device-side guide only: days with sales over those days plus `day_left`, 100% for a past month, none for a future one.
+- **Export** (`GET /export` for Excel, `GET /pdf` for PDF) is the brand table of the period on screen, through `apiClient.getFile` and `shareFile`. Nothing is cached.
+
 ## Backend contract
 
 What a module's v1 API must provide for this to work. `PriceApproval` (`digitalapproval/Modules/PriceApproval`) is the reference.

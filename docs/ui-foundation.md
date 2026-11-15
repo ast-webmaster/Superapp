@@ -65,7 +65,9 @@ Always through `AppText`. Defaults for the whole app: every bold style is weight
 | `label`          | 12 / 16, 500        | Field labels, nav labels                                                                                      |
 | `micro`          | 10 / 12, 500        | Tags that must stay quiet, such as the role `Badge` (`size="xs"`). Not for anything the user must read to act |
 
-Dates and money are formatted only through `@/shared/utils/format`: `formatDate` ("1 Okt 2026"), `formatDateTime` ("1 Okt 2026 14:30") and `formatMoney` ("Rp 20,000", "Rp 20,000.50": always the Rp symbol, decimals only when present). Never format them per module.
+Dates and money are formatted only through `@/shared/utils/format`: `formatDate` ("1 Okt 2026"), `formatDateTime` ("1 Okt 2026 14:30") and `formatMoney` ("Rp 20,000", "Rp 20,000.50": always the Rp symbol, decimals only when present). Chart axes and labels that cannot fit the full amount use `formatShortDate` ("1 Okt") and `formatCompactMoney` ("Rp 1.3M"), with the full amount in the text or screen-reader label beside them. Never format them per module.
+
+**Charts** are module-local until a second module needs them. The reference is `LaporanPenjualan/components/charts/`: `react-native-svg`, one hue (`primary` line or column, `lavender` for soft fills and secondary columns), a monotone curve (`smooth-path.ts`) that never overshoots below zero, hairline `border` gridlines with `label` muted tick text drawn as `AppText` over the drawing, a soft fade-in (`Reveal`) and bars that grow in, both off with reduce motion. Status is a `Badge`, never the chart color.
 
 `tone`: `ink` (default), `muted`, `primary`, `on-primary`, `success`, `danger`, `warning`.
 
