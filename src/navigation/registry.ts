@@ -1,5 +1,6 @@
 import { laporanPenjualanManifest } from '@/modules/LaporanPenjualan';
 import { marketingActivityManifest } from '@/modules/MarketingActivity';
+import { marketingPromoManifest } from '@/modules/MarketingPromo';
 import { priceApprovalManifest } from '@/modules/PriceApproval';
 import { purchaseRequestManifest } from '@/modules/PurchaseRequest';
 import { stockPenjualanManifest } from '@/modules/StockPenjualan';
@@ -14,4 +15,5 @@ export const moduleManifests: ModuleManifest[] = [
   stockPenjualanManifest,
   laporanPenjualanManifest,
   marketingActivityManifest,
+  marketingPromoManifest,
 ];

@@ -222,6 +222,17 @@ The Marketing Activity module (`src/modules/MarketingActivity`) talks to `v1/mar
 - **Export** (`GET /export` of the chosen group) is an `.xlsx` of a date range of at most 31 days (both ends counted), without drafts. Nothing is cached.
 - **Inbox and push:** the backend notifies the Combination group under its own slug, `marketing-activity-combination`. The manifest `id` is `marketing-activity` and lists the other slug in `aliases`; the shell finds the module through `findManifest` (`navigation/find-manifest.ts`), and `detailRoute(docUuid, slug)` opens the document in the right group.
 
+## Marketing Promo
+
+The Marketing Promo module (`src/modules/MarketingPromo`) talks to `v1/marketing-promo` and `v1/marketing-promo-combination` (`digitalapproval/Modules/MarketingPromo`). It is built like Marketing Activity: both groups share one controller and one response shape, so it is one tile with a Single | Combination switch. It follows `PriceApproval` (list, detail with `allowed_actions`, action, export) and has no create: the API cannot create or edit a promo, and the post-approval stages (recap, realization, additional cost, revision cost) stay on the web. Manifest `permission` is any of the promo roles (`create_marketing_promo_marcom`, `create_marketing_promo_marcom_asusnb`, the six `approve_marketing_promo_as_*` and `read_only_all_marketing_promo`), the same either-or the backend middleware uses.
+
+- **The group is part of the document's identity.** Same as Marketing Activity: `kind` (`single` | `combination`) is in every query key (`marketingPromoKeys.list(kind, filters, search)` and `detail(kind, uuid)`), in the api paths and in the detail route (`/marketing-promo/<uuid>?kind=combination`).
+- **Actions:** `approve`, `reject`, `revise`, `cancel`. The server decides which the user may do; `cancel` is for the applicant. `reject`, `revise` and `cancel` need a reason of 6 to 191 characters, checked on the device first (`useConfirm`'s `reason.minLength`). Every action is JSON.
+- **Filters** (status, `tier`, date range on the promo date) sit in `store/marketingPromoFilterStore.ts` with the chosen `kind`, and reset on sign-out. Search goes to the server. The `mkt_code` filter is not offered: the API has no brand lookup.
+- **Files:** the PDF (`/{uuid}/pdf`), the mechanism document (`/{uuid}/mechanism/download`) and each attachment (`/{uuid}/attachments/{id}/download`) go through `apiClient.getFile` and `shareFile`; the absolute URLs the server sends are not used.
+- **Export** (`GET /export` of the chosen group) is an `.xlsx` of a date range of at most 31 days (both ends counted), without drafts. Nothing is cached.
+- **Inbox and push:** the backend notifies the Combination group under `marketing-promo-combination`. The manifest `id` is `marketing-promo` and lists the other slug in `aliases`; `detailRoute(docUuid, slug)` opens the document in the right group.
+
 ## Laporan Penjualan
 
 The Laporan Penjualan module (`src/modules/LaporanPenjualan`) is read-only and talks to `v1/wall-report` (`digitalapproval/Modules/WallReport`). Manifest `permission` is any of `read_all_wallreport`, `read_wallreport_by_group`, `create_wallreport`, `read_wallreport_by_branch`, `read_wallreport_by_brand`, the same either-or the backend controller uses. The server scopes the figures (branch, brand) by permission; the app never filters them.
