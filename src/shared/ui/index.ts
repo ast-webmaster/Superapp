@@ -12,7 +12,14 @@ export {
   type BottomNavProps,
 } from './bottom-nav/bottom-nav';
 export { Button, type ButtonProps } from './button/button';
-export { Chip, ChipGroup, type ChipGroupProps, type ChipProps } from './chip/chip';
+export {
+  Chip,
+  ChipGroup,
+  MultiChipGroup,
+  type ChipGroupProps,
+  type ChipProps,
+  type MultiChipGroupProps,
+} from './chip/chip';
 export { ConfirmProvider, useConfirm, type ConfirmOptions } from './dialog/dialog';
 export { EmptyState, type EmptyStateProps } from './empty-state/empty-state';
 export { Fab, type FabProps } from './fab/fab';
@@ -29,6 +36,7 @@ export { ListGroup, ListRow, type ListGroupProps, type ListRowProps } from './li
 export { Loading, type LoadingProps } from './loading/loading';
 export { Logo, type LogoProps } from './logo/logo';
 export { ModuleCard, type ModuleCardProps } from './module-card/module-card';
+export { ProgressBar, type ProgressBarProps } from './progress-bar/progress-bar';
 export { Screen, type ScreenProps } from './screen/screen';
 export {
   Skeleton,

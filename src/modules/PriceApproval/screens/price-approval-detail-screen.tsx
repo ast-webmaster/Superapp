@@ -5,9 +5,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { toAppError } from '@/core/errors';
 import { colors, sizes } from '@/shared/theme/tokens';
 import { Alert, Button, EmptyState, Screen } from '@/shared/ui';
+import { formatSyncedAt } from '@/shared/utils/format';
 
 import { ApprovalActions } from '../components/approval-actions';
-import { formatSyncedAt } from '../components/format';
 import {
   HistorySection,
   InfoSection,
@@ -15,7 +15,7 @@ import {
   SummarySection,
 } from '../components/price-approval-detail-sections';
 import { PriceApprovalDetailSkeleton } from '../components/price-approval-skeletons';
-import { useIsOnline } from '../hooks/use-is-online';
+import { useIsOnline } from '@/shared/hooks/use-is-online';
 import { usePriceApproval } from '../hooks/use-price-approval';
 
 export function PriceApprovalDetailScreen() {

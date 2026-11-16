@@ -24,6 +24,23 @@ describe('resolveNotificationRoute', () => {
     );
   });
 
+  it('matches a module by an alias and tells its route which slug came in', () => {
+    const aliased: ModuleManifest = {
+      id: 'marketing-activity',
+      title: 'Marketing Activity',
+      description: '',
+      route: '/marketing-activity',
+      aliases: ['marketing-activity-combination'],
+      detailRoute: (uuid, slug) => `/marketing-activity/${uuid}?slug=${slug}`,
+    };
+
+    expect(
+      resolveNotificationRoute({ module: 'marketing-activity-combination', doc_uuid: 'abc' }, [
+        aliased,
+      ]),
+    ).toBe('/marketing-activity/abc?slug=marketing-activity-combination');
+  });
+
   it('returns null for an unknown module', () => {
     expect(resolveNotificationRoute({ module: 'nope', doc_uuid: 'abc' }, manifests)).toBeNull();
   });

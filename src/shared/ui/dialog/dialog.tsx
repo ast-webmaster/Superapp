@@ -16,7 +16,14 @@ export interface ConfirmOptions {
   /** Colors the icon and the confirm action red, for an action that is hard to undo. */
   destructive?: boolean;
   /** Adds a text field to the dialog. `onConfirm` receives the trimmed text. */
-  reason?: { label: string; required: boolean; maxLength?: number; requiredMessage?: string };
+  reason?: {
+    label: string;
+    required: boolean;
+    maxLength?: number;
+    /** Fewest characters (after trimming) a required reason may have. Defaults to 1. */
+    minLength?: number;
+    requiredMessage?: string;
+  };
   onConfirm: (reason: string) => void;
 }
 
@@ -72,7 +79,7 @@ function ConfirmDialog({
 
   const submit = () => {
     const trimmed = text.trim();
-    if (reason?.required && !trimmed) {
+    if (reason?.required && trimmed.length < (reason.minLength ?? 1)) {
       setError(reason.requiredMessage ?? 'Enter a reason.');
       return;
     }

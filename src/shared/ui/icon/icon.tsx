@@ -25,7 +25,9 @@ import LayoutGrid from 'lucide-react-native/icons/layout-grid';
 import List from 'lucide-react-native/icons/list';
 import Lock from 'lucide-react-native/icons/lock';
 import LogOut from 'lucide-react-native/icons/log-out';
+import History from 'lucide-react-native/icons/history';
 import Map from 'lucide-react-native/icons/map';
+import Mic from 'lucide-react-native/icons/mic';
 import MessageSquare from 'lucide-react-native/icons/message-square';
 import Minus from 'lucide-react-native/icons/minus';
 import Pencil from 'lucide-react-native/icons/pencil';
@@ -77,6 +79,8 @@ const icons = {
   'eye-off': EyeOff,
   sliders: SlidersHorizontal,
   list: List,
+  history: History,
+  mic: Mic,
   map: Map,
   cart: ShoppingCart,
   star: Star,

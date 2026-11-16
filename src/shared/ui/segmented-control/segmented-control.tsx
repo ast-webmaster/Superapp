@@ -25,6 +25,8 @@ export interface SegmentedControlProps {
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
+  /** Stretch to the width of the parent and share it between the options equally. */
+  fullWidth?: boolean;
   className?: string;
 }
 
@@ -34,6 +36,7 @@ export function SegmentedControl({
   value,
   defaultValue,
   onChange,
+  fullWidth = false,
   className,
 }: SegmentedControlProps) {
   const [current, setCurrent] = useControllableState({
@@ -54,7 +57,11 @@ export function SegmentedControl({
     <View
       role="radiogroup"
       aria-label={label}
-      className={clsx('flex-row self-start rounded-pill bg-surface px-0.5', className)}>
+      className={clsx(
+        'flex-row rounded-pill bg-surface px-0.5',
+        fullWidth ? 'self-stretch' : 'self-start',
+        className,
+      )}>
       {options.map((option, index) => {
         const selected = option.value === current;
 
@@ -66,7 +73,11 @@ export function SegmentedControl({
             aria-label={option.label}
             aria-checked={selected}
             onPress={() => setCurrent(option.value)}
-            className={clsx('min-h-touch justify-center rounded-pill py-0.5', focusRing)}
+            className={clsx(
+              'min-h-touch justify-center rounded-pill py-0.5',
+              fullWidth && 'flex-1',
+              focusRing,
+            )}
             {...itemProps(index)}>
             <View
               className={clsx(

@@ -7,6 +7,7 @@ import { View } from 'react-native';
 import { toAppError } from '@/core/errors';
 import { useCan } from '@/core/permissions';
 import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
+import { formatSyncedAt } from '@/shared/utils/format';
 import {
   Alert,
   Button,
@@ -21,14 +22,13 @@ import {
 
 import { ExportSheet } from '../components/export-sheet';
 import { FilterSheet } from '../components/filter-sheet';
-import { formatSyncedAt } from '../components/format';
 import { priceApprovalRoutes } from '../navigation/routes';
 import { PriceApprovalCard } from '../components/price-approval-card';
 import { PriceApprovalListSkeleton } from '../components/price-approval-skeletons';
 import { StatusFilter } from '../components/status-filter';
-import { useIsOnline } from '../hooks/use-is-online';
+import { useIsOnline } from '@/shared/hooks/use-is-online';
 import { usePriceApprovals } from '../hooks/use-price-approvals';
-import { hasSheetFilters, usePriceApprovalFilter } from '../store/priceApprovalFilterStore';
+import { countSheetFilters, usePriceApprovalFilter } from '../store/priceApprovalFilterStore';
 
 export function PriceApprovalListScreen() {
   const [query, setQuery] = useState('');
@@ -93,7 +93,7 @@ export function PriceApprovalListScreen() {
             placeholder: 'Search requests',
           }}
           onFilter={() => setFiltering(true)}
-          filterActive={hasSheetFilters(filters)}>
+          filterCount={countSheetFilters(filters)}>
           <StatusFilter value={filters.status} onChange={(status) => setFilters({ status })} />
         </ListToolbar>
       </View>

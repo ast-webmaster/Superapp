@@ -10,8 +10,16 @@ export type ModuleManifest = {
    * its path, but the typed route tree belongs to the app shell, which casts when linking.
    */
   route: string;
-  /** Path of one document, so an inbox item can open it. `docUuid` is the document's uuid. */
-  detailRoute?: (docUuid: string) => string;
+  /**
+   * Other module slugs the backend notifies with for this module, besides `id`. Inbox items
+   * and push notifications carrying one of them open this module.
+   */
+  aliases?: readonly string[];
+  /**
+   * Path of one document, so an inbox item can open it. `docUuid` is the document's uuid and
+   * `slug` the module slug the notification carried (`id` or one of `aliases`).
+   */
+  detailRoute?: (docUuid: string, slug: string) => string;
   /** Tile icon on the home screen. Falls back to a generic box. */
   icon?: IconName;
   /** Hidden from users who hold none of these permissions. Omit when everyone may open it. */

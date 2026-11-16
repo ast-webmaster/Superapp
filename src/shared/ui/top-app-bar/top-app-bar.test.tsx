@@ -19,15 +19,55 @@ describe('TopAppBar', () => {
     expect(onBack).toHaveBeenCalledTimes(1);
   });
 
-  it('runs the action on the right', async () => {
-    const onPress = jest.fn();
+  it('runs each action on the right', async () => {
+    const onFilter = jest.fn();
+    const onSearch = jest.fn();
     await render(
-      <TopAppBar title="Requests" action={{ icon: 'sliders', label: 'Filter', onPress }} />,
+      <TopAppBar
+        title="Requests"
+        actions={[
+          { icon: 'sliders', label: 'Filter', onPress: onFilter },
+          { icon: 'search', label: 'Search', onPress: onSearch },
+        ]}
+      />,
     );
 
     await userEvent.press(screen.getByRole('button', { name: 'Filter' }));
+    await userEvent.press(screen.getByRole('button', { name: 'Search' }));
 
-    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onFilter).toHaveBeenCalledTimes(1);
+    expect(onSearch).toHaveBeenCalledTimes(1);
+  });
+
+  it('draws every action at the header size: a 40 circle in a 48 press area', async () => {
+    await render(
+      <TopAppBar
+        title="AI chat"
+        actions={[{ icon: 'history', label: 'History', onPress: jest.fn() }]}
+      />,
+    );
+
+    const button = screen.getByRole('button', { name: 'History' });
+    // Classes, not styles: NativeWind does not turn them into styles under jest.
+    const circle = button.children[0] as { props: { className?: string } };
+    expect(button.props.className).toContain('size-touch');
+    expect(circle.props.className).toContain('size-10');
+  });
+
+  it('shows an action as on or unavailable', async () => {
+    const onPress = jest.fn();
+    await render(
+      <TopAppBar
+        title="Requests"
+        actions={[
+          { icon: 'search', label: 'Search', onPress, active: true },
+          { icon: 'pencil', label: 'New', onPress, disabled: true },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole('button', { name: 'Search' })).toBeSelected();
+    expect(screen.getByRole('button', { name: 'New' })).toBeDisabled();
   });
 });
 
