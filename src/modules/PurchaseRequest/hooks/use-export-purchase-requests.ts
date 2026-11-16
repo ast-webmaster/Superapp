@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { shareFile } from '@/core/files';
+import { useProgressToast } from '@/shared/hooks/use-progress-toast';
 
 import { purchaseRequestApi } from '../api/purchaseRequestApi';
 
@@ -16,9 +17,13 @@ export interface ExportRange {
  * send. Nothing is cached or kept: an export is a one-off action, not data the screens show.
  */
 export function useExportPurchaseRequests() {
+  const withProgress = useProgressToast();
+
   return useMutation({
     mutationFn: async ({ dateFrom, dateTo }: ExportRange) => {
-      const bytes = await purchaseRequestApi.exportXlsx(dateFrom, dateTo);
+      const bytes = await withProgress('Preparing the Excel file', () =>
+        purchaseRequestApi.exportXlsx(dateFrom, dateTo),
+      );
       await shareFile(bytes, `purchase-request_${dateFrom}_${dateTo}.xlsx`, XLSX_MIME);
     },
   });

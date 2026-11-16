@@ -212,6 +212,16 @@ The Purchase Request module (`src/modules/PurchaseRequest`) talks to `v1/purchas
 - **Export** (`GET /export`) is an `.xlsx` of a date range of at most 31 days (the sheet allows 30), without drafts. Nothing is cached.
 - **Inbox and push:** the module id is `purchase-request`, the slug the backend notifies with, and `detailRoute` opens the request.
 
+## Marketing Activity
+
+The Marketing Activity module (`src/modules/MarketingActivity`) talks to `v1/marketing-activity` and `v1/marketing-activity-combination` (`digitalapproval/Modules/MarketingActivity`, MAF). Both groups share one controller and one response shape, so the module is one tile with a Single | Combination switch. It follows `PriceApproval` (list, detail with `allowed_actions`, action, export) and has no create: the API cannot create or edit an activity, fill in realization, or download attachments yet, so those stay on the web. Manifest `permission` is any of `read_marketing_activity_marcom`, `read_marketing_activity_marcom_asusnb`, `read_only_all_marketing_activity`, the same either-or the backend middleware uses.
+
+- **The group is part of the document's identity.** A uuid is only valid in its own group; the other group answers 404. So `kind` (`single` | `combination`) is in every query key (`marketingActivityKeys.list(kind, filters, search)` and `detail(kind, uuid)`), in the api paths and in the detail route (`/marketing-activity/<uuid>?kind=combination`; Single has no query).
+- **Actions:** `approve`, `reject`, `revise`, `finish_realization`, `complete`, `claim`. The server decides which the user may do. `reject` and `revise` need a reason of 6 to 191 characters, checked on the device first (`useConfirm`'s `reason.minLength`). `claim` carries a proof file (docx, doc, xls, xlsx, csv, jpg, png, pdf, zip, msg, up to 10 MB) picked in `ClaimSheet`, and goes as multipart; every other action is JSON. A refused claim file (422) closes the sheet, so the user picks the file again.
+- **Filters** (status, `last_updated_tier`, date range) sit in `store/marketingActivityFilterStore.ts` with the chosen `kind`, and reset on sign-out. Search goes to the server. The `mkt_code` filter is not offered: the API has no brand lookup.
+- **Export** (`GET /export` of the chosen group) is an `.xlsx` of a date range of at most 31 days (both ends counted), without drafts. Nothing is cached.
+- **Inbox and push:** the backend notifies the Combination group under its own slug, `marketing-activity-combination`. The manifest `id` is `marketing-activity` and lists the other slug in `aliases`; the shell finds the module through `findManifest` (`navigation/find-manifest.ts`), and `detailRoute(docUuid, slug)` opens the document in the right group.
+
 ## Laporan Penjualan
 
 The Laporan Penjualan module (`src/modules/LaporanPenjualan`) is read-only and talks to `v1/wall-report` (`digitalapproval/Modules/WallReport`). Manifest `permission` is any of `read_all_wallreport`, `read_wallreport_by_group`, `create_wallreport`, `read_wallreport_by_branch`, `read_wallreport_by_brand`, the same either-or the backend controller uses. The server scopes the figures (branch, brand) by permission; the app never filters them.

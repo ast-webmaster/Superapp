@@ -80,7 +80,7 @@ export function StockPenjualanListScreen() {
             placeholder: 'Search product code or name',
           }}
           onFilter={() => setFiltering(true)}
-          filterActive={filters.categoryCode !== null}
+          filterCount={filters.categoryCode !== null ? 1 : 0}
           actions={[
             {
               key: 'export',

@@ -52,6 +52,17 @@ describe('ListToolbar', () => {
     expect(onFilter).toHaveBeenCalledTimes(1);
   });
 
+  it('shows how many filter categories are applied, and nothing when none are', async () => {
+    const { rerender } = await render(<ListToolbar onFilter={jest.fn()} filterCount={0} />);
+    expect(screen.queryByText('0', { includeHiddenElements: true })).toBeNull();
+
+    await rerender(<ListToolbar onFilter={jest.fn()} filterCount={3} />);
+
+    // The badge is hidden from screen readers: the button's own label carries the count.
+    expect(screen.getByText('3', { includeHiddenElements: true })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Filter, 3 applied' })).toBeOnTheScreen();
+  });
+
   it('shows the search field while open, and Cancel clears it and closes it', async () => {
     const onChange = jest.fn();
     await render(<Searchable onChange={onChange} />);
@@ -68,7 +79,9 @@ describe('ListToolbar', () => {
   it('lists the actions in a menu and runs the one chosen', async () => {
     const onExport = jest.fn();
     await render(
-      <ListToolbar actions={[{ key: 'export', label: 'Export', icon: 'download', onPress: onExport }]} />,
+      <ListToolbar
+        actions={[{ key: 'export', label: 'Export', icon: 'download', onPress: onExport }]}
+      />,
     );
 
     await userEvent.press(screen.getByRole('button', { name: 'Actions' }));

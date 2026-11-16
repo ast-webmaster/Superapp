@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import { AppError } from '@/core/errors';
 import { shareFile } from '@/core/files';
+import { useProgressToast } from '@/shared/hooks/use-progress-toast';
 import { useToast } from '@/shared/ui';
 
 import { aiChatApi } from '../api/aiChatApi';
@@ -30,6 +31,7 @@ export function exportFilename(date: Date) {
 /** Downloads a chat attachment or an answer's Excel export and hands it to the user. */
 export function useChatFile() {
   const toast = useToast();
+  const withProgress = useProgressToast();
   const onError = (error: unknown) =>
     toast.show({
       tone: 'danger',
@@ -40,7 +42,7 @@ export function useChatFile() {
   const attachment = useMutation({
     mutationFn: async (file: ChatAttachment) =>
       shareFile(
-        await aiChatApi.attachment(file.uuid),
+        await withProgress(`Downloading ${file.name}`, () => aiChatApi.attachment(file.uuid)),
         file.name,
         MIME[file.extension.toLowerCase()] ?? 'application/octet-stream',
       ),
@@ -49,7 +51,11 @@ export function useChatFile() {
 
   const exported = useMutation({
     mutationFn: async (messageUuid: string) =>
-      shareFile(await aiChatApi.exportMessage(messageUuid), exportFilename(new Date()), XLSX_MIME),
+      shareFile(
+        await withProgress('Preparing the Excel file', () => aiChatApi.exportMessage(messageUuid)),
+        exportFilename(new Date()),
+        XLSX_MIME,
+      ),
     onError,
   });
 

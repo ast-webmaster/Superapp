@@ -28,7 +28,7 @@ import { PriceApprovalListSkeleton } from '../components/price-approval-skeleton
 import { StatusFilter } from '../components/status-filter';
 import { useIsOnline } from '@/shared/hooks/use-is-online';
 import { usePriceApprovals } from '../hooks/use-price-approvals';
-import { hasSheetFilters, usePriceApprovalFilter } from '../store/priceApprovalFilterStore';
+import { countSheetFilters, usePriceApprovalFilter } from '../store/priceApprovalFilterStore';
 
 export function PriceApprovalListScreen() {
   const [query, setQuery] = useState('');
@@ -93,7 +93,7 @@ export function PriceApprovalListScreen() {
             placeholder: 'Search requests',
           }}
           onFilter={() => setFiltering(true)}
-          filterActive={hasSheetFilters(filters)}>
+          filterCount={countSheetFilters(filters)}>
           <StatusFilter value={filters.status} onChange={(status) => setFilters({ status })} />
         </ListToolbar>
       </View>

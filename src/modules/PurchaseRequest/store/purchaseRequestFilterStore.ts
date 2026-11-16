@@ -11,8 +11,11 @@ export const DEFAULT_FILTERS: PurchaseRequestListFilters = {
 };
 
 /** True when the filter sheet (not the status chips on the toolbar) narrows the list. */
-export function hasSheetFilters(filters: PurchaseRequestListFilters) {
-  return filters.dateFrom !== null || (filters.status !== 'AWAITING' && filters.status !== 'all');
+export function countSheetFilters(filters: PurchaseRequestListFilters) {
+  return [
+    filters.dateFrom !== null || filters.dateTo !== null,
+    filters.status !== 'AWAITING' && filters.status !== 'all',
+  ].filter(Boolean).length;
 }
 
 // Client-only UI state for this module. Server data lives in React Query, not here.

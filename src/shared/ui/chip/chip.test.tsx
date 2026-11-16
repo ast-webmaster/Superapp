@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, userEvent } from '@testing-library/react-native';
 
-import { Chip, ChipGroup } from './chip';
+import { Chip, ChipGroup, MultiChipGroup } from './chip';
 
 const options = [
   { value: 'all', label: 'All apps' },
@@ -22,6 +22,50 @@ describe('Chip', () => {
 
     expect(chip('Sales')).toBeSelected();
     expect(chip('Sales')).toHaveProp('aria-pressed', true);
+  });
+});
+
+describe('MultiChipGroup', () => {
+  it('toggles values on and off', async () => {
+    const onChange = jest.fn();
+    await render(
+      <MultiChipGroup label="Filter" options={options} values={['recent']} onChange={onChange} />,
+    );
+
+    await userEvent.press(chip('Favorites'));
+    expect(onChange).toHaveBeenLastCalledWith(['recent', 'favorites']);
+
+    await userEvent.press(chip('Recent'));
+    expect(onChange).toHaveBeenLastCalledWith([]);
+  });
+
+  it('shows the all chip while nothing is selected and clears on press', async () => {
+    const onChange = jest.fn();
+    const { rerender } = await render(
+      <MultiChipGroup
+        label="Filter"
+        options={options}
+        values={[]}
+        allLabel="Any"
+        onChange={onChange}
+      />,
+    );
+    expect(chip('Any')).toBeSelected();
+
+    await rerender(
+      <MultiChipGroup
+        label="Filter"
+        options={options}
+        values={['recent']}
+        allLabel="Any"
+        onChange={onChange}
+      />,
+    );
+    expect(chip('Any')).not.toBeSelected();
+    expect(chip('Recent')).toBeSelected();
+
+    await userEvent.press(chip('Any'));
+    expect(onChange).toHaveBeenLastCalledWith([]);
   });
 });
 

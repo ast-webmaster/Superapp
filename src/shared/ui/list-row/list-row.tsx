@@ -30,7 +30,10 @@ export function ListRow({
   const content = (
     <>
       {icon ? <Icon name={icon} color={destructive ? 'danger' : 'ink'} /> : null}
-      <AppText variant="body-strong" tone={destructive ? 'danger' : 'ink'} className="min-w-0 flex-1">
+      <AppText
+        variant="body-strong"
+        tone={destructive ? 'danger' : 'ink'}
+        className="min-w-0 flex-1">
         {label}
       </AppText>
       {value ? <AppText tone="muted">{value}</AppText> : null}

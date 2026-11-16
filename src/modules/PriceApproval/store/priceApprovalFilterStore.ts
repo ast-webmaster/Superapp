@@ -13,15 +13,14 @@ export const DEFAULT_FILTERS: PriceApprovalListFilters = {
   maxTotal: null,
 };
 
-/** True when the filter sheet (not the status chips on the toolbar) narrows the list. */
-export function hasSheetFilters(filters: PriceApprovalListFilters) {
-  return (
-    filters.tier !== 'all' ||
-    filters.dateFrom !== null ||
-    filters.minTotal !== null ||
-    filters.maxTotal !== null ||
-    (filters.status !== 'AWAITING' && filters.status !== 'all')
-  );
+/** How many filter categories the sheet (not the status chips on the toolbar) narrows the list by. */
+export function countSheetFilters(filters: PriceApprovalListFilters) {
+  return [
+    filters.tier !== 'all',
+    filters.dateFrom !== null || filters.dateTo !== null,
+    filters.minTotal !== null || filters.maxTotal !== null,
+    filters.status !== 'AWAITING' && filters.status !== 'all',
+  ].filter(Boolean).length;
 }
 
 // Client-only UI state for this module. Server data lives in React Query, not here.

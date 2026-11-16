@@ -42,7 +42,12 @@ export function Avatar({ name, uri, size = 'md', className }: AvatarProps) {
       )}>
       {uri ? (
         // expo-image takes `style`, not `className`.
-        <Image accessible={false} contentFit="cover" source={{ uri }} style={StyleSheet.absoluteFill} />
+        <Image
+          accessible={false}
+          contentFit="cover"
+          source={{ uri }}
+          style={StyleSheet.absoluteFill}
+        />
       ) : (
         <AppText variant={style.text} tone="primary" importantForAccessibility="no">
           {initials(name)}

@@ -28,6 +28,15 @@ describe('SegmentedControl', () => {
     expect(screen.getByRole('radio', { name: 'Grid' })).toBeChecked();
   });
 
+  it('still selects an option when it fills the width', async () => {
+    await render(<SegmentedControl label="View as" options={options} fullWidth />);
+
+    await userEvent.press(screen.getByRole('radio', { name: 'Grid' }));
+
+    expect(screen.getByRole('radio', { name: 'Grid' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: 'List' })).not.toBeChecked();
+  });
+
   it('moves with the arrow keys', async () => {
     await render(<SegmentedControl label="View as" options={options} />);
 

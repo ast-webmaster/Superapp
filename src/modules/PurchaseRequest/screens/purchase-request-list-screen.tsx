@@ -28,7 +28,7 @@ import { PurchaseRequestListSkeleton } from '../components/purchase-request-skel
 import { StatusFilter } from '../components/status-filter';
 import { usePurchaseRequests } from '../hooks/use-purchase-requests';
 import { purchaseRequestRoutes } from '../navigation/routes';
-import { hasSheetFilters, usePurchaseRequestFilter } from '../store/purchaseRequestFilterStore';
+import { countSheetFilters, usePurchaseRequestFilter } from '../store/purchaseRequestFilterStore';
 
 export function PurchaseRequestListScreen() {
   const [query, setQuery] = useState('');
@@ -93,7 +93,7 @@ export function PurchaseRequestListScreen() {
             placeholder: 'Search requests',
           }}
           onFilter={() => setFiltering(true)}
-          filterActive={hasSheetFilters(filters)}>
+          filterCount={countSheetFilters(filters)}>
           <StatusFilter value={filters.status} onChange={(status) => setFilters({ status })} />
         </ListToolbar>
       </View>

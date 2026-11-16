@@ -80,6 +80,36 @@ describe('ToastProvider', () => {
     expect(screen.queryByText('First')).not.toBeOnTheScreen();
   });
 
+  it('keeps a progress toast, with a bar, until the work ends', async () => {
+    let done = () => {};
+    function StartProgress() {
+      const { progress } = useToast();
+      return (
+        <Pressable
+          role="button"
+          aria-label="Start"
+          onPress={() => {
+            done = progress('Downloading a.pdf');
+          }}
+        />
+      );
+    }
+    await render(
+      <ToastProvider>
+        <StartProgress />
+      </ToastProvider>,
+    );
+    await fireEvent.press(screen.getByRole('button', { name: 'Start' }));
+
+    await advance(60000);
+    expect(screen.getByText('Downloading a.pdf')).toBeOnTheScreen();
+    expect(screen.getByRole('progressbar', { name: 'Downloading a.pdf' })).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Dismiss' })).not.toBeOnTheScreen();
+
+    await act(async () => done());
+    expect(screen.queryByText('Downloading a.pdf')).not.toBeOnTheScreen();
+  });
+
   it('can be dismissed by hand', async () => {
     await setup();
     await show('First');

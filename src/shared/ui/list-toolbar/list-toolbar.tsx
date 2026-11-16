@@ -2,6 +2,7 @@ import { clsx } from 'clsx';
 import { useState, type ReactNode } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
+import { Badge } from '../badge/badge';
 import { focusRing } from '../focus';
 import { IconButton } from '../icon-button/icon-button';
 import type { IconName } from '../icon/icon';
@@ -31,8 +32,8 @@ export interface ListToolbarProps {
   };
   /** Shows the filter button. The module opens its own `Sheet` from this. */
   onFilter?: () => void;
-  /** Lit while any filter is applied. */
-  filterActive?: boolean;
+  /** How many filter categories are applied. The button lights up and shows the number above 0. */
+  filterCount?: number;
   /** Shows the actions button, a menu of things like export and import. Leave empty to hide it. */
   actions?: readonly ListToolbarAction[];
   /** A module's own quick filters, such as a status `ChipGroup`. They scroll beside the buttons. */
@@ -48,7 +49,7 @@ export interface ListToolbarProps {
 export function ListToolbar({
   search,
   onFilter,
-  filterActive = false,
+  filterCount = 0,
   actions = [],
   children,
   className,
@@ -87,7 +88,28 @@ export function ListToolbar({
   return (
     <View className={clsx('flex-row items-center gap-3 pl-5', className)}>
       {onFilter ? (
-        <IconButton icon="sliders" label="Filter" active={filterActive} onPress={onFilter} />
+        <View>
+          <IconButton
+            icon="sliders"
+            label={filterCount > 0 ? `Filter, ${filterCount} applied` : 'Filter'}
+            active={filterCount > 0}
+            onPress={onFilter}
+          />
+          {filterCount > 0 ? (
+            <View
+              aria-hidden
+              importantForAccessibility="no-hide-descendants"
+              pointerEvents="none"
+              className="absolute -right-1 -top-1">
+              <Badge
+                label={String(filterCount)}
+                tone="info"
+                size="sm"
+                className="border border-surface"
+              />
+            </View>
+          ) : null}
+        </View>
       ) : null}
       {actions.length > 0 ? (
         <>
