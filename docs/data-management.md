@@ -80,7 +80,7 @@ export const priceApprovalKeys = {
 | ----------------------------- | -------------------------------------------------------- |
 | Screen opens                  | A stale query refetches on mount                         |
 | App returns to the foreground | `focusManager`, wired to `AppState` (native)             |
-| Connection returns            | `onlineManager`, wired to `expo-network` (native)        |
+| Connection returns            | `onlineManager`, wired to `expo-network` (native), and re-read on foreground |
 | After an action               | The mutation's `onSuccess` / `onError`                   |
 | User pulls down               | `refetch()` from `RefreshControl` / `FlatList onRefresh` |
 

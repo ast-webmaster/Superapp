@@ -33,12 +33,23 @@ if (Platform.OS !== 'web') {
     return () => subscription.remove();
   });
 
+  // A network event can be missed or arrive stale (a Wi-Fi handover, the app in the background),
+  // leaving the app "offline" with queries paused until it restarts. Read the real state again
+  // at start and whenever the app returns to the foreground.
   onlineManager.setEventListener((setOnline) => {
-    void Network.getNetworkStateAsync().then((state) => setOnline(state.isConnected !== false));
-    const subscription = Network.addNetworkStateListener((state) =>
+    const sync = () =>
+      void Network.getNetworkStateAsync().then((state) => setOnline(state.isConnected !== false));
+    sync();
+    const network = Network.addNetworkStateListener((state) =>
       setOnline(state.isConnected !== false),
     );
-    return () => subscription.remove();
+    const appState = AppState.addEventListener('change', (state) => {
+      if (state === 'active') sync();
+    });
+    return () => {
+      network.remove();
+      appState.remove();
+    };
   });
 }
 
