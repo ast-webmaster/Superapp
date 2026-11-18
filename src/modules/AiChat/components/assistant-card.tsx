@@ -6,6 +6,10 @@ import type { ChatMessage } from '../types';
 import { ReplyText } from './reply/reply-text';
 import { AssistantShell } from './assistant-shell';
 import { ClarifyChoices } from './clarify-choices';
+import { SuggestionChips } from './suggestion-chips';
+
+/** The AI could not answer: its suggestions are examples of what it can. */
+const CANNOT_ANSWER = ['denied', 'unanswerable'];
 
 export interface AssistantCardProps {
   message: ChatMessage;
@@ -13,15 +17,17 @@ export interface AssistantCardProps {
   onExport?: () => void;
   exporting?: boolean;
   /**
-   * Sends the option picked for a clarifying question. Pass it only while the question is still
-   * open (the newest message, nothing in flight); without it the options are not shown.
+   * Sends the option picked for a clarifying question, or the tapped follow-up suggestion. Pass it
+   * only while the answer is still open (the newest message, nothing in flight); without it
+   * neither the options nor the suggestions are shown.
    */
   onChoose?: (option: string) => void;
 }
 
 /**
- * One AI answer. The server's suggestions are shown only as the options of a clarifying
- * question (`meta.type` is `clarify`); follow-up suggestions are deliberately left out.
+ * One AI answer. The server's suggestions are shown by `meta.type`: the options of a clarifying
+ * question (`clarify`, radio rows inside the card), or chips under the card with follow-up
+ * questions, or examples of what can be asked when the AI could not answer.
  */
 export function AssistantCard({
   message,
@@ -30,7 +36,10 @@ export function AssistantCard({
   onChoose,
 }: AssistantCardProps) {
   const assumptions = message.meta?.assumptions ?? [];
-  const options = message.meta?.type === 'clarify' ? (message.meta.suggestions ?? []) : [];
+  const type = message.meta?.type;
+  const suggestions = message.meta?.suggestions ?? [];
+  const options = type === 'clarify' ? suggestions : [];
+  const chips = type === 'clarify' ? [] : suggestions;
   return (
     <View className="gap-2">
       <AssistantShell>
@@ -48,6 +57,15 @@ export function AssistantCard({
           <ClarifyChoices options={options} onChoose={onChoose} />
         ) : null}
       </AssistantShell>
+      {onChoose && chips.length > 0 ? (
+        <View className="ml-8">
+          <SuggestionChips
+            label={type && CANNOT_ANSWER.includes(type) ? 'Try asking:' : 'Follow-up questions'}
+            suggestions={chips}
+            onChoose={onChoose}
+          />
+        </View>
+      ) : null}
       {message.meta?.exportable && onExport ? (
         <Button
           variant="soft"

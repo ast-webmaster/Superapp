@@ -15,7 +15,10 @@ export type ChatAttachment = {
 
 export type ChatMeta = {
   type: string | null;
-  /** Shown only when `type` is `clarify`, where they are the options to pick from. */
+  /**
+   * Complete questions that can be sent as they are. By `type`: `clarify` the options to pick
+   * from; `denied` or `unanswerable` examples of what can be asked; otherwise follow-ups.
+   */
   suggestions: string[];
   assumptions: string[];
   /** The answer's data can be downloaded as Excel. */

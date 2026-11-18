@@ -183,6 +183,76 @@ describe('clarifying question', () => {
   });
 });
 
+describe('follow-up suggestions', () => {
+  const answered: ChatHistory = {
+    ...history,
+    messages: [
+      history.messages[0]!,
+      {
+        ...history.messages[1]!,
+        meta: {
+          type: 'data_query',
+          suggestions: ['Bandingkan dengan bulan lalu'],
+          assumptions: [],
+          exportable: false,
+        },
+      },
+    ],
+  };
+
+  it('are offered on the newest answer', async () => {
+    useAiChatStore.setState({ activeSessionUuid: 's-1' });
+    api.messages.mockResolvedValue(answered);
+    await renderScreen();
+
+    expect(
+      await screen.findByRole('button', { name: 'Bandingkan dengan bulan lalu' }),
+    ).toBeOnTheScreen();
+  });
+
+  it('are dropped once a message follows the answer', async () => {
+    useAiChatStore.setState({ activeSessionUuid: 's-1' });
+    api.messages.mockResolvedValue({
+      ...answered,
+      messages: [
+        ...answered.messages,
+        { ...history.messages[0]!, uuid: 'm-3', message: 'Bandingkan dengan bulan lalu' },
+      ],
+    });
+    await renderScreen();
+
+    expect(await screen.findByText('Stok ada', { exact: false })).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Bandingkan dengan bulan lalu' })).toBeNull();
+  });
+
+  it('are dropped while a message is on its way', async () => {
+    useAiChatStore.setState({
+      activeSessionUuid: 's-1',
+      pending: { sessionUuid: 's-1', message: 'Lagi?', files: [], traceId: 't-1' },
+    });
+    api.messages.mockResolvedValue(answered);
+    await renderScreen();
+
+    expect(await screen.findByText('Lagi?')).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Bandingkan dengan bulan lalu' })).toBeNull();
+  });
+
+  it('are not offered on an older answer', async () => {
+    useAiChatStore.setState({ activeSessionUuid: 's-1' });
+    api.messages.mockResolvedValue({
+      ...answered,
+      messages: [
+        ...answered.messages,
+        { ...history.messages[1]!, uuid: 'm-3', message: 'Jawaban lain' },
+      ],
+    });
+    await renderScreen();
+
+    expect(await screen.findByText('Jawaban lain')).toBeOnTheScreen();
+    expect(screen.queryByRole('button', { name: 'Bandingkan dengan bulan lalu' })).toBeNull();
+  });
+});
+
 describe('keyboard', () => {
   const os = Platform.OS;
   afterEach(() => {

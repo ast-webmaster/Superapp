@@ -27,15 +27,10 @@ it('has no download when the answer is not exportable', async () => {
   expect(screen.queryByText('Download Excel')).toBeNull();
 });
 
-it('shows assumptions and never the suggestions', async () => {
-  await render(
-    <AssistantCard
-      message={reply({ suggestions: ['Shift 30 min'], assumptions: ['Periode bulan ini'] })}
-    />,
-  );
+it('shows assumptions', async () => {
+  await render(<AssistantCard message={reply({ assumptions: ['Periode bulan ini'] })} />);
 
   expect(screen.getByText('Periode bulan ini')).toBeTruthy();
-  expect(screen.queryByText('Shift 30 min')).toBeNull();
 });
 
 const clarify = reply({
@@ -64,16 +59,55 @@ it('hides the options once the question is no longer open', async () => {
   expect(screen.queryByRole('radio')).toBeNull();
 });
 
-it('shows no options for answers that are not a clarifying question', async () => {
-  await render(
-    <AssistantCard
-      message={reply({ type: 'data_query', suggestions: ['Bandingkan dengan bulan lalu'] })}
-      onChoose={jest.fn()}
-    />,
-  );
+describe('suggestion chips', () => {
+  const followUp = reply({
+    type: 'data_query',
+    suggestions: ['Bandingkan dengan bulan lalu', 'Tampilkan per cabang'],
+  });
 
-  expect(screen.queryByRole('radio')).toBeNull();
-  expect(screen.queryByText('Bandingkan dengan bulan lalu')).toBeNull();
+  it('offers follow-up questions and sends the tapped one as it is', async () => {
+    const onChoose = jest.fn();
+    await render(<AssistantCard message={followUp} onChoose={onChoose} />);
+
+    expect(screen.getByText('Follow-up questions')).toBeTruthy();
+    await fireEvent.press(screen.getByRole('button', { name: 'Tampilkan per cabang' }));
+
+    expect(onChoose).toHaveBeenCalledWith('Tampilkan per cabang');
+    expect(screen.queryByRole('radio')).toBeNull();
+  });
+
+  it('shows examples of what can be asked when the AI could not answer', async () => {
+    await render(
+      <AssistantCard
+        message={reply({ type: 'unanswerable', suggestions: ['Stok per gudang'] })}
+        onChoose={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByText('Try asking:')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Stok per gudang' })).toBeTruthy();
+  });
+
+  it('shows no chips once the answer is no longer open', async () => {
+    await render(<AssistantCard message={followUp} />);
+
+    expect(screen.queryByText('Bandingkan dengan bulan lalu')).toBeNull();
+    expect(screen.queryByText('Follow-up questions')).toBeNull();
+  });
+
+  it('shows no chips when there are no suggestions', async () => {
+    await render(<AssistantCard message={reply({ type: 'data_query' })} onChoose={jest.fn()} />);
+
+    expect(screen.queryByText('Follow-up questions')).toBeNull();
+  });
+
+  it('keeps the radio options of a clarifying question, not chips', async () => {
+    await render(<AssistantCard message={clarify} onChoose={jest.fn()} />);
+
+    expect(screen.getAllByRole('radio')).toHaveLength(2);
+    expect(screen.queryByRole('button', { name: 'Penjualan Juni' })).toBeNull();
+    expect(screen.queryByText('Follow-up questions')).toBeNull();
+  });
 });
 
 it('renders the reply text', async () => {
