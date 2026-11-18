@@ -28,11 +28,12 @@ export function Chip({
   className,
   ...props
 }: ChipProps) {
+  // A filled chip keeps a transparent border, so it is the same size as an unselected one.
   const selectedStyle = outlined
     ? 'border border-primary bg-surface'
     : icon
-      ? 'bg-primary'
-      : 'bg-lavender';
+      ? 'border border-transparent bg-primary'
+      : 'border border-transparent bg-lavender';
   const selectedTone = icon && !outlined ? 'on-primary' : 'primary';
   const leadingIcon = icon ?? (outlined && selected ? 'check' : undefined);
 
@@ -43,11 +44,7 @@ export function Chip({
       accessibilityState={{ selected }}
       className={clsx(
         'min-h-touch flex-row items-center justify-center gap-2 rounded-pill px-5',
-        selected
-          ? selectedStyle
-          : outlined
-            ? 'border border-border bg-surface active:bg-border'
-            : 'bg-surface active:bg-border',
+        selected ? selectedStyle : 'border border-border bg-surface active:bg-border',
         focusRing,
         className,
       )}
