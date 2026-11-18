@@ -15,7 +15,7 @@ export type ChatAttachment = {
 
 export type ChatMeta = {
   type: string | null;
-  /** Sent by the server, not shown in the app. */
+  /** Shown only when `type` is `clarify`, where they are the options to pick from. */
   suggestions: string[];
   assumptions: string[];
   /** The answer's data can be downloaded as Excel. */

@@ -133,6 +133,16 @@ export function AiChatScreen() {
     followNow();
   };
 
+  // A clarifying question stays answerable only while it is the newest message and nothing is in flight.
+  const messages = history.data?.messages ?? [];
+  const openQuestionUuid = shownPending ? null : (messages[messages.length - 1]?.uuid ?? null);
+
+  const choose = (option: string) => {
+    voice.cancel();
+    void send(option, []);
+    followNow();
+  };
+
   const restore = () => {
     if (!failedDraft) return;
     setText(failedDraft.message);
@@ -160,6 +170,7 @@ export function AiChatScreen() {
             message={message}
             onExport={() => files.exportMessage(message.uuid)}
             exporting={files.exportingUuid === message.uuid}
+            onChoose={message.uuid === openQuestionUuid ? choose : undefined}
           />
         );
       }

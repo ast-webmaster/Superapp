@@ -179,7 +179,7 @@ The backend sends a push (Expo Push API, payload data `{ module, doc_uuid }`) ri
 
 ## AI chat
 
-The AI chat tab (`src/modules/AiChat`) talks to `v1/ai-chat` (`digitalapproval/Modules/AiChat`). It is reached from its own tab, so it has no manifest; `navigation/ai-chat-screen.tsx` shows it when `useCan()` passes `AI_CHAT_PERMISSIONS` (the backend's `AiChatConversationService::READ_PERMISSIONS`) and the coming-soon page otherwise.
+The AI chat tab (`src/modules/AiChat`) talks to `v1/ai-chat` (`digitalapproval/Modules/AiChat`). It is reached from its own tab, so it has no manifest; `navigation/ai-chat-screen.tsx` shows it when `useCan()` passes `AI_CHAT_PERMISSIONS` (the backend's `AiChatConversationService::READ_PERMISSIONS`) and the coming-soon page otherwise. The server's `meta.suggestions` are shown only when `meta.type` is `clarify`: the AI could not tell what was meant, so the newest answer lists them as radio options (`ClarifyChoices`) and sending one posts it as an ordinary message. Follow-up suggestions on other answers are not shown.
 
 - **Keys:** `aiChatKeys.sessions()` (loaded only while the history sheet is open) and `aiChatKeys.messages(uuid)`.
 - **Active chat and the message on its way are module state** (`store/aiChatStore.ts`, reset on sign-out), not the query cache. The in-flight message is shown as a bubble from that state and disappears once the server's history has it. It lives outside the screen so a send survives the screen going away.

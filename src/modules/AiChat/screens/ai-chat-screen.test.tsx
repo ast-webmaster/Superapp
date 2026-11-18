@@ -126,6 +126,63 @@ it('waits for the chat to load before a message can be sent', async () => {
   expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
 });
 
+describe('clarifying question', () => {
+  const asked: ChatHistory = {
+    ...history,
+    messages: [
+      ...history.messages,
+      {
+        uuid: 'm-3',
+        role: 'assistant',
+        message: 'Maksudnya yang mana?',
+        meta: {
+          type: 'clarify',
+          suggestions: ['Penjualan tertinggi per cabang', 'Pencapaian target tertinggi'],
+          assumptions: [],
+          exportable: false,
+        },
+        created_at: '2026-11-14T07:01:00Z',
+        attachments: [],
+      },
+    ],
+  };
+
+  it('offers the options while it is the newest message', async () => {
+    useAiChatStore.setState({ activeSessionUuid: 's-1' });
+    api.messages.mockResolvedValue(asked);
+    await renderScreen();
+
+    expect(await screen.findAllByRole('radio')).toHaveLength(2);
+  });
+
+  it('drops the options once it has been answered', async () => {
+    useAiChatStore.setState({ activeSessionUuid: 's-1' });
+    api.messages.mockResolvedValue({
+      ...asked,
+      messages: [
+        ...asked.messages,
+        { ...history.messages[0]!, uuid: 'm-4', message: 'Penjualan tertinggi per cabang' },
+      ],
+    });
+    await renderScreen();
+
+    expect(await screen.findByText('Maksudnya yang mana?')).toBeOnTheScreen();
+    expect(screen.queryByRole('radio')).toBeNull();
+  });
+
+  it('drops the options while a message is on its way', async () => {
+    useAiChatStore.setState({
+      activeSessionUuid: 's-1',
+      pending: { sessionUuid: 's-1', message: 'Lagi?', files: [], traceId: 't-1' },
+    });
+    api.messages.mockResolvedValue(asked);
+    await renderScreen();
+
+    expect(await screen.findByText('Maksudnya yang mana?')).toBeOnTheScreen();
+    expect(screen.queryByRole('radio')).toBeNull();
+  });
+});
+
 describe('keyboard', () => {
   const os = Platform.OS;
   afterEach(() => {
