@@ -3,6 +3,7 @@ import { marketingActivityManifest } from '@/modules/MarketingActivity';
 import { marketingPromoManifest } from '@/modules/MarketingPromo';
 import { priceApprovalManifest } from '@/modules/PriceApproval';
 import { purchaseRequestManifest } from '@/modules/PurchaseRequest';
+import { registerCustomerManifest } from '@/modules/RegisterCustomer';
 import { stockPenjualanManifest } from '@/modules/StockPenjualan';
 import type { ModuleManifest } from '@/shared/types/module';
 
@@ -12,6 +13,7 @@ import type { ModuleManifest } from '@/shared/types/module';
 export const moduleManifests: ModuleManifest[] = [
   priceApprovalManifest,
   purchaseRequestManifest,
+  registerCustomerManifest,
   stockPenjualanManifest,
   laporanPenjualanManifest,
   marketingActivityManifest,
