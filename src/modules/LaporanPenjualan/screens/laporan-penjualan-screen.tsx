@@ -19,6 +19,7 @@ import { formatSyncedAt } from '@/shared/utils/format';
 
 import { BarList } from '../components/charts/bar-list';
 import { GroupCard } from '../components/group-card';
+import { filterGroups, GroupFilter, NO_GROUP_FILTERS } from '../components/group-filter';
 import { currentPeriod, expectedShare } from '../components/level';
 import { PeriodSheet } from '../components/period-sheet';
 import { ReportSkeleton } from '../components/report-skeletons';
@@ -44,11 +45,13 @@ function SectionTitle({ title, note }: { title: string; note?: string }) {
 }
 
 function Report({ summary }: { summary: ReportSummary }) {
+  const [filters, setFilters] = useState(NO_GROUP_FILTERS);
   // Every group counts the same sales days (the server takes them from the whole period).
   const daysDone = summary.groups[0]?.weekly.reduce((sum, week) => sum + week.dates.length, 0) ?? 0;
   const expected = (dayLeft: number) =>
     expectedShare(summary.period, daysDone, dayLeft, currentPeriod());
   const showsExpected = summary.groups.some((group) => expected(group.target.day_left) !== null);
+  const groups = filterGroups(summary.groups, filters);
 
   return (
     <>
@@ -57,9 +60,20 @@ function Report({ summary }: { summary: ReportSummary }) {
         title="Groups"
         note={showsExpected ? 'The dark tick marks where sales should be by now.' : undefined}
       />
-      {summary.groups.map((group) => (
+      <GroupFilter groups={summary.groups} value={filters} onChange={setFilters} />
+      {groups.map((group) => (
         <GroupCard key={group.group} group={group} expected={expected(group.target.day_left)} />
       ))}
+      {groups.length === 0 ? (
+        <EmptyState
+          icon="chart"
+          title="No groups match"
+          description="Try another status or group.">
+          <Button variant="soft" onPress={() => setFilters(NO_GROUP_FILTERS)}>
+            Clear filters
+          </Button>
+        </EmptyState>
+      ) : null}
       {summary.branches.length > 0 ? (
         <>
           <SectionTitle title="Sales by branch" note="All groups together, largest first." />

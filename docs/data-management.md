@@ -240,6 +240,7 @@ The Laporan Penjualan module (`src/modules/LaporanPenjualan`) is read-only and t
 - **Period:** `store/laporanPenjualanPeriodStore.ts` holds the chosen `YYYY-MM`, or `null` for the server's default; it resets on sign-out. The period sheet loads `GET /periods` only while open. The summary keeps the previous period on screen while the next loads (`keepPreviousData`).
 - **Keys:** `laporanPenjualanKeys.summary(period)`, `group(period, name)` and `periods()`.
 - **Group detail** (`/laporan-penjualan/[group]`, name URI-encoded) reads `GET /group?group=&period=`; a group outside the period or the user's scope answers 404, shown as "Group not found".
+- **Group filter** (status and group chips under "Groups") is `useState` in the report and narrows only the group cards, on the device: `GET /summary` answers every group at once, so nothing is paged. The total and the branch chart keep showing the whole period.
 - **Levels** (`below`, `near`, `achieved`) come from the server and show as a `Badge`; an unknown level shows as sent.
 - **Expected by now** (the tick on each meter) is a device-side guide only: days with sales over those days plus `day_left`, 100% for a past month, none for a future one.
 - **Export** (`GET /export` for Excel, `GET /pdf` for PDF) is the brand table of the period on screen, through `apiClient.getFile` and `shareFile`. Nothing is cached.
