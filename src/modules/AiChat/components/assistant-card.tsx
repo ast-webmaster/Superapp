@@ -69,6 +69,7 @@ export function AssistantCard({
       {message.meta?.exportable && onExport ? (
         <Button
           variant="soft"
+          size="sm"
           iconLeft="download"
           loading={exporting}
           onPress={onExport}

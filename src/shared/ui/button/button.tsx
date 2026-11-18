@@ -29,9 +29,16 @@ const variants = {
   { container: string; tone: AppTextProps['tone']; icon: ColorToken }
 >;
 
+const sizes = {
+  md: { container: 'min-h-control gap-3 px-6', icon: 24 },
+  sm: { container: 'min-h-10 gap-2 px-4', icon: 16 },
+} as const;
+
 export interface ButtonProps extends Omit<PressableProps, 'children' | 'disabled' | 'style'> {
   children: string;
   variant?: keyof typeof variants;
+  /** `sm` is a 40 high button for secondary actions inside content; it keeps a 48 press area. */
+  size?: keyof typeof sizes;
   iconLeft?: IconName;
   iconRight?: IconName;
   block?: boolean;
@@ -44,6 +51,7 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'disabled
 export function Button({
   children,
   variant = 'primary',
+  size = 'md',
   iconLeft,
   iconRight,
   block = false,
@@ -53,6 +61,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const { container, tone, icon } = variants[variant];
+  const { container: sizeContainer, icon: iconSize } = sizes[size];
   const inactive = disabled || loading;
 
   return (
@@ -61,8 +70,10 @@ export function Button({
       aria-busy={loading}
       aria-disabled={inactive}
       disabled={inactive}
+      hitSlop={size === 'sm' ? 4 : undefined}
       className={clsx(
-        'min-h-control flex-row items-center justify-center gap-3 rounded-pill px-6',
+        'flex-row items-center justify-center rounded-pill',
+        sizeContainer,
         block ? 'self-stretch' : 'self-start',
         container,
         disabled && 'opacity-50',
@@ -70,12 +81,12 @@ export function Button({
         className,
       )}
       {...props}>
-      {loading ? <ActivityIndicator color={colors[icon]} /> : null}
-      {!loading && iconLeft ? <Icon name={iconLeft} color={icon} /> : null}
+      {loading ? <ActivityIndicator size={iconSize} color={colors[icon]} /> : null}
+      {!loading && iconLeft ? <Icon name={iconLeft} size={iconSize} color={icon} /> : null}
       <AppText variant="button" tone={tone}>
         {children}
       </AppText>
-      {!loading && iconRight ? <Icon name={iconRight} color={icon} /> : null}
+      {!loading && iconRight ? <Icon name={iconRight} size={iconSize} color={icon} /> : null}
     </Pressable>
   );
 }
