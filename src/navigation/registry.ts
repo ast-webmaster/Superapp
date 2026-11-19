@@ -1,7 +1,10 @@
 import { laporanPenjualanManifest } from '@/modules/LaporanPenjualan';
 import { marketingActivityManifest } from '@/modules/MarketingActivity';
 import { marketingPromoManifest } from '@/modules/MarketingPromo';
+import { meetingRoomManifest } from '@/modules/MeetingRoom';
+import { onDutyRequestManifest } from '@/modules/OnDutyRequest';
 import { priceApprovalManifest } from '@/modules/PriceApproval';
+import { productBorrowingManifest } from '@/modules/ProductBorrowing';
 import { purchaseRequestManifest } from '@/modules/PurchaseRequest';
 import { registerCustomerManifest } from '@/modules/RegisterCustomer';
 import { stockPenjualanManifest } from '@/modules/StockPenjualan';
@@ -13,9 +16,12 @@ import type { ModuleManifest } from '@/shared/types/module';
 export const moduleManifests: ModuleManifest[] = [
   priceApprovalManifest,
   purchaseRequestManifest,
+  onDutyRequestManifest,
   registerCustomerManifest,
   stockPenjualanManifest,
   laporanPenjualanManifest,
   marketingActivityManifest,
   marketingPromoManifest,
+  meetingRoomManifest,
+  productBorrowingManifest,
 ];
