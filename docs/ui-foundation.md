@@ -133,11 +133,13 @@ Motion explains a change; it never decorates. Only `transform` and `opacity` ani
 | `Sheet` closes                  | 200ms, `Easing.bezier(0.23, 1, 0.32, 1)`. Closing is faster than opening                                            |
 | `Sheet` dragged                 | The header follows the finger. On release a flick decides, not distance: it closes when `translateY + project(velocityY)` passes 40% of the sheet height. The finger's velocity goes into the spring. Close: `{ duration: 300, dampingRatio: 1, overshootClamping: true }`. Snap back: `{ duration: 300, dampingRatio: 0.8 }`. Pulling up past the top rubber-bands |
 | Press on `Button`, `Chip`, `InfoCard` | `pressScale` (`src/shared/ui/press.ts`): scale 0.97 in 120ms, `ease-press` (`cubic-bezier(0.23, 1, 0.32, 1)`). A full-width list row only changes its background |
-| Screen push                     | The platform transition, untouched, with its interactive swipe back. Tabs do not animate                            |
+| Screen push and pop             | Morph: the old screen fades into the new one (`morphScreenOptions` from `@/shared/motion/morph`, 250ms, spread into every stack's `screenOptions`). The edge swipe back stays, on the whole screen. A card or tile that opens a screen uses `MorphLink`: on iOS 18+ it zooms into the screen, elsewhere it is a plain push with the fade |
+| Tab picked                      | The tab content fades up from 98% in 150ms (`withTabMorph` in `src/navigation/tab-morph.tsx`, applied in the tab route files). The tab bar does not move. Reduce motion: fade only |
+| `ConfirmDialog` and `UpdateBanner` appear | The surface grows from 96% and fades in, 220ms (`useMorphEntering`). The dialog's scrim fades with the `Modal`. Reduce motion: fade only |
 
 **`Sheet`.** `visible` stays the only source of truth: the close button, the scrim, the Android back button and a drag all call `onClose`, and the parent hides the sheet. The `Modal` stays mounted until the closing animation ends. One shared value, `translateY`, drives the sheet, the scrim opacity and the drag. The sheet opens once it has been measured (`onLayout`), so it travels exactly its own height. Only the header (grabber and title row) carries the pan gesture, so the content keeps scrolling. A `Modal` is its own native window on Android, so the sheet has its own `GestureHandlerRootView`. Callers do not change.
 
-**Reduce motion** (`useReducedMotion` from `@/shared/hooks/use-reduced-motion`): the sheet and its scrim only fade (150ms), with no translation and no spring. The grabber and the drag are off; the close button remains. `AppStack` pushes fade instead of sliding.
+**Reduce motion** (`useReducedMotion` from `@/shared/hooks/use-reduced-motion`): the sheet and its scrim only fade (150ms), with no translation and no spring. The grabber and the drag are off; the close button remains. Morph screens already only fade, so they need no variant.
 
 **Haptics** (`expo-haptics`), at most one per action and always beside a visual change, never the only feedback:
 

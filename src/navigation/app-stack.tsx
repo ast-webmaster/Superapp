@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router/stack';
 
 import { useCan } from '@/core/permissions';
-import { useReducedMotion } from '@/shared/hooks/use-reduced-motion';
+import { morphScreenOptions } from '@/shared/motion/morph';
 import { colors } from '@/shared/theme/tokens';
 import { renderTopAppBar } from '@/shared/ui';
 
@@ -28,17 +28,14 @@ export function AppStack() {
 
 function AppStackScreens() {
   const can = useCan();
-  const reducedMotion = useReducedMotion();
 
   return (
     <Stack
       screenOptions={{
+        ...morphScreenOptions,
         headerShown: false,
         // The ground behind every screen, so a module never flashes white mid-transition.
         contentStyle: { backgroundColor: colors.ground },
-        // Pushes keep the platform's own transition, and its interactive swipe back. With
-        // reduce motion on, they fade instead of sliding.
-        animation: reducedMotion ? 'fade' : undefined,
       }}>
       <Stack.Screen name="profile" options={{ ...stackHeader, title: 'Profile' }} />
       <Stack.Screen name="edit-profile" options={{ ...stackHeader, title: 'Edit profile' }} />

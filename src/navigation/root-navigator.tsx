@@ -2,6 +2,7 @@ import { Stack } from 'expo-router/stack';
 import { useEffect } from 'react';
 
 import { useAuthStatus, useAuthStore } from '@/core/auth';
+import { morphScreenOptions } from '@/shared/motion/morph';
 
 import { usePushNotifications } from './use-push-notifications';
 import { useSessionRefresh } from './use-session-refresh';
@@ -27,7 +28,7 @@ export function RootNavigator() {
   const signedIn = status === 'authenticated';
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ ...morphScreenOptions, headerShown: false }}>
       {/* Everything behind sign-in lives under the (app) route group, so adding a
           module never requires touching this file. */}
       <Stack.Protected guard={signedIn}>

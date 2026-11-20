@@ -1,9 +1,9 @@
 import { clsx } from 'clsx';
-import { router, type Href } from 'expo-router';
+import { type Href } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
 import type { ColorToken } from '@/shared/theme/tokens';
-import { AppText, Badge, focusRing } from '@/shared/ui';
+import { AppText, Badge, focusRing, MorphLink } from '@/shared/ui';
 import { formatMoney } from '@/shared/utils/format';
 
 import { laporanPenjualanRoutes } from '../navigation/routes';
@@ -39,38 +39,39 @@ export function GroupCard({ group }: GroupCardProps) {
   const values = groupSeries(group);
 
   return (
-    <Pressable
-      role="button"
-      aria-label={`Open ${group.group}, ${formatPercent(achievement.percentage)} of target`}
-      onPress={() => router.push(laporanPenjualanRoutes.group(group.group) as Href)}
-      className={clsx(
-        'gap-3 rounded-xl border border-border bg-surface p-4 active:bg-surface-gray',
-        focusRing,
-      )}>
-      <View className="flex-row items-start justify-between gap-3">
-        <AppText variant="caption-strong" numberOfLines={2} className="min-w-0 shrink">
-          {group.group}
-        </AppText>
-        <Badge size="sm" {...levelBadge(achievement.level)} />
-      </View>
-      <View className="flex-row items-center justify-between gap-3">
-        <View className="min-w-0 shrink gap-1">
-          <Amount value={achievement.value} variant="title" numberOfLines={1} />
-          {/* An accent fill with `ink` text on it: the gold fails contrast under light text. */}
-          <View className="min-h-6 self-start justify-center rounded-pill bg-accent px-2">
-            <AppText variant="label" tone="ink" numberOfLines={1}>
-              {`Target ${formatMoney(target.monthly_amount)}`}
-            </AppText>
+    <MorphLink href={laporanPenjualanRoutes.group(group.group) as Href}>
+      <Pressable
+        role="button"
+        aria-label={`Open ${group.group}, ${formatPercent(achievement.percentage)} of target`}
+        className={clsx(
+          'gap-3 rounded-xl border border-border bg-surface p-4 active:bg-surface-gray',
+          focusRing,
+        )}>
+        <View className="flex-row items-start justify-between gap-3">
+          <AppText variant="caption-strong" numberOfLines={2} className="min-w-0 shrink">
+            {group.group}
+          </AppText>
+          <Badge size="sm" {...levelBadge(achievement.level)} />
+        </View>
+        <View className="flex-row items-center justify-between gap-3">
+          <View className="min-w-0 shrink gap-1">
+            <Amount value={achievement.value} variant="title" numberOfLines={1} />
+            {/* An accent fill with `ink` text on it: the gold fails contrast under light text. */}
+            <View className="min-h-6 self-start justify-center rounded-pill bg-accent px-2">
+              <AppText variant="label" tone="ink" numberOfLines={1}>
+                {`Target ${formatMoney(target.monthly_amount)}`}
+              </AppText>
+            </View>
           </View>
+          <Sparkline values={values} color={color} width={88} height={40} />
         </View>
-        <Sparkline values={values} color={color} width={88} height={40} />
-      </View>
-      <View className="flex-row items-center gap-3">
-        <View className="min-w-0 flex-1">
-          <Meter percentage={achievement.percentage} fill={color} />
+        <View className="flex-row items-center gap-3">
+          <View className="min-w-0 flex-1">
+            <Meter percentage={achievement.percentage} fill={color} />
+          </View>
+          <DeltaChip percentage={achievement.percentage} level={achievement.level} />
         </View>
-        <DeltaChip percentage={achievement.percentage} level={achievement.level} />
-      </View>
-    </Pressable>
+      </Pressable>
+    </MorphLink>
   );
 }

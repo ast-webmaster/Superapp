@@ -4,7 +4,11 @@ import type { ModuleManifest } from '@/shared/types/module';
 
 import { AppGrid } from './app-tile';
 
-jest.mock('expo-router', () => ({ router: { push: jest.fn() } }));
+// `Link` needs a mounted router. Here it only hands its press to the tile.
+jest.mock('expo-router', () => {
+  const passthrough = ({ children }: { children: unknown }) => children;
+  return { Link: Object.assign(passthrough, { AppleZoom: passthrough }) };
+});
 
 const app = (id: string): ModuleManifest => ({
   id,

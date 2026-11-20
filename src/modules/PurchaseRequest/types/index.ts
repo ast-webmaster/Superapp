@@ -85,6 +85,8 @@ export type PurchaseRequestLine = {
   remarks: string | null;
   status_purchase: string | null;
   received_at: string | null;
+  /** The signed-in user may receive this item now. The server decides; the app only shows it. */
+  can_receive: boolean;
   /** File name of the supporting document, when the item has one. */
   document: string | null;
 };

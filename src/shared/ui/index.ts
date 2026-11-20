@@ -36,6 +36,7 @@ export {
 export { ListGroup, ListRow, type ListGroupProps, type ListRowProps } from './list-row/list-row';
 export { Loading, type LoadingProps } from './loading/loading';
 export { Logo, type LogoProps } from './logo/logo';
+export { MorphLink, type MorphLinkProps } from './morph-link/morph-link';
 export { ModuleCard, type ModuleCardProps } from './module-card/module-card';
 export { ProductImage, type ProductImageProps } from './product-image/product-image';
 export { ProgressBar, type ProgressBarProps } from './progress-bar/progress-bar';

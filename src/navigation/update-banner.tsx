@@ -1,8 +1,8 @@
 import { StyleSheet, View } from 'react-native';
-import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useReducedMotion } from '@/shared/hooks/use-reduced-motion';
+import { useMorphEntering } from '@/shared/motion/morph';
 import { sizes } from '@/shared/theme/tokens';
 import { AppText, Button, Icon } from '@/shared/ui';
 
@@ -15,7 +15,7 @@ import { useAppUpdate } from './use-app-update';
  */
 export function UpdateBanner() {
   const { ready, restarting, dismiss, restart } = useAppUpdate();
-  const reducedMotion = useReducedMotion();
+  const entering = useMorphEntering();
   const { top } = useSafeAreaInsets();
 
   if (!ready) return null;
@@ -24,7 +24,7 @@ export function UpdateBanner() {
     <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
       {/* `Animated.View` takes `style` only, so the card and its classes are a plain View inside. */}
       <Animated.View
-        entering={reducedMotion ? FadeIn.duration(150) : FadeInUp.duration(300)}
+        entering={entering}
         pointerEvents="box-none"
         style={{ position: 'absolute', left: 20, right: 20, top: top + sizes.toastOffset }}>
         <View className="mx-auto w-full max-w-phone gap-3 rounded-lg border border-border bg-surface p-4">

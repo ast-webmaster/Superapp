@@ -5,11 +5,20 @@ import { Skeleton, SkeletonGroup } from '@/shared/ui';
 /** Same shape as `CustomerCard`. */
 function CardSkeleton() {
   return (
-    <View className="gap-2 rounded-xl border border-border bg-surface p-4">
-      <Skeleton className="h-4 w-1/3" />
-      <Skeleton className="h-5 w-3/4" />
-      <Skeleton className="h-6 w-24 rounded-pill" />
-      <Skeleton className="h-4 w-1/2" />
+    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+      <View className="flex-row items-center justify-between gap-3">
+        <Skeleton className="h-4 w-1/3" />
+        <Skeleton className="h-6 w-16 rounded-pill" />
+      </View>
+      <View className="gap-1">
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-4 w-full" />
+      </View>
+      <View role="separator" className="h-px bg-border" />
+      <View className="flex-row gap-4">
+        <Skeleton className="h-9 flex-1" />
+        <Skeleton className="h-9 flex-1" />
+      </View>
     </View>
   );
 }

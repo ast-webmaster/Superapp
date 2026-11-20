@@ -1,6 +1,9 @@
 import { clsx } from 'clsx';
 import { createContext, use, useMemo, useState, type ReactNode } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, View } from 'react-native';
+import Animated from 'react-native-reanimated';
+
+import { useMorphEntering } from '@/shared/motion/morph';
 
 import { focusRing } from '../focus';
 import { Icon, type IconName } from '../icon/icon';
@@ -76,6 +79,7 @@ function ConfirmDialog({
 }: ConfirmDialogProps) {
   const [text, setText] = useState('');
   const [error, setError] = useState<string>();
+  const entering = useMorphEntering();
 
   const submit = () => {
     const trimmed = text.trim();
@@ -97,53 +101,56 @@ function ConfirmDialog({
           className="absolute inset-0"
           onPress={onCancel}
         />
-        <View
-          accessible
-          role="alertdialog"
-          aria-modal
-          aria-label={title}
-          className="w-full max-w-dialog overflow-hidden rounded-xl bg-surface border border-border">
-          <View className="items-center gap-3 px-6 pb-6 pt-8">
-            <View
-              className={clsx(
-                'size-14 items-center justify-center rounded-pill',
-                destructive ? 'bg-danger-bg' : 'bg-primary-soft',
-              )}>
-              <Icon name={icon} color={destructive ? 'danger' : 'primary'} />
-            </View>
-            <AppText variant="module-title" role="heading" className="text-center">
-              {title}
-            </AppText>
-            {message ? (
-              <AppText variant="caption" tone="muted" className="text-center">
-                {message}
+        {/* `Animated.View` takes `style` only, so it just centers; the card keeps its classes. */}
+        <Animated.View entering={entering} style={{ width: '100%', alignItems: 'center' }}>
+          <View
+            accessible
+            role="alertdialog"
+            aria-modal
+            aria-label={title}
+            className="w-full max-w-dialog overflow-hidden rounded-xl bg-surface border border-border">
+            <View className="items-center gap-3 px-6 pb-6 pt-8">
+              <View
+                className={clsx(
+                  'size-14 items-center justify-center rounded-pill',
+                  destructive ? 'bg-danger-bg' : 'bg-primary-soft',
+                )}>
+                <Icon name={icon} color={destructive ? 'danger' : 'primary'} />
+              </View>
+              <AppText variant="module-title" role="heading" className="text-center">
+                {title}
               </AppText>
-            ) : null}
-            {reason ? (
-              <TextField
-                label={reason.label}
-                value={text}
-                onChangeText={(value) => {
-                  setText(value);
-                  setError(undefined);
-                }}
-                error={error}
-                multiline
-                maxLength={reason.maxLength}
-                className="mt-2 self-stretch"
+              {message ? (
+                <AppText variant="caption" tone="muted" className="text-center">
+                  {message}
+                </AppText>
+              ) : null}
+              {reason ? (
+                <TextField
+                  label={reason.label}
+                  value={text}
+                  onChangeText={(value) => {
+                    setText(value);
+                    setError(undefined);
+                  }}
+                  error={error}
+                  multiline
+                  maxLength={reason.maxLength}
+                  className="mt-2 self-stretch"
+                />
+              ) : null}
+            </View>
+            <View className="flex-row bg-primary-soft">
+              <DialogAction label={cancelLabel} onPress={onCancel} />
+              <View aria-hidden className="w-px bg-highlight" />
+              <DialogAction
+                label={confirmLabel}
+                tone={destructive ? 'danger' : 'primary'}
+                onPress={submit}
               />
-            ) : null}
+            </View>
           </View>
-          <View className="flex-row bg-primary-soft">
-            <DialogAction label={cancelLabel} onPress={onCancel} />
-            <View aria-hidden className="w-px bg-highlight" />
-            <DialogAction
-              label={confirmLabel}
-              tone={destructive ? 'danger' : 'primary'}
-              onPress={submit}
-            />
-          </View>
-        </View>
+        </Animated.View>
       </KeyboardAvoidingView>
     </Modal>
   );

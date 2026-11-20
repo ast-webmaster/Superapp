@@ -1,36 +1,37 @@
 import { clsx } from 'clsx';
-import { router, type Href } from 'expo-router';
+import { type Href } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
-import { AppText, Badge, focusRing, Icon } from '@/shared/ui';
+import { AppText, Badge, focusRing, Icon, MorphLink } from '@/shared/ui';
 
 import { meetingRoomRoutes } from '../navigation/routes';
 import type { MeetingRoom, MeetingRoomBookingSummary } from '../types';
 
 function BookingRow({ booking }: { booking: MeetingRoomBookingSummary }) {
   return (
-    <Pressable
-      role="button"
-      aria-label={`${booking.title}, ${booking.start_time} to ${booking.end_time}, by ${booking.organizer_name}`}
-      onPress={() => router.push(meetingRoomRoutes.detail(booking.id) as Href)}
-      className={clsx(
-        'min-h-touch flex-row items-center gap-3 rounded-lg bg-surface-gray px-3 py-2 active:bg-border',
-        focusRing,
-      )}>
-      <View className="w-24">
-        <AppText variant="caption-strong">{`${booking.start_time} - ${booking.end_time}`}</AppText>
-      </View>
-      <View className="min-w-0 flex-1">
-        <AppText variant="caption-strong" numberOfLines={1}>
-          {booking.title}
-        </AppText>
-        <AppText variant="label" tone="muted" numberOfLines={1}>
-          {booking.organizer_name}
-        </AppText>
-      </View>
-      {booking.is_owner ? <Badge size="sm" tone="info" label="You" /> : null}
-      <Icon name="chevron-right" color="ink-muted" />
-    </Pressable>
+    <MorphLink href={meetingRoomRoutes.detail(booking.id) as Href}>
+      <Pressable
+        role="button"
+        aria-label={`${booking.title}, ${booking.start_time} to ${booking.end_time}, by ${booking.organizer_name}`}
+        className={clsx(
+          'min-h-touch flex-row items-center gap-3 rounded-lg bg-surface-gray px-3 py-2 active:bg-border',
+          focusRing,
+        )}>
+        <View className="w-24">
+          <AppText variant="caption-strong">{`${booking.start_time} - ${booking.end_time}`}</AppText>
+        </View>
+        <View className="min-w-0 flex-1">
+          <AppText variant="caption-strong" numberOfLines={1}>
+            {booking.title}
+          </AppText>
+          <AppText variant="label" tone="muted" numberOfLines={1}>
+            {booking.organizer_name}
+          </AppText>
+        </View>
+        {booking.is_owner ? <Badge size="sm" tone="info" label="You" /> : null}
+        <Icon name="chevron-right" color="ink-muted" />
+      </Pressable>
+    </MorphLink>
   );
 }
 

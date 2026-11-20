@@ -18,6 +18,7 @@ import {
   SummarySection,
 } from '../components/purchase-request-detail-sections';
 import { PurchaseRequestDetailSkeleton } from '../components/purchase-request-skeletons';
+import { ReceiveActions } from '../components/receive-actions';
 import { usePurchaseRequest } from '../hooks/use-purchase-request';
 import { usePurchaseRequestFile } from '../hooks/use-purchase-request-file';
 
@@ -68,6 +69,8 @@ export function PurchaseRequestDetailScreen() {
 
   const syncedAt = formatSyncedAt(dataUpdatedAt);
   const files = { onDownload: download, pending };
+  const hasActionBar =
+    data.allowed_actions.length > 0 || data.items.some((line) => line.can_receive);
 
   return (
     <Screen>
@@ -78,8 +81,7 @@ export function PurchaseRequestDetailScreen() {
         contentContainerStyle={{
           paddingTop: sizes.screenTopGap,
           // The decision bar owns the bottom inset when it is shown.
-          paddingBottom:
-            data.allowed_actions.length > 0 ? sizes.screenTopGap : bottom + sizes.screenTopGap,
+          paddingBottom: hasActionBar ? sizes.screenTopGap : bottom + sizes.screenTopGap,
         }}
         refreshControl={
           <RefreshControl
@@ -101,6 +103,7 @@ export function PurchaseRequestDetailScreen() {
         <HistorySection detail={data} />
       </ScrollView>
       <ApprovalActions detail={data} online={online} />
+      <ReceiveActions detail={data} online={online} />
     </Screen>
   );
 }

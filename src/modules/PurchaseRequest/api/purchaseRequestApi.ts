@@ -93,6 +93,14 @@ export const purchaseRequestApi = {
       })
     ).data,
 
+  /** Resolves with the request as the server now has it. 409: an item was already received. */
+  receive: async (uuid: string, itemIds: number[]) =>
+    (
+      await apiClient.post<PurchaseRequestDetail>(`/purchase-request/${uuid}/receive`, {
+        item_ids: itemIds,
+      })
+    ).data,
+
   attachment: (uuid: string, attachmentId: number) =>
     apiClient.getFile(`/purchase-request/${uuid}/attachments/${attachmentId}/download`, {
       timeoutMs: DOWNLOAD_TIMEOUT_MS,

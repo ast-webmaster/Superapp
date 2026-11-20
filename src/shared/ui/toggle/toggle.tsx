@@ -1,14 +1,14 @@
 import { clsx } from 'clsx';
 import { useEffect, useState, type ComponentRef, type Ref } from 'react';
-import { Animated, Platform, Pressable, View } from 'react-native';
+import { Animated, Easing, Platform, Pressable, View } from 'react-native';
 
 import { useControllableState } from '@/shared/hooks/use-controllable-state';
 import { useReducedMotion } from '@/shared/hooks/use-reduced-motion';
+import { MORPH_CURVE, MORPH_MS } from '@/shared/motion/morph';
 
 import { focusRing } from '../focus';
 
 const KNOB_TRAVEL = 24;
-const DURATION = 150;
 
 export interface ToggleProps {
   /** What the switch controls, for screen readers. */
@@ -37,7 +37,8 @@ export function Toggle({
   useEffect(() => {
     Animated.timing(offset, {
       toValue: on ? KNOB_TRAVEL : 0,
-      duration: reducedMotion ? 0 : DURATION,
+      duration: reducedMotion ? 0 : MORPH_MS.quick,
+      easing: Easing.bezier(...MORPH_CURVE),
       useNativeDriver: Platform.OS !== 'web',
     }).start();
   }, [offset, on, reducedMotion]);

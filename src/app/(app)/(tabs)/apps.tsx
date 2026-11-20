@@ -1,1 +1,4 @@
-export { AppsScreen as default } from '@/navigation/apps-screen';
+import { AppsScreen } from '@/navigation/apps-screen';
+import { withTabMorph } from '@/navigation/tab-morph';
+
+export default withTabMorph(AppsScreen);

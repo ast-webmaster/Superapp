@@ -5,12 +5,12 @@ import { Skeleton, SkeletonGroup } from '@/shared/ui';
 /** Same shape as `ProductCard`. */
 function CardSkeleton() {
   return (
-    <View className="flex-row items-center gap-4 rounded-xl border border-border bg-surface p-4">
-      <Skeleton className="size-16 rounded-lg" />
+    <View className="flex-row items-center gap-4 rounded-xl border border-border bg-surface p-3">
+      <Skeleton className="size-20 rounded-lg" />
       <View className="flex-1 gap-1">
         <Skeleton className="h-4 w-1/3" />
         <Skeleton className="h-5 w-3/4" />
-        <Skeleton className="h-6 w-16 rounded-pill" />
+        <Skeleton className="h-4 w-1/2" />
       </View>
     </View>
   );
