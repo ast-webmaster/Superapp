@@ -49,7 +49,7 @@ export function ClarifyChoices({ options, onChoose }: ClarifyChoicesProps) {
               className={clsx(
                 'min-h-touch flex-row items-center gap-3 rounded-lg border px-3 py-2',
                 selected
-                  ? 'border-primary bg-primary-soft'
+                  ? 'border-ink bg-ink'
                   : 'border-border bg-surface active:bg-surface-gray',
                 focusRing,
               )}>
@@ -57,14 +57,16 @@ export function ClarifyChoices({ options, onChoose }: ClarifyChoicesProps) {
                 aria-hidden
                 className={clsx(
                   'size-7 items-center justify-center rounded-sm',
-                  selected ? 'bg-primary' : 'bg-surface-gray',
+                  selected ? 'bg-surface' : 'bg-surface-gray',
                 )}>
-                <AppText variant="caption-strong" tone={selected ? 'on-primary' : 'muted'}>
+                <AppText variant="caption-strong" tone={selected ? 'ink' : 'muted'}>
                   {letter(index)}
                 </AppText>
               </View>
-              <AppText className="min-w-0 flex-1">{option}</AppText>
-              {selected ? <Icon name="check" color="primary" /> : null}
+              <AppText tone={selected ? 'on-primary' : 'ink'} className="min-w-0 flex-1">
+                {option}
+              </AppText>
+              {selected ? <Icon name="check" color="on-primary" /> : null}
             </Pressable>
           );
         })}

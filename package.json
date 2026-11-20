@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
     "@expo-google-fonts/rubik": "^0.4.2",
     "@expo/ui": "~58.0.27",
     "@expo/vector-icons": "^15.0.2",
+    "@hugeicons/core-free-icons": "^4.4.0",
+    "@hugeicons/react-native": "^1.0.17",
     "@tanstack/react-query": "^5.106.1",
     "clsx": "^2.1.1",
     "eslint-config-expo": "~58.0.4",
@@ -34,7 +37,6 @@
     "expo-symbols": "~58.0.4",
     "expo-system-ui": "~58.0.7",
     "expo-web-browser": "~58.0.7",
-    "lucide-react-native": "^1.70.0",
     "nativewind": "5.0.0-rc.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
@@ -82,12 +84,11 @@
     "preset": "jest-expo",
     "resolver": "react-native-reanimated/jest/resolver",
     "moduleNameMapper": {
-      "^lucide-react-native/icons/(.*)$": "<rootDir>/node_modules/lucide-react-native/dist/cjs/icons/$1.js",
       "^@/assets/(.*)$": "<rootDir>/assets/$1",
       "^@/(.*)$": "<rootDir>/src/$1"
     },
     "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|lucide-react-native|react-native-svg)"
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@hugeicons/.*|react-native-svg)"
     ],
     "setupFiles": [
       "<rootDir>/jest.setup.js"

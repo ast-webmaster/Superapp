@@ -2,7 +2,7 @@ import { clsx } from 'clsx';
 import { router, type Href } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
-import { AppText, Badge, Button, focusRing, Icon } from '@/shared/ui';
+import { AppText, Badge, focusRing, Icon } from '@/shared/ui';
 
 import { meetingRoomRoutes } from '../navigation/routes';
 import type { MeetingRoom, MeetingRoomBookingSummary } from '../types';
@@ -36,12 +36,10 @@ function BookingRow({ booking }: { booking: MeetingRoomBookingSummary }) {
 
 export interface RoomCardProps {
   room: MeetingRoom;
-  /** YYYY-MM-DD, the day the bookings belong to. */
-  date: string;
 }
 
-/** One room: what it offers, who has it today, and a way to book it. */
-export function RoomCard({ room, date }: RoomCardProps) {
+/** One room: what it offers and who has it on the chosen day. Booking is the screen's button. */
+export function RoomCard({ room }: RoomCardProps) {
   return (
     <View className="gap-4 rounded-xl border border-border bg-surface p-4">
       <View className="gap-2">
@@ -76,13 +74,6 @@ export function RoomCard({ room, date }: RoomCardProps) {
           No bookings on this day.
         </AppText>
       )}
-      <Button
-        variant="soft"
-        block
-        iconLeft="plus"
-        onPress={() => router.push(meetingRoomRoutes.create({ room: room.uuid, date }) as Href)}>
-        {`Book ${room.name}`}
-      </Button>
     </View>
   );
 }

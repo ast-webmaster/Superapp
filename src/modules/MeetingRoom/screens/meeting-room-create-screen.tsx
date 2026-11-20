@@ -12,7 +12,6 @@ import {
   Alert,
   AppText,
   Button,
-  ChipGroup,
   FieldLabel,
   focusRing,
   Icon,
@@ -24,6 +23,7 @@ import { formatDate } from '@/shared/utils/format';
 import { AttendeesField } from '../components/attendees-field';
 import { DaySheet } from '../components/day-sheet';
 import { QueryStatus } from '../components/query-status';
+import { RoomPicker } from '../components/room-picker';
 import { SlotPicker } from '../components/slot-picker';
 import {
   DESCRIPTION_MAX,
@@ -137,9 +137,8 @@ export function MeetingRoomCreateScreen() {
                   Loading rooms…
                 </AppText>
               ) : (
-                <ChipGroup
-                  label="Room"
-                  options={rooms.data.rooms.map((item) => ({ value: item.uuid, label: item.name }))}
+                <RoomPicker
+                  rooms={rooms.data.rooms}
                   value={draft.roomUuid ?? ''}
                   // Another room has other free times, so the chosen ones no longer apply.
                   onChange={(roomUuid) => change({ roomUuid, slots: [] })}

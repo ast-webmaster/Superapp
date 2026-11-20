@@ -11,6 +11,7 @@ export function MicButton({ voice }: { voice: VoiceInput }) {
     <IconButton
       icon="mic"
       size="sm"
+      tone="gray"
       active={voice.listening}
       disabled={!online && !voice.listening}
       label={voice.listening ? 'Stop listening' : 'Start voice input'}

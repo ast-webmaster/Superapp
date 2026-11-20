@@ -22,13 +22,13 @@ export interface ComposerProps {
   onSend: () => void;
   /** A message is on its way: the user may type the next one but not send it yet. */
   busy: boolean;
-  /** Shown in place of send while there is nothing to send, such as the mic. */
+  /** Voice input button, next to attach. */
   mic?: ReactNode;
-  /** Voice input is on: the mic stays in place as its stop button while words fill the field. */
+  /** Voice input is on: words fill the field, so send waits until the user stops. */
   listening?: boolean;
 }
 
-/** The floating message bar: attach, type, then send (or speak, while it is empty). */
+/** The floating message card: the field on top; attach and voice on the left, send on the right. */
 export function Composer({
   value,
   onChangeText,
@@ -42,7 +42,7 @@ export function Composer({
   const toast = useToast();
   const online = useIsOnline();
   const hasContent = value.trim().length > 0 || files.length > 0;
-  const canSend = hasContent && online && !busy;
+  const canSend = hasContent && online && !busy && !listening;
 
   const attach = async () => {
     try {
@@ -80,19 +80,23 @@ export function Composer({
           ))}
         </View>
       ) : null}
-      <View className="min-h-control flex-row items-end rounded-xl border border-border bg-surface px-1 shadow-card">
-        <IconButton icon="plus" size="sm" label="Attach file" onPress={attach} />
+      <View className="rounded-xl border border-border bg-surface pl-4 pr-1 pt-3">
         <TextInput
           value={value}
           onChangeText={onChangeText}
-          placeholder="Message AI…"
+          placeholder="Ask Lumina anything…"
           placeholderTextColor={colors['ink-muted']}
           aria-label="Message"
           multiline
           maxLength={MAX_LENGTH}
-          className="max-h-32 min-h-touch flex-1 self-center px-2 py-3 font-rubik text-body text-ink outline-none"
+          textAlignVertical="top"
+          className="max-h-32 min-h-14 pr-3 font-jakarta text-body text-ink outline-none"
         />
-        {(hasContent && !listening) || !mic ? (
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row">
+            <IconButton icon="plus" size="sm" tone="gray" label="Attach file" onPress={attach} />
+            {mic}
+          </View>
           <Pressable
             role="button"
             aria-label="Send"
@@ -110,13 +114,11 @@ export function Composer({
                   pressed ? 'bg-primary-pressed' : 'bg-primary',
                   !canSend && 'opacity-50',
                 )}>
-                <Icon name="arrow-up" size={20} color="on-primary" />
+                <Icon name="send" size={20} color="on-primary" />
               </View>
             )}
           </Pressable>
-        ) : (
-          mic
-        )}
+        </View>
       </View>
     </View>
   );

@@ -35,21 +35,27 @@ import { navItems } from '../components/sample-data';
 
 const palette = [
   {
-    name: 'Primary Indigo',
-    value: '#130066',
-    use: 'Primary actions, active states',
+    name: 'Primary Black',
+    value: '#111113',
+    use: 'Primary actions, the tab bar',
     swatch: 'bg-primary',
   },
   {
-    name: 'Lavender',
-    value: '#C9B4FF',
+    name: 'Highlight',
+    value: '#D9D9DD',
     use: 'Secondary actions, highlights',
-    swatch: 'bg-lavender',
+    swatch: 'bg-highlight',
   },
-  { name: 'Text Primary', value: '#0B0B1A', use: 'Headings, primary text', swatch: 'bg-ink' },
+  {
+    name: 'Accent Gold',
+    value: '#F3AF00',
+    use: 'The one highlight beside black. Fill only, with dark text on it',
+    swatch: 'bg-accent',
+  },
+  { name: 'Text Primary', value: '#111113', use: 'Headings, primary text', swatch: 'bg-ink' },
   {
     name: 'Text Secondary',
-    value: '#5B6270',
+    value: '#6A6A72',
     use: 'Body text, secondary text',
     swatch: 'bg-ink-muted',
   },
@@ -61,16 +67,30 @@ const palette = [
   },
   {
     name: 'Surface Gray',
-    value: '#F4F5F7',
+    value: '#F6F6F7',
     use: 'App background, input fields',
     swatch: 'bg-surface-gray border border-border',
   },
-  { name: 'Border Gray', value: '#E5E7EB', use: 'Dividers, borders', swatch: 'bg-border' },
+  { name: 'Border Gray', value: '#E4E4E7', use: 'Dividers, borders', swatch: 'bg-border' },
+  {
+    name: 'Market Ink',
+    value: '#1C1C21',
+    use: 'Raised tiles on the dark market card',
+    swatch: 'bg-ink-raised',
+  },
+  {
+    name: 'Soft Blue',
+    value: '#E6EEFF',
+    use: 'Near-target status',
+    swatch: 'bg-blue-soft border border-border',
+  },
+  { name: 'Gain', value: '#34D399', use: 'Up, on the market card', swatch: 'bg-gain' },
+  { name: 'Loss', value: '#FB7185', use: 'Down, on the market card', swatch: 'bg-loss' },
   {
     name: 'Glass Blur',
     value: 'rgba(255,255,255,0.7)',
     use: 'Tab bar, glass surfaces',
-    swatch: 'bg-lavender',
+    swatch: 'bg-highlight',
   },
 ] as const;
 
@@ -81,17 +101,17 @@ const typeScale: readonly {
   sample: string;
   tone?: AppTextProps['tone'];
 }[] = [
-  { role: 'Display', spec: 'ExtraBold, 40 / 44', variant: 'display', sample: 'Work, anywhere' },
-  { role: 'Heading', spec: 'Bold, 28 / 34', variant: 'heading', sample: 'Stock opname review' },
+  { role: 'Display', spec: 'SemiBold, 24 / 28', variant: 'display', sample: 'Work, anywhere' },
+  { role: 'Heading', spec: 'SemiBold, 18 / 24', variant: 'heading', sample: 'Stock opname review' },
   {
     role: 'Body',
-    spec: 'Regular, 16 / 24',
+    spec: 'Regular, 14 / 20',
     variant: 'body',
     sample: 'Approve, track and request from any department, anywhere and anytime.',
   },
   {
     role: 'Caption',
-    spec: 'Medium, 13 / 20',
+    spec: 'SemiBold, 13 / 20',
     variant: 'caption',
     sample: 'Warehouse, Jakarta DC',
     tone: 'muted',
@@ -271,7 +291,7 @@ export default function BoardScreen() {
           </ListGroup>
         </BoardCard>
         <BoardCard number="10" title="Bottom navigation (black tab bar)" span={4}>
-          <View className="rounded-lg bg-lavender p-4">
+          <View className="rounded-lg bg-highlight p-4">
             <BottomNav items={navItems} activeKey={tab} onChange={setTab} placement="inline" />
           </View>
         </BoardCard>

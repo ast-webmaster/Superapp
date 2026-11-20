@@ -23,6 +23,17 @@ it('leaves the period out so the server picks its default', async () => {
   expect(get.mock.calls[1]?.[1].query).toEqual({ period: '2026-10' });
 });
 
+it('asks for the whole report in one request from /bundle', async () => {
+  await laporanPenjualanApi.bundle(null);
+  await laporanPenjualanApi.bundle('2026-10');
+
+  expect(get.mock.calls[0]).toEqual([
+    '/wall-report/bundle',
+    { query: { period: undefined }, signal: undefined },
+  ]);
+  expect(get.mock.calls[1]?.[1].query).toEqual({ period: '2026-10' });
+});
+
 it('asks for one group by name', async () => {
   await laporanPenjualanApi.group('2026-10', 'GROUP A');
 

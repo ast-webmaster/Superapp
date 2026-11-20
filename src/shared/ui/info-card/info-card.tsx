@@ -19,12 +19,12 @@ export function InfoCard({ title, description, icon, className, ...props }: Info
     <Pressable
       role="button"
       className={clsx(
-        'flex-row items-center gap-4 self-stretch rounded-lg bg-primary-soft p-4 active:bg-lavender',
+        'flex-row items-center gap-4 self-stretch rounded-lg bg-primary-soft p-4 active:bg-highlight',
         focusRing,
         className,
       )}
       {...props}>
-      <View className="size-touch items-center justify-center rounded-md bg-lavender">
+      <View className="size-touch items-center justify-center rounded-md bg-highlight">
         <Icon name={icon} color="primary" />
       </View>
       <View className="min-w-0 flex-1">

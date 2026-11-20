@@ -97,7 +97,7 @@ function ProgressToast({ message }: { message: string }) {
   }, [message]);
 
   return (
-    <View className="gap-3 rounded-lg bg-primary-soft px-4 py-3">
+    <View className="gap-3 rounded-lg bg-accent px-4 py-3">
       <AppText role="status" aria-live="polite">
         {message}
       </AppText>
@@ -147,7 +147,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
       onHoverIn={() => setHovered(true)}
       onHoverOut={() => setHovered(false)}>
       <View {...focusHandlers}>
-        <Alert tone={toast.tone} message={toast.message} onDismiss={onDismiss} />
+        <Alert accent tone={toast.tone} message={toast.message} onDismiss={onDismiss} />
       </View>
     </Pressable>
   );

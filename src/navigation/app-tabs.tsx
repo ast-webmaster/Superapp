@@ -10,8 +10,8 @@ import { BottomNav } from '@/shared/ui';
 const tabs = [
   { key: 'home', label: 'Home', icon: 'home', href: '/' },
   { key: 'apps', label: 'Apps', icon: 'grid', href: '/apps' },
-  { key: 'inbox', label: 'Inbox', icon: 'bell', href: '/inbox' },
   { key: 'ai-chat', label: 'AI chat', icon: 'ai', href: '/ai-chat' },
+  { key: 'inbox', label: 'Inbox', icon: 'bell', href: '/inbox' },
 ] as const;
 
 export default function AppTabs() {
@@ -19,8 +19,8 @@ export default function AppTabs() {
   const inboxCount = useInboxTotal();
   const active = tabs.find((tab) => tab.href !== '/' && pathname.startsWith(tab.href)) ?? tabs[0];
 
-  const [home, apps, inbox, aiChat] = tabs;
-  const items = [home, apps, { ...inbox, badge: inboxCount }, aiChat] as const;
+  const [home, apps, aiChat, inbox] = tabs;
+  const items = [home, apps, aiChat, { ...inbox, badge: inboxCount }] as const;
 
   return (
     <Tabs>

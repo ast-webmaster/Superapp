@@ -20,7 +20,7 @@ const variants = {
     icon: 'ink',
   },
   soft: {
-    container: 'bg-primary-soft active:bg-lavender',
+    container: 'bg-primary-soft active:bg-highlight',
     tone: 'primary',
     icon: 'primary',
   },

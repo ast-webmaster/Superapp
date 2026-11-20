@@ -81,13 +81,17 @@ export function SegmentedControl({
             {...itemProps(index)}>
             <View
               className={clsx(
-                'min-h-11 flex-row items-center justify-center gap-2 rounded-pill px-5',
+                // One line always: a label that wrapped would turn the pill into a tall block.
+                'h-11 flex-row items-center justify-center gap-2 rounded-pill',
+                fullWidth ? 'px-2' : 'px-5',
                 selected && 'bg-primary',
               )}>
               {option.icon ? (
                 <Icon name={option.icon} color={selected ? 'on-primary' : 'ink'} />
               ) : null}
-              <AppText tone={selected ? 'on-primary' : 'ink'}>{option.label}</AppText>
+              <AppText numberOfLines={1} tone={selected ? 'on-primary' : 'ink'} className="shrink">
+                {option.label}
+              </AppText>
             </View>
           </Pressable>
         );

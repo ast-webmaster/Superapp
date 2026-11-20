@@ -21,10 +21,15 @@ export interface AlertProps {
   /** One sentence. */
   message: string;
   onDismiss?: () => void;
+  /**
+   * Fills the alert with `accent` instead of its tone, for a toast. The icon circle keeps the
+   * tone color and the text stays `ink`, so the tone is still told by the icon and the color.
+   */
+  accent?: boolean;
   className?: string;
 }
 
-export function Alert({ tone, message, onDismiss, className }: AlertProps) {
+export function Alert({ tone, message, onDismiss, accent = false, className }: AlertProps) {
   const style = tones[tone];
   const urgent = tone === 'danger';
 
@@ -37,7 +42,7 @@ export function Alert({ tone, message, onDismiss, className }: AlertProps) {
       className={clsx(
         'min-h-control flex-row items-center gap-3 rounded-lg py-1 pl-4',
         onDismiss ? 'pr-1' : 'pr-4',
-        style.container,
+        accent ? 'bg-accent' : style.container,
         className,
       )}>
       <View className={clsx('size-7 items-center justify-center rounded-pill', style.dot)}>

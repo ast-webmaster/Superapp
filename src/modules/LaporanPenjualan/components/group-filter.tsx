@@ -7,10 +7,24 @@ import type { GroupSummary } from '../types';
 import { levelBadge } from './level';
 
 /** `ChipGroup` values are strings, so "no filter" is an empty one. */
-const ALL = '';
+export const ALL = '';
 
 /** Levels the server sends today, in the order of the badge. Others it adds later are appended. */
 const KNOWN_LEVELS = ['below', 'near', 'achieved'];
+
+/** The status options of a filter: "All statuses", the known levels, then any new one in `levels`. */
+export function statusOptions(levels: string[]) {
+  const extra = levels.filter(
+    (level, index, all) => !KNOWN_LEVELS.includes(level) && all.indexOf(level) === index,
+  );
+  return [
+    { value: ALL, label: 'All statuses' },
+    ...[...KNOWN_LEVELS, ...extra].map((level) => ({
+      value: level,
+      label: levelBadge(level).label,
+    })),
+  ];
+}
 
 export type GroupFilters = { level: string; group: string };
 
@@ -36,16 +50,7 @@ export interface GroupFilterProps {
 export function GroupFilter({ groups, value, onChange }: GroupFilterProps) {
   const [open, setOpen] = useState<'level' | 'group' | null>(null);
 
-  const extraLevels = groups
-    .map((item) => item.achievement.level)
-    .filter((level, index, all) => !KNOWN_LEVELS.includes(level) && all.indexOf(level) === index);
-  const levelOptions = [
-    { value: ALL, label: 'All statuses' },
-    ...[...KNOWN_LEVELS, ...extraLevels].map((level) => ({
-      value: level,
-      label: levelBadge(level).label,
-    })),
-  ];
+  const levelOptions = statusOptions(groups.map((item) => item.achievement.level));
   const groupOptions = [
     { value: ALL, label: 'All groups' },
     ...groups.map((item) => ({ value: item.group, label: item.group })),

@@ -1,8 +1,23 @@
+import { clsx } from 'clsx';
 import { View } from 'react-native';
 
 import { AppText, Chip, FieldLabel, Loading } from '@/shared/ui';
 
-import { durationLabel, rangeLabel, slotStart, toggleSlot } from '../create/slots';
+import {
+  durationLabel,
+  rangeLabel,
+  slotsByPartOfDay,
+  slotStart,
+  toggleSlot,
+} from '../create/slots';
+
+const PER_ROW = 4;
+
+function chunk<T>(items: readonly T[], size: number): T[][] {
+  return Array.from({ length: Math.ceil(items.length / size) }, (_, index) =>
+    items.slice(index * size, index * size + size),
+  );
+}
 
 export interface SlotPickerProps {
   /** Every slot the server offers. Empty while they load. */
@@ -41,24 +56,37 @@ export function SlotPicker({
           <AppText variant="caption" tone="muted">
             Tap the start, then the following slots. Grey slots are already booked.
           </AppText>
-          <View role="group" aria-label="Time slots" className="flex-row flex-wrap gap-2">
-            {slots.map((slot) => {
-              const isTaken = taken.has(slot);
-              return (
-                <Chip
-                  key={slot}
-                  outlined
-                  label={slotStart(slot)}
-                  selected={selected.includes(slot)}
-                  disabled={isTaken}
-                  aria-label={isTaken ? `${slot}, already booked` : slot}
-                  accessibilityState={{ selected: selected.includes(slot), disabled: isTaken }}
-                  className={isTaken ? 'opacity-40' : undefined}
-                  onPress={() => onChange(toggleSlot(selected, slot, slots))}
-                />
-              );
-            })}
-          </View>
+          {slotsByPartOfDay(slots).map((part) => (
+            <View key={part.label} role="group" aria-label={part.label} className="gap-2">
+              <AppText variant="caption-strong" tone="muted">
+                {part.label}
+              </AppText>
+              {chunk(part.slots, PER_ROW).map((row) => (
+                <View key={row[0]} className="flex-row gap-2">
+                  {Array.from({ length: PER_ROW }, (_, column) => {
+                    const slot = row[column];
+                    // An empty cell keeps the last row's chips as wide as the rows above.
+                    if (slot === undefined) return <View key={column} className="flex-1" />;
+                    const isTaken = taken.has(slot);
+                    return (
+                      <Chip
+                        key={slot}
+                        outlined
+                        compact
+                        label={slotStart(slot)}
+                        selected={selected.includes(slot)}
+                        disabled={isTaken}
+                        aria-label={isTaken ? `${slot}, already booked` : slot}
+                        accessibilityState={{ selected: selected.includes(slot), disabled: isTaken }}
+                        className={clsx('min-w-0 flex-1', isTaken && 'opacity-40')}
+                        onPress={() => onChange(toggleSlot(selected, slot, slots))}
+                      />
+                    );
+                  })}
+                </View>
+              ))}
+            </View>
+          ))}
           {selected.length > 0 ? (
             <AppText variant="caption-strong" tone="primary">
               {`${rangeLabel(selected, slots)} · ${durationLabel(selected.length)}`}

@@ -1,6 +1,7 @@
 import '../global.css';
 
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 
 import { AnimatedSplashOverlay } from '@/bootstrap/splash-overlay';
 import { useAppFonts } from '@/bootstrap/use-app-fonts';
@@ -19,6 +20,9 @@ export default function RootLayout() {
 
   return (
     <AppProviders>
+      {/* Dark icons on the light `ground`. Mounted first, so the splash overlay and the login hero,
+          which are black and set light icons, stack above it while they are on screen. */}
+      <StatusBar style="dark" />
       <AnimatedSplashOverlay />
       <RootNavigator />
     </AppProviders>

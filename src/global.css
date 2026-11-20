@@ -14,56 +14,72 @@
  */
 @theme {
   --color-*: initial;
-  --color-primary: #130066;
-  --color-primary-pressed: #0c0044;
+  --color-primary: #111113;
+  --color-primary-pressed: #2c2c31;
   --color-on-primary: #ffffff;
-  --color-primary-soft: #eeeafb;
-  --color-lavender: #c9b4ff;
-  --color-ink: #0b0b1a;
-  --color-ink-muted: #5b6270;
+  --color-primary-soft: #ececee;
+  --color-highlight: #d9d9dd;
+  /* The one brand color beside black. A fill only, always with `ink` on top: as text it fails contrast on white. */
+  --color-accent: #f3af00;
+  --color-ink: #111113;
+  --color-ink-muted: #6a6a72;
   --color-surface: #ffffff;
-  --color-ground: #eceef7;
-  --color-surface-gray: #f4f5f7;
-  --color-border: #e5e7eb;
-  --color-scrim: rgba(11, 11, 26, 0.4);
+  --color-ground: #f2f2f3;
+  --color-surface-gray: #f6f6f7;
+  --color-border: #e4e4e7;
+  --color-scrim: rgba(17, 17, 19, 0.4);
   --color-glass: rgba(255, 255, 255, 0.7);
-  --color-control-off: #868c98;
+  --color-control-off: #8b8b93;
   --color-success: #176a42;
   --color-success-bg: #e6f4ec;
   --color-danger: #b42318;
   --color-danger-bg: #fde8e8;
   --color-warning: #8a5a00;
   --color-warning-bg: #fff4d6;
+  /* Soft blue, for the "near target" status: blue text on the soft fill (6:1). */
+  --color-blue: #1d4ed8;
+  --color-blue-soft: #e6eeff;
+  /* Market surfaces: a dark card on the light ground, with gain/loss colors that read on it. */
+  --color-ink-raised: #1c1c21;
+  --color-ink-line: #303036;
+  --color-on-ink-muted: #a9a9b1;
+  --color-gain: #34d399;
+  --color-loss: #fb7185;
   --color-transparent: transparent;
 
-  --font-rubik: 'Rubik';
-  --font-rubik-medium: 'RubikMedium';
+  --font-jakarta: 'PlusJakartaSans';
+  --font-jakarta-semibold: 'PlusJakartaSansSemiBold';
+  --font-jakarta-extrabold: 'PlusJakartaSansExtraBold';
 
   --text-*: initial;
-  --text-display: 20px;
-  --text-display--line-height: 1.1; /* 22px */
+  --text-hero: 44px;
+  --text-hero--line-height: 1.0909091; /* 48px */
+  --text-hero--font-weight: 500;
+  --text-hero--letter-spacing: -1px;
+  --text-display: 24px;
+  --text-display--line-height: 1.1666667; /* 28px */
   --text-display--font-weight: 500;
   --text-display--letter-spacing: -0.4px;
   --text-avatar: 32px;
   --text-avatar--line-height: 1.25; /* 40px */
   --text-avatar--font-weight: 500;
-  --text-heading: 17px;
-  --text-heading--line-height: 1.2941176; /* 22px */
+  --text-heading: 18px;
+  --text-heading--line-height: 1.3333333; /* 24px */
   --text-heading--font-weight: 500;
   --text-title: 16px;
-  --text-title--line-height: 1.25; /* 20px */
+  --text-title--line-height: 1.375; /* 22px */
   --text-title--font-weight: 500;
-  --text-module-title: 13px;
-  --text-module-title--line-height: 1.5384615; /* 20px */
+  --text-module-title: 14px;
+  --text-module-title--line-height: 1.4285714; /* 20px */
   --text-module-title--font-weight: 500;
-  --text-info-title: 13px;
-  --text-info-title--line-height: 1.5384615; /* 20px */
+  --text-info-title: 14px;
+  --text-info-title--line-height: 1.4285714; /* 20px */
   --text-info-title--font-weight: 500;
-  --text-body: 13px;
-  --text-body--line-height: 1.5384615; /* 20px */
+  --text-body: 14px;
+  --text-body--line-height: 1.4285714; /* 20px */
   --text-body--font-weight: 400;
-  --text-body-strong: 13px;
-  --text-body-strong--line-height: 1.5384615; /* 20px */
+  --text-body-strong: 14px;
+  --text-body-strong--line-height: 1.4285714; /* 20px */
   --text-body-strong--font-weight: 500;
   --text-caption: 13px;
   --text-caption--line-height: 1.5384615; /* 20px */
@@ -71,12 +87,15 @@
   --text-caption-strong: 13px;
   --text-caption-strong--line-height: 1.5384615; /* 20px */
   --text-caption-strong--font-weight: 500;
-  --text-button: 13px;
-  --text-button--line-height: 1.5384615; /* 20px */
+  --text-button: 14px;
+  --text-button--line-height: 1.4285714; /* 20px */
   --text-button--font-weight: 500;
   --text-label: 12px;
   --text-label--line-height: 1.3333333; /* 16px */
   --text-label--font-weight: 500;
+  --text-tile-title: 11px;
+  --text-tile-title--line-height: 1.4545455; /* 16px */
+  --text-tile-title--font-weight: 400;
   --text-micro: 10px;
   --text-micro--line-height: 1.2; /* 12px */
   --text-micro--font-weight: 500;
@@ -97,8 +116,8 @@
   --radius-pill: 999px;
 
   --shadow-*: initial;
-  --shadow-card: 0 1px 2px #0b0b1a0f, 0 8px 24px #0b0b1a14;
-  --shadow-glass: 0 8px 32px #13006626;
+  --shadow-card: 0 1px 2px #1111130f, 0 8px 24px #11111314;
+  --shadow-glass: 0 8px 32px #11111333;
 
   --blur-glass: 20px;
 

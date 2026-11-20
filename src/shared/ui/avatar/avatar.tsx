@@ -36,7 +36,7 @@ export function Avatar({ name, uri, size = 'md', className }: AvatarProps) {
       role="img"
       aria-label={name}
       className={clsx(
-        'items-center justify-center overflow-hidden rounded-pill bg-lavender',
+        'items-center justify-center overflow-hidden rounded-pill bg-highlight',
         style.container,
         className,
       )}>

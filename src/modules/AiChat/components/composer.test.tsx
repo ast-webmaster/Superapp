@@ -42,11 +42,12 @@ beforeEach(() => {
   online.mockReset().mockReturnValue(true);
 });
 
-it('shows the mic instead of send when there is nothing to send', async () => {
-  await renderComposer();
+it('shows the mic beside attach and a disabled send when there is nothing to send', async () => {
+  const { onSend } = await renderComposer();
 
-  expect(screen.queryByRole('button', { name: 'Send' })).toBeNull();
   expect(screen.getByText('mic-slot')).toBeTruthy();
+  await fireEvent.press(screen.getByRole('button', { name: 'Send' }));
+  expect(onSend).not.toHaveBeenCalled();
 });
 
 it('sends the text', async () => {
@@ -125,9 +126,11 @@ it('removes a file', async () => {
   expect(onChangeFiles).toHaveBeenCalledWith([file('b.pdf')]);
 });
 
-it('keeps the mic as a stop button while listening, even once words fill the field', async () => {
-  await renderComposer({ value: 'halo', listening: true });
+it('holds send while listening, even once words fill the field', async () => {
+  const { onSend } = await renderComposer({ value: 'halo', listening: true });
+
+  await fireEvent.press(screen.getByRole('button', { name: 'Send' }));
 
   expect(screen.getByText('mic-slot')).toBeOnTheScreen();
-  expect(screen.queryByRole('button', { name: 'Send' })).toBeNull();
+  expect(onSend).not.toHaveBeenCalled();
 });

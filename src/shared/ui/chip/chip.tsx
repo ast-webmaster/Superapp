@@ -13,28 +13,24 @@ export interface ChipProps extends Omit<PressableProps, 'children' | 'style'> {
   label: string;
   icon?: IconName;
   selected?: boolean;
-  /** A thin border instead of a fill. Selected is a primary border and a check, not a color only. */
+  /** Adds a check when selected, so selected is never color only. */
   outlined?: boolean;
+  /** Tighter padding, for a short label such as a time that must fit four to a row. */
+  compact?: boolean;
   className?: string;
   ref?: Ref<ComponentRef<typeof Pressable>>;
 }
 
-/** Without an icon it is a filter chip (lavender); with an icon a department switch (primary). */
+/** Without an icon it is a filter chip; with an icon a department switch. Selected is black (`ink`) with white text. */
 export function Chip({
   label,
   icon,
   selected = false,
   outlined = false,
+  compact = false,
   className,
   ...props
 }: ChipProps) {
-  // A filled chip keeps a transparent border, so it is the same size as an unselected one.
-  const selectedStyle = outlined
-    ? 'border border-primary bg-surface'
-    : icon
-      ? 'border border-transparent bg-primary'
-      : 'border border-transparent bg-lavender';
-  const selectedTone = icon && !outlined ? 'on-primary' : 'primary';
   const leadingIcon = icon ?? (outlined && selected ? 'check' : undefined);
 
   return (
@@ -43,14 +39,15 @@ export function Chip({
       aria-pressed={selected}
       accessibilityState={{ selected }}
       className={clsx(
-        'min-h-touch flex-row items-center justify-center gap-2 rounded-pill px-5',
-        selected ? selectedStyle : 'border border-border bg-surface active:bg-border',
+        'min-h-touch flex-row items-center justify-center rounded-pill',
+        compact ? 'gap-1 px-2' : 'gap-2 px-5',
+        selected ? 'border border-ink bg-ink' : 'border border-border bg-surface active:bg-border',
         focusRing,
         className,
       )}
       {...props}>
-      {leadingIcon ? <Icon name={leadingIcon} color={selected ? selectedTone : 'ink'} /> : null}
-      <AppText tone={selected ? selectedTone : 'ink'}>{label}</AppText>
+      {leadingIcon ? <Icon name={leadingIcon} color={selected ? 'on-primary' : 'ink'} /> : null}
+      <AppText tone={selected ? 'on-primary' : 'ink'}>{label}</AppText>
     </Pressable>
   );
 }

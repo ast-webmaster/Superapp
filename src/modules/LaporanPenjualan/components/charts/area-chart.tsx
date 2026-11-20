@@ -30,6 +30,8 @@ export interface AreaChartProps {
   target?: number;
   /** Read out by screen readers, such as "Daily sales". */
   label: string;
+  /** `accent` draws in `ink` for a card with the accent fill. */
+  tone?: 'default' | 'accent';
 }
 
 /**
@@ -37,7 +39,9 @@ export interface AreaChartProps {
  * day; the readout above shows the latest day until then. Screen readers move day by day with
  * the adjust gestures.
  */
-export function AreaChart({ data, target, label }: AreaChartProps) {
+export function AreaChart({ data, target, label, tone = 'default' }: AreaChartProps) {
+  const accent = tone === 'accent';
+  const quiet = accent ? 'ink' : 'muted';
   const [width, setWidth] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const gradientId = `area-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
@@ -64,11 +68,16 @@ export function AreaChart({ data, target, label }: AreaChartProps) {
 
   return (
     <View className="gap-3">
-      <View aria-live="polite" className="gap-1">
-        <AppText variant="label" tone="muted">
-          {formatDate(point.date)}
+      {/* The picked day: a dark date pill over a big amount, so it reads as the active one. */}
+      <View aria-live="polite" className="items-start gap-2">
+        <View className="min-h-6 justify-center rounded-pill bg-ink px-3">
+          <AppText variant="label" tone="on-primary">
+            {formatDate(point.date)}
+          </AppText>
+        </View>
+        <AppText variant="display" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+          {formatMoney(point.amount)}
         </AppText>
-        <AppText variant="title">{formatMoney(point.amount)}</AppText>
       </View>
       <Reveal>
         <View
@@ -99,8 +108,16 @@ export function AreaChart({ data, target, label }: AreaChartProps) {
               <Svg width={width} height={HEIGHT}>
                 <Defs>
                   <LinearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                    <Stop offset="0" stopColor={colors.lavender} stopOpacity={0.55} />
-                    <Stop offset="1" stopColor={colors.lavender} stopOpacity={0} />
+                    <Stop
+                      offset="0"
+                      stopColor={accent ? colors.ink : colors.highlight}
+                      stopOpacity={accent ? 0.22 : 0.55}
+                    />
+                    <Stop
+                      offset="1"
+                      stopColor={accent ? colors.ink : colors.highlight}
+                      stopOpacity={0}
+                    />
                   </LinearGradient>
                 </Defs>
                 {ticks.map((tick) => (
@@ -110,7 +127,8 @@ export function AreaChart({ data, target, label }: AreaChartProps) {
                     x2={width}
                     y1={y(tick)}
                     y2={y(tick)}
-                    stroke={colors.border}
+                    stroke={accent ? colors.ink : colors.border}
+                    strokeOpacity={accent ? 0.15 : 1}
                     strokeWidth={1}
                   />
                 ))}
@@ -120,8 +138,8 @@ export function AreaChart({ data, target, label }: AreaChartProps) {
                     x2={width}
                     y1={y(target)}
                     y2={y(target)}
-                    stroke={colors['ink-muted']}
-                    strokeOpacity={0.6}
+                    stroke={accent ? colors.ink : colors['ink-muted']}
+                    strokeOpacity={accent ? 0.5 : 0.6}
                     strokeWidth={1}
                     strokeDasharray="4 4"
                   />
@@ -129,7 +147,7 @@ export function AreaChart({ data, target, label }: AreaChartProps) {
                 <Path d={smoothArea(points, baseline)} fill={`url(#${gradientId})`} />
                 <Path
                   d={smoothLine(points)}
-                  stroke={colors.primary}
+                  stroke={accent ? colors.ink : colors.primary}
                   strokeWidth={2}
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -140,15 +158,16 @@ export function AreaChart({ data, target, label }: AreaChartProps) {
                   x2={x(selected)}
                   y1={PLOT_TOP}
                   y2={baseline}
-                  stroke={colors.lavender}
+                  stroke={accent ? colors.ink : colors.highlight}
+                  strokeOpacity={accent ? 0.3 : 1}
                   strokeWidth={1}
                 />
                 <Circle
                   cx={x(selected)}
                   cy={y(point.amount)}
-                  r={5}
-                  fill={colors.primary}
-                  stroke={colors.surface}
+                  r={6}
+                  fill={colors.ink}
+                  stroke={accent ? colors.accent : colors.surface}
                   strokeWidth={2}
                 />
               </Svg>
@@ -157,14 +176,14 @@ export function AreaChart({ data, target, label }: AreaChartProps) {
                   key={tick}
                   className="absolute left-0"
                   style={{ top: y(tick) - TICK_LABEL_OFFSET }}>
-                  <AppText variant="label" tone="muted">
+                  <AppText variant="label" tone={quiet}>
                     {formatCompactMoney(tick)}
                   </AppText>
                 </View>
               ))}
               {target ? (
                 <View className="absolute right-0" style={{ top: y(target) - TICK_LABEL_OFFSET }}>
-                  <AppText variant="label" tone="muted">
+                  <AppText variant="label" tone={quiet}>
                     Daily target
                   </AppText>
                 </View>
@@ -174,11 +193,11 @@ export function AreaChart({ data, target, label }: AreaChartProps) {
         </View>
       </Reveal>
       <View aria-hidden className="flex-row justify-between">
-        <AppText variant="label" tone="muted">
+        <AppText variant="label" tone={quiet}>
           {formatShortDate(data[0]!.date)}
         </AppText>
         {last > 0 ? (
-          <AppText variant="label" tone="muted">
+          <AppText variant="label" tone={quiet}>
             {formatShortDate(data[last]!.date)}
           </AppText>
         ) : null}

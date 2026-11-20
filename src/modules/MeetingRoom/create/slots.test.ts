@@ -2,6 +2,7 @@ import {
   durationLabel,
   isConsecutive,
   isSlotTaken,
+  slotsByPartOfDay,
   rangeLabel,
   takenSlots,
   toggleSlot,
@@ -57,6 +58,17 @@ describe('toggleSlot', () => {
 
   it('ignores a slot the server does not offer', () => {
     expect(toggleSlot([S0], '23:00 - 23:30', ALL)).toEqual([S0]);
+  });
+});
+
+describe('slotsByPartOfDay', () => {
+  it('splits at noon and leaves out an empty part', () => {
+    const slots = ['11:30 - 12:00', '12:00 - 12:30', '16:00 - 16:30'];
+    expect(slotsByPartOfDay(slots)).toEqual([
+      { label: 'Pagi', slots: ['11:30 - 12:00'] },
+      { label: 'Siang & sore', slots: ['12:00 - 12:30', '16:00 - 16:30'] },
+    ]);
+    expect(slotsByPartOfDay(['08:00 - 08:30']).map((part) => part.label)).toEqual(['Pagi']);
   });
 });
 

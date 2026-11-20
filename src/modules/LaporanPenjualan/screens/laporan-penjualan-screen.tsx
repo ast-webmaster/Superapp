@@ -1,33 +1,45 @@
+import { Stack } from 'expo-router/stack';
 import { useState } from 'react';
-import { RefreshControl, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { toAppError } from '@/core/errors';
 import { useIsOnline } from '@/shared/hooks/use-is-online';
-import { colors, sizes } from '@/shared/theme/tokens';
+import { sizes } from '@/shared/theme/tokens';
 import {
   Alert,
   AppText,
   Button,
-  Chip,
   EmptyState,
-  ListToolbar,
+  IconButton,
+  ListGroup,
+  ListRow,
   Loading,
   Screen,
+  Sheet,
+  type IconName,
 } from '@/shared/ui';
-import { formatSyncedAt } from '@/shared/utils/format';
+import { formatMonth, formatSyncedAt } from '@/shared/utils/format';
 
+import { AreaChart } from '../components/charts/area-chart';
 import { BarList } from '../components/charts/bar-list';
 import { GroupCard } from '../components/group-card';
 import { filterGroups, GroupFilter, NO_GROUP_FILTERS } from '../components/group-filter';
-import { currentPeriod, expectedShare } from '../components/level';
-import { PeriodSheet } from '../components/period-sheet';
+import { PeriodChips } from '../components/period-chips';
+import { ReportCard } from '../components/report-card';
 import { ReportSkeleton } from '../components/report-skeletons';
 import { TotalCard } from '../components/total-card';
 import { useExportReport, type ExportFormat } from '../hooks/use-export-report';
+import { useRefreshReport } from '../hooks/use-refresh-report';
+import { canRefresh, nextRefreshAt } from '../hooks/report-freshness';
 import { useReportSummary } from '../hooks/use-report-summary';
 import { useLaporanPenjualanPeriod } from '../store/laporanPenjualanPeriodStore';
 import type { ReportSummary } from '../types';
+
+const exportActions: readonly { format: ExportFormat; label: string; icon: IconName }[] = [
+  { format: 'xlsx', label: 'Export to Excel', icon: 'download' },
+  { format: 'pdf', label: 'Export to PDF', icon: 'doc' },
+];
 
 function SectionTitle({ title, note }: { title: string; note?: string }) {
   return (
@@ -46,29 +58,25 @@ function SectionTitle({ title, note }: { title: string; note?: string }) {
 
 function Report({ summary }: { summary: ReportSummary }) {
   const [filters, setFilters] = useState(NO_GROUP_FILTERS);
-  // Every group counts the same sales days (the server takes them from the whole period).
-  const daysDone = summary.groups[0]?.weekly.reduce((sum, week) => sum + week.dates.length, 0) ?? 0;
-  const expected = (dayLeft: number) =>
-    expectedShare(summary.period, daysDone, dayLeft, currentPeriod());
-  const showsExpected = summary.groups.some((group) => expected(group.target.day_left) !== null);
   const groups = filterGroups(summary.groups, filters);
+  const dailyTarget = summary.groups.reduce((sum, group) => sum + group.target.daily_amount, 0);
+  const dailyTotals = summary.daily_totals ?? [];
 
   return (
     <>
       <TotalCard summary={summary} />
-      <SectionTitle
-        title="Groups"
-        note={showsExpected ? 'The dark tick marks where sales should be by now.' : undefined}
-      />
+      {dailyTotals.length > 0 ? (
+        <ReportCard title="Daily sales" note="All groups together. Touch the chart to read a day.">
+          <AreaChart data={dailyTotals} target={dailyTarget || undefined} label="Daily sales" />
+        </ReportCard>
+      ) : null}
+      <SectionTitle title="Groups" />
       <GroupFilter groups={summary.groups} value={filters} onChange={setFilters} />
       {groups.map((group) => (
-        <GroupCard key={group.group} group={group} expected={expected(group.target.day_left)} />
+        <GroupCard key={group.group} group={group} />
       ))}
       {groups.length === 0 ? (
-        <EmptyState
-          icon="chart"
-          title="No groups match"
-          description="Try another status or group.">
+        <EmptyState icon="chart" title="No groups match" description="Try another status or group.">
           <Button variant="soft" onPress={() => setFilters(NO_GROUP_FILTERS)}>
             Clear filters
           </Button>
@@ -94,12 +102,15 @@ function Report({ summary }: { summary: ReportSummary }) {
 
 export function LaporanPenjualanScreen() {
   const { bottom } = useSafeAreaInsets();
-  const [choosingPeriod, setChoosingPeriod] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const period = useLaporanPenjualanPeriod((state) => state.period);
   const online = useIsOnline();
   const exportReport = useExportReport();
+  const { refresh, isRefreshing } = useRefreshReport();
   const { data, error, fetchStatus, dataUpdatedAt, isRefetching, isPlaceholderData, refetch } =
     useReportSummary(period);
+  // Read on every render, and opening the Actions sheet renders, so it is current when it shows.
+  const canUpdate = canRefresh(dataUpdatedAt);
 
   const retry = (
     <Button variant="soft" onPress={() => refetch()}>
@@ -113,35 +124,55 @@ export function LaporanPenjualanScreen() {
 
   return (
     <Screen>
-      <PeriodSheet visible={choosingPeriod} onClose={() => setChoosingPeriod(false)} />
-      <View className="pb-4 pt-2">
-        <ListToolbar
-          actions={
-            data
-              ? [
-                  {
-                    key: 'xlsx',
-                    label: 'Export to Excel',
-                    icon: 'download',
-                    onPress: () => download('xlsx'),
-                  },
-                  {
-                    key: 'pdf',
-                    label: 'Export to PDF',
-                    icon: 'doc',
-                    onPress: () => download('pdf'),
-                  },
-                ]
-              : []
-          }>
-          <Chip
-            icon="calendar"
-            label={data?.label ?? 'Latest'}
-            selected
-            aria-label={`Period, ${data?.label ?? 'latest'}. Change period`}
-            onPress={() => setChoosingPeriod(true)}
+      <Stack.Screen
+        options={{
+          // The export menu lives in the top bar; it has nothing to export until a report loads.
+          headerRight: data
+            ? () => (
+                <IconButton
+                  size="sm"
+                  icon="more"
+                  label="Actions"
+                  disabled={exportReport.isPending}
+                  onPress={() => setMenuOpen(true)}
+                />
+              )
+            : undefined,
+        }}
+      />
+      <Sheet visible={menuOpen} title="Actions" onClose={() => setMenuOpen(false)}>
+        <ListGroup>
+          {/* The report only changes once a morning, so this is how to ask for it sooner, and
+              only once an hour: the row says when it can be used again. */}
+          <ListRow
+            label="Update data"
+            icon="refresh"
+            value={
+              canUpdate
+                ? `Updated ${formatSyncedAt(dataUpdatedAt)}`
+                : `Available at ${formatSyncedAt(nextRefreshAt(dataUpdatedAt))}`
+            }
+            disabled={!online || isRefreshing || !canUpdate}
+            onPress={() => {
+              setMenuOpen(false);
+              void refresh();
+            }}
           />
-        </ListToolbar>
+          {exportActions.map((action) => (
+            <ListRow
+              key={action.format}
+              label={action.label}
+              icon={action.icon}
+              onPress={() => {
+                setMenuOpen(false);
+                download(action.format);
+              }}
+            />
+          ))}
+        </ListGroup>
+      </Sheet>
+      <View className="pb-4 pt-2">
+        <PeriodChips currentPeriod={data?.period} />
       </View>
       {exportReport.isPending ? <Loading label="Preparing file" /> : null}
       {exportReport.error ? (
@@ -171,18 +202,15 @@ export function LaporanPenjualanScreen() {
           <ReportSkeleton />
         )
       ) : (
+        // No pull to refresh on this screen: "Update data" in the Actions menu is the one way, and it
+        // is limited to once an hour, so a pull must not be a way around that.
         <ScrollView
           contentContainerClassName="gap-4 px-5"
-          contentContainerStyle={{ paddingBottom: bottom + sizes.screenTopGap, flexGrow: 1 }}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefetching && !isPlaceholderData}
-              onRefresh={() => void refetch()}
-              tintColor={colors.primary}
-            />
-          }>
+          contentContainerStyle={{ paddingBottom: bottom + sizes.screenTopGap, flexGrow: 1 }}>
           {isPlaceholderData ? (
             <Loading label="Loading period" />
+          ) : isRefetching ? (
+            <Loading label="Updating data" />
           ) : !online ? (
             <Alert
               tone="warning"
@@ -200,7 +228,7 @@ export function LaporanPenjualanScreen() {
             <EmptyState
               icon="chart"
               title="No sales yet"
-              description={`Nothing has been recorded for ${data.label}.`}
+              description={`Nothing has been recorded for ${formatMonth(data.period)}.`}
             />
           )}
         </ScrollView>

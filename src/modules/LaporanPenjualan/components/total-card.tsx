@@ -1,40 +1,36 @@
-import { View } from 'react-native';
-
-import { AppText, Badge } from '@/shared/ui';
-import { formatMoney } from '@/shared/utils/format';
+import { formatMonth } from '@/shared/utils/format';
 
 import type { ReportSummary } from '../types';
-import { ProgressRing } from './charts/progress-ring';
-import { Reveal } from './charts/reveal';
-import { describeBalance, levelBadge } from './level';
+import { HeroCard } from './hero-card';
+import { cumulative, weeklySeries } from './series';
 
 /** The period's headline: total sales against the total target of every group in scope. */
 export function TotalCard({ summary }: { summary: ReportSummary }) {
   const { total } = summary;
 
   return (
-    <View className="gap-4 rounded-xl border border-border bg-surface p-4">
-      <View className="flex-row items-center gap-4">
-        <View className="min-w-0 flex-1 gap-1">
-          <AppText variant="label" tone="muted">
-            Total sales
-          </AppText>
-          <AppText variant="heading" role="heading">
-            {formatMoney(total.achievement)}
-          </AppText>
-          <AppText variant="caption" tone="muted">
-            {`Target ${formatMoney(total.target)}`}
-          </AppText>
-          <View className="flex-row pt-1">
-            <Badge size="sm" {...levelBadge(total.level)} />
-          </View>
-        </View>
-        <Reveal trigger={summary.period}>
-          <ProgressRing percentage={total.percentage} />
-        </Reveal>
-      </View>
-      <View role="separator" className="h-px bg-border" />
-      <AppText variant="caption">{describeBalance(total.balance, formatMoney)}</AppText>
-    </View>
+    <HeroCard
+      eyebrow={`Total sales · ${formatMonth(summary.period)}`}
+      amount={total.achievement}
+      target={total.target}
+      percentage={total.percentage}
+      level={total.level}
+      series={cumulative(runningSeries(summary))}
+      stats={[
+        { label: total.balance < 0 ? 'To go' : 'Above target', value: Math.abs(total.balance) },
+        { label: 'Average per sales day', value: dailyAverage(summary) },
+      ]}
+    />
   );
+}
+
+/** Sales per day when the server sends them, else per week, for the sparkline. */
+function runningSeries({ daily_totals, groups }: ReportSummary): number[] {
+  return daily_totals?.length ? daily_totals.map((day) => day.amount) : weeklySeries(groups);
+}
+
+/** Sales per sales day: what the whole period has made, over the days that had sales. */
+function dailyAverage({ total, groups }: ReportSummary): number {
+  const days = groups[0]?.weekly.reduce((sum, week) => sum + week.dates.length, 0) ?? 0;
+  return days > 0 ? Math.round(total.achievement / days) : 0;
 }

@@ -1,28 +1,27 @@
 import { clsx } from 'clsx';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router, type Href } from 'expo-router';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useCurrentUser, useRoles } from '@/core/auth';
+import { useCurrentUser } from '@/core/auth';
 import { profilePhotoUri } from '@/modules/Auth';
 import { InboxRow, InboxRowsSkeleton, useInbox, useRefreshInboxOnFocus } from '@/modules/Inbox';
-import { colors, sizes } from '@/shared/theme/tokens';
+import { sizes } from '@/shared/theme/tokens';
 import {
   Alert,
   AppText,
   Avatar,
-  Badge,
   focusRing,
+  IconButton,
   ListGroup,
   Logo,
   Screen,
   Skeleton,
   useBottomNavInset,
 } from '@/shared/ui';
-import { formatRoles, formatWeekdayDate } from '@/shared/utils/format';
 
-import { FavoriteAppTile } from './favorite-app-tile';
+import { AppGrid } from './app-tile';
+import { InboxHero } from './inbox-hero';
 import { inboxRowProps } from './inbox-row-props';
 import { useFavoriteApps } from './use-favorite-apps';
 
@@ -30,48 +29,35 @@ const INBOX_PREVIEW = 5;
 
 export function HomeScreen() {
   const user = useCurrentUser();
-  const roles = useRoles();
   const { favorites, ready } = useFavoriteApps();
   const { top } = useSafeAreaInsets();
   const bottomInset = useBottomNavInset();
   useRefreshInboxOnFocus();
-
-  const roleLabel = formatRoles(roles);
 
   return (
     <Screen>
       <ScrollView
         contentContainerClassName="grow"
         contentContainerStyle={{ paddingBottom: bottomInset }}>
-        {/* Lavender fading into the screen ground behind the top of the screen. The gradient takes `style`, not
-            `className`, so the layout sits on the plain View inside it. */}
-        <LinearGradient
-          colors={[colors.lavender, colors.ground]}
+        <View
+          className="flex-row items-center gap-3 px-5 pb-5"
           style={{ paddingTop: top + sizes.screenTopGap }}>
-          <View className="gap-4 px-5 pb-6">
-            {/* Logo above the card, the account button on the other side. */}
-            <View className="flex-row items-center justify-between gap-4">
-              <Logo width={112} />
-              <Pressable
-                role="button"
-                aria-label="Profile"
-                onPress={() => router.push('/profile' as Href)}
-                className={clsx('rounded-pill', focusRing)}>
-                <Avatar size="sm" name={user?.name ?? ''} uri={profilePhotoUri(user ?? null)} />
-              </Pressable>
-            </View>
-            <View className="gap-2 rounded-2xl bg-ink p-5">
-              <AppText tone="on-primary">{formatWeekdayDate(new Date())}</AppText>
-              <AppText variant="display" tone="on-primary" role="heading" numberOfLines={1}>
-                {user?.name}
-              </AppText>
-              {roleLabel ? <Badge size="xs" tone="info" label={roleLabel} /> : null}
-            </View>
+          <View className="flex-1 items-start">
+            <Logo width={112} />
           </View>
-        </LinearGradient>
+          <InboxBell />
+          <Pressable
+            role="button"
+            aria-label="Profile"
+            onPress={() => router.push('/profile' as Href)}
+            className={clsx('rounded-pill', focusRing)}>
+            <Avatar size="sm" name={user?.name ?? ''} uri={profilePhotoUri(user ?? null)} />
+          </Pressable>
+        </View>
 
-        <View className="gap-4 px-5">
-          <View className="gap-2">
+        <View className="gap-5 px-5">
+          <InboxHero />
+          <View className="gap-3">
             <View className="flex-row items-center justify-between">
               <AppText variant="title" role="heading">
                 Favorite apps
@@ -86,15 +72,11 @@ export function HomeScreen() {
               </Pressable>
             </View>
             {!ready ? (
-              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full rounded-lg" />
             ) : favorites.length === 0 ? (
               <AppText tone="muted">No favorite apps yet. Choose some with Manage apps.</AppText>
             ) : (
-              <View className="flex-row flex-wrap">
-                {favorites.map((manifest) => (
-                  <FavoriteAppTile key={manifest.id} manifest={manifest} />
-                ))}
-              </View>
+              <AppGrid manifests={favorites} />
             )}
           </View>
 
@@ -102,6 +84,29 @@ export function HomeScreen() {
         </View>
       </ScrollView>
     </Screen>
+  );
+}
+
+/** The bell in the header: opens the Inbox tab, with a dot while something waits. */
+function InboxBell() {
+  const { data } = useInbox({ perPage: 1 });
+  const total = data?.total ?? 0;
+
+  return (
+    <View>
+      <IconButton
+        icon="bell"
+        size="sm"
+        label={total > 0 ? `Inbox, ${total} waiting` : 'Inbox'}
+        onPress={() => router.navigate('/inbox' as Href)}
+      />
+      {total > 0 ? (
+        <View
+          pointerEvents="none"
+          className="absolute top-2.5 right-2.5 size-3 rounded-pill border-2 border-surface bg-danger"
+        />
+      ) : null}
+    </View>
   );
 }
 

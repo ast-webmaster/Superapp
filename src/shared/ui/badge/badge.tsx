@@ -12,6 +12,7 @@ const tones = {
   success: { container: 'bg-success-bg', text: 'success', icon: 'success' },
   danger: { container: 'bg-danger-bg', text: 'danger', icon: 'danger' },
   warning: { container: 'bg-warning-bg', text: 'warning', icon: 'warning' },
+  blue: { container: 'bg-blue-soft', text: 'blue', icon: 'blue' },
 } as const satisfies Record<
   string,
   { container: string; text: AppTextProps['tone']; icon: ColorToken }

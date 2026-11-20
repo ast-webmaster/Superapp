@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { toAppError } from '@/core/errors';
 import { Alert, Button, ChipGroup, Loading, Sheet } from '@/shared/ui';
+import { formatMonth } from '@/shared/utils/format';
 
 import { useReportPeriods } from '../hooks/use-report-periods';
 import { useLaporanPenjualanPeriod } from '../store/laporanPenjualanPeriodStore';
@@ -54,7 +55,10 @@ export function PeriodSheet({ visible, onClose }: PeriodSheetProps) {
           label="Period"
           options={[
             { value: LATEST, label: 'Latest' },
-            ...data.periods.map((item) => ({ value: item.period, label: item.label })),
+            ...data.periods.map((item) => ({
+              value: item.period,
+              label: formatMonth(item.period),
+            })),
           ]}
           value={draft}
           onChange={setDraft}

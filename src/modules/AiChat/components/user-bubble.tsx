@@ -11,7 +11,7 @@ export interface UserBubbleProps {
   onOpenAttachment?: (index: number) => void;
 }
 
-/** What the user asked, on the right in a soft lavender bubble. */
+/** What the user asked, on the right in a soft blue bubble. */
 export function UserBubble({ message, attachments, onOpenAttachment }: UserBubbleProps) {
   return (
     <View className="flex-row justify-end pl-12">

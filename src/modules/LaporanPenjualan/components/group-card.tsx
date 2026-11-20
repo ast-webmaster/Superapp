@@ -2,23 +2,41 @@ import { clsx } from 'clsx';
 import { router, type Href } from 'expo-router';
 import { Pressable, View } from 'react-native';
 
+import type { ColorToken } from '@/shared/theme/tokens';
 import { AppText, Badge, focusRing } from '@/shared/ui';
 import { formatMoney } from '@/shared/utils/format';
 
 import { laporanPenjualanRoutes } from '../navigation/routes';
 import type { GroupSummary } from '../types';
+import { Amount } from './amount';
 import { Meter } from './charts/meter';
-import { formatPercent, levelBadge } from './level';
+import { Sparkline } from './charts/sparkline';
+import { DeltaChip } from './delta-chip';
+import { formatPercent, levelBadge, levelTrend, type Trend } from './level';
+import { groupSeries } from './series';
+
+/** The line and bar of a ticker row on a white card. Flat is the brand blue. */
+const trendColor: Record<Trend, ColorToken> = {
+  gain: 'success',
+  flat: 'primary',
+  loss: 'danger',
+};
 
 export interface GroupCardProps {
   group: GroupSummary;
-  /** Where the bar should be by now, 0–100, or null when there is no fair expectation. */
-  expected: number | null;
 }
 
-/** One group's month so far. Opens the group's daily, weekly and branch detail. */
-export function GroupCard({ group, expected }: GroupCardProps) {
+/**
+ * One group's month so far, as a ticker row: its name and status, the amount against its target
+ * with its sales per day (only days with transactions) as a sparkline, and the bar with the
+ * share reached. Opens the group's
+ * daily, weekly and branch detail.
+ */
+export function GroupCard({ group }: GroupCardProps) {
   const { achievement, target } = group;
+  const color = trendColor[levelTrend(achievement.level)];
+  // Read from the summary already on screen: no request per card (see data-management.md).
+  const values = groupSeries(group);
 
   return (
     <Pressable
@@ -35,15 +53,23 @@ export function GroupCard({ group, expected }: GroupCardProps) {
         </AppText>
         <Badge size="sm" {...levelBadge(achievement.level)} />
       </View>
-      <Meter percentage={achievement.percentage} expected={expected} />
-      <View className="flex-row items-end justify-between gap-3">
-        <View>
-          <AppText variant="caption-strong">{formatMoney(achievement.value)}</AppText>
-          <AppText variant="label" tone="muted">
-            {`of ${formatMoney(target.monthly_amount)}`}
-          </AppText>
+      <View className="flex-row items-center justify-between gap-3">
+        <View className="min-w-0 shrink gap-1">
+          <Amount value={achievement.value} variant="title" numberOfLines={1} />
+          {/* An accent fill with `ink` text on it: the gold fails contrast under light text. */}
+          <View className="min-h-6 self-start justify-center rounded-pill bg-accent px-2">
+            <AppText variant="label" tone="ink" numberOfLines={1}>
+              {`Target ${formatMoney(target.monthly_amount)}`}
+            </AppText>
+          </View>
         </View>
-        <AppText variant="title">{formatPercent(achievement.percentage)}</AppText>
+        <Sparkline values={values} color={color} width={88} height={40} />
+      </View>
+      <View className="flex-row items-center gap-3">
+        <View className="min-w-0 flex-1">
+          <Meter percentage={achievement.percentage} fill={color} />
+        </View>
+        <DeltaChip percentage={achievement.percentage} level={achievement.level} />
       </View>
     </Pressable>
   );

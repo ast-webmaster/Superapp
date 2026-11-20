@@ -83,7 +83,7 @@ export function ColumnChart({ data, highlight, label }: ColumnChartProps) {
                         barWidth,
                         height(column.value),
                       )}
-                      fill={column.key === highlight ? colors.primary : colors.lavender}
+                      fill={column.key === highlight ? colors.primary : colors.highlight}
                     />
                   ) : null,
                 )}

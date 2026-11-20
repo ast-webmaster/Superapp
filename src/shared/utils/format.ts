@@ -29,6 +29,15 @@ export function formatShortDate(value: string): string {
   return found ? found.date.slice(0, found.date.lastIndexOf(' ')) : value;
 }
 
+const YEAR_MONTH = /^(\d{4})-(\d{2})$/;
+
+/** "2026-11" -> "Nov 2026". A month and year, as a report period is named. Anything else comes back as it was. */
+export function formatMonth(value: string): string {
+  const match = YEAR_MONTH.exec(value);
+  const name = match ? MONTHS[Number(match[2]) - 1] : undefined;
+  return match && name ? `${name} ${match[1]}` : value;
+}
+
 /** "2026-10-01 14:30:00" -> "1 Okt 2026 14:30". A value without a time is just the date. */
 export function formatDateTime(value: string): string {
   const found = parts(value);
@@ -69,6 +78,11 @@ export function formatCompactMoney(value: number): string {
     return `${sign}Rp ${rounded}${unit}`;
   }
   return `${sign}Rp ${Math.round(abs)}`;
+}
+
+/** A `Date`'s weekday as "Sen", in the phone's own time zone. */
+export function formatWeekday(date: Date): string {
+  return WEEKDAYS[date.getDay()]!;
 }
 
 /** A `Date` as "Sen, 9 Nov", in the phone's own time zone: it is for "today", not for stored data. */

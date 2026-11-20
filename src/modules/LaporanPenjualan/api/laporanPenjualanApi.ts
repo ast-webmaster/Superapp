@@ -1,6 +1,6 @@
 import { apiClient } from '@/core/api';
 
-import type { GroupDetail, ReportPeriods, ReportSummary } from '../types';
+import type { GroupDetail, ReportBundle, ReportPeriods, ReportSummary } from '../types';
 
 /** The server builds the file before it answers, so it gets longer than a normal request. */
 const EXPORT_TIMEOUT_MS = 60_000;
@@ -17,6 +17,11 @@ export const laporanPenjualanApi = {
 
   summary: async (period: string | null, signal?: AbortSignal) =>
     (await apiClient.get<ReportSummary>(PATH, { query: periodQuery(period), signal })).data,
+
+  /** The summary and every group's detail in one response. Answers 404 on a server without it. */
+  bundle: async (period: string | null, signal?: AbortSignal) =>
+    (await apiClient.get<ReportBundle>(`${PATH}/bundle`, { query: periodQuery(period), signal }))
+      .data,
 
   /** Answers 404 for a group that is not in the period or outside the user's scope. */
   group: async (period: string | null, group: string, signal?: AbortSignal) =>

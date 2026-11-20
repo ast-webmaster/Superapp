@@ -1,11 +1,11 @@
 import { clsx } from 'clsx';
-import { router, type Href } from 'expo-router';
+import { router, Stack, type Href } from 'expo-router';
 import { useState } from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
 
 import { useIsOnline } from '@/shared/hooks/use-is-online';
 import { colors } from '@/shared/theme/tokens';
-import { Alert, EmptyState, Fab, Screen } from '@/shared/ui';
+import { Alert, Button, EmptyState, Fab, Screen } from '@/shared/ui';
 import { formatSyncedAt } from '@/shared/utils/format';
 
 import { DayBar } from '../components/day-bar';
@@ -24,6 +24,16 @@ export function MeetingRoomListScreen() {
 
   return (
     <Screen>
+      <Stack.Screen
+        options={{
+          headerRight: () =>
+            date !== todayIso() ? (
+              <Button size="sm" variant="soft" onPress={() => setDate(todayIso())}>
+                Today
+              </Button>
+            ) : null,
+        }}
+      />
       <View className="pb-4 pt-2">
         <DayBar value={date} onChange={setDate} />
       </View>
@@ -42,7 +52,7 @@ export function MeetingRoomListScreen() {
         <FlatList
           data={data.rooms}
           keyExtractor={(room) => room.uuid}
-          renderItem={({ item }) => <RoomCard room={item} date={date} />}
+          renderItem={({ item }) => <RoomCard room={item} />}
           ListHeaderComponent={
             !online ? (
               <Alert

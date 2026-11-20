@@ -44,6 +44,11 @@ export type GroupSummary = {
     balance_daily: number;
   };
   weekly: WeeklyAchievement[];
+  /**
+   * The group's sales per day with sales, oldest first. Optional: a server that has not been
+   * updated yet does not send it, and the card then falls back to the weekly figures.
+   */
+  daily_totals?: DailyAmount[];
 };
 
 export type ReportSummary = ReportPeriod & {
@@ -55,6 +60,11 @@ export type ReportSummary = ReportPeriod & {
     level: AchievementLevel;
   };
   groups: GroupSummary[];
+  /**
+   * Sales of every group together, per day with sales, oldest first. Optional: a server that has
+   * not been updated yet does not send it, and the report then simply has no daily chart.
+   */
+  daily_totals?: DailyAmount[];
   branches: { branch: string; achievement: number }[];
 };
 
@@ -66,6 +76,12 @@ export type BranchAchievement = {
   target: { monthly_amount: number; daily_amount: number; balance: number };
   daily: DailyAmount[];
 };
+
+/**
+ * `GET /bundle`: the summary and the detail of every group of one period in a single response,
+ * so the app loads the whole report once and every group page opens from its cache.
+ */
+export type ReportBundle = { summary: ReportSummary; groups: GroupDetail[] };
 
 export type GroupDetail = ReportPeriod &
   GroupSummary & {

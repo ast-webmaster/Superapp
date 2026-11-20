@@ -9,10 +9,17 @@ import { focusRing } from '../focus';
 import { Icon, type IconName } from '../icon/icon';
 import { AppText } from '../text/text';
 
-// These mirror the `px-2 gap-1` classes and `h-14` item height on the bar below.
-const BAR_PADDING = 8;
+// These mirror the `px-4 gap-1` classes and the `h-14 w-17` item on the bar below.
+const BAR_PADDING = 16;
 const ITEM_GAP = 4;
-const ITEM_HEIGHT = 56;
+const ITEM_WIDTH = 68;
+/**
+ * The active pill holds the icon and its label together. It is as wide as the item, so the
+ * longest label ("AI chat") keeps 11px each side, and 10px short of the bar top and bottom,
+ * so its ends follow the bar's own curve.
+ */
+const PILL_WIDTH = ITEM_WIDTH;
+const PILL_HEIGHT = 52;
 
 export interface BottomNavItem {
   key: string;
@@ -52,15 +59,12 @@ export function BottomNav({
   const { bottom } = useSafeAreaInsets();
   const floating = placement === 'floating';
 
-  // The active background is one pill that slides to the active item instead of each item
-  // switching its own background.
-  const [barWidth, setBarWidth] = useState(0);
+  // The active background is one white circle that slides to the active item instead of each
+  // item switching its own background.
   const activeIndex = Math.max(
     0,
     items.findIndex((item) => item.key === activeKey),
   );
-  const itemWidth =
-    barWidth > 0 ? (barWidth - BAR_PADDING * 2 - ITEM_GAP * (items.length - 1)) / items.length : 0;
   const [offset] = useState(() => new Animated.Value(0));
   const placed = useRef(false);
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -70,8 +74,7 @@ export function BottomNav({
   }, []);
 
   useEffect(() => {
-    if (itemWidth === 0) return;
-    const target = activeIndex * (itemWidth + ITEM_GAP);
+    const target = activeIndex * (ITEM_WIDTH + ITEM_GAP);
     if (!placed.current || reduceMotion) {
       // Jump to the first position, then slide on every change after it.
       offset.setValue(target);
@@ -84,33 +87,28 @@ export function BottomNav({
       }).start();
     }
     placed.current = true;
-  }, [activeIndex, itemWidth, offset, reduceMotion]);
+  }, [activeIndex, offset, reduceMotion]);
 
   return (
     <View
       role="navigation"
-      onLayout={(event) => setBarWidth(event.nativeEvent.layout.width)}
-      className={clsx(floating && 'absolute right-5 left-5', className)}
+      className={clsx('items-center', floating && 'absolute inset-x-0', className)}
       style={floating ? { bottom: bottom + sizes.tabBarOffset } : undefined}>
-      {/* Solid black like the login hero; the active item is a lavender pill. */}
-      <View className="h-tabbar flex-row items-center gap-1 rounded-pill bg-ink px-2 shadow-glass">
-        {itemWidth > 0 ? (
-          <Animated.View
-            pointerEvents="none"
-            style={[
-              {
-                position: 'absolute',
-                left: BAR_PADDING,
-                top: (sizes.tabBar - ITEM_HEIGHT) / 2,
-                width: itemWidth,
-                height: ITEM_HEIGHT,
-                borderRadius: radiusPill,
-                backgroundColor: colors.lavender,
-              },
-              { transform: [{ translateX: offset }] },
-            ]}
-          />
-        ) : null}
+      {/* A dark bar floating on the ground. The active item is one accent pill holding its icon and its label, both black. */}
+      <View className="h-tabbar flex-row items-center gap-1 rounded-pill bg-ink px-4 shadow-glass">
+        <Animated.View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            left: BAR_PADDING + (ITEM_WIDTH - PILL_WIDTH) / 2,
+            top: (sizes.tabBar - PILL_HEIGHT) / 2,
+            width: PILL_WIDTH,
+            height: PILL_HEIGHT,
+            borderRadius: radiusPill,
+            backgroundColor: colors.accent,
+            transform: [{ translateX: offset }],
+          }}
+        />
         {items.map((item) => {
           const active = item.key === activeKey;
 
@@ -123,23 +121,22 @@ export function BottomNav({
               accessibilityState={{ selected: active }}
               onPress={() => onChange(item.key)}
               className={clsx(
-                'h-14 min-w-0 flex-1 items-center justify-center rounded-pill',
-                !active && 'active:bg-primary',
+                'h-14 w-17 items-center justify-center gap-0.5 rounded-pill',
                 focusRing,
               )}>
-              <View>
-                <Icon name={item.icon} color={active ? 'primary' : 'on-primary'} />
+              <View className="size-6 items-center justify-center">
+                <Icon name={item.icon} size={22} color={active ? 'ink' : 'on-ink-muted'} />
                 {item.badge ? (
                   <View
                     testID={`${item.key}-badge`}
-                    className="absolute -right-3 -top-2 h-5 min-w-5 items-center justify-center rounded-pill bg-danger px-1">
+                    className="absolute -right-2 -top-2 h-5 min-w-5 items-center justify-center rounded-pill border-2 border-ink bg-danger px-1">
                     <AppText variant="label" tone="on-primary">
                       {item.badge > 99 ? '99+' : String(item.badge)}
                     </AppText>
                   </View>
                 ) : null}
               </View>
-              <AppText variant="label" tone={active ? 'primary' : 'on-primary'} numberOfLines={1}>
+              <AppText variant="label" tone={active ? 'ink' : 'on-ink-muted'} numberOfLines={1}>
                 {item.label}
               </AppText>
             </Pressable>

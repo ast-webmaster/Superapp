@@ -3,8 +3,10 @@ import {
   formatDate,
   formatDateTime,
   formatMoney,
+  formatMonth,
   formatRoles,
   formatShortDate,
+  formatWeekday,
   formatWeekdayDate,
   sentenceCase,
 } from './format';
@@ -56,6 +58,20 @@ describe('formatMoney', () => {
   });
 });
 
+describe('formatMonth', () => {
+  it('writes the short Indonesian month and the year', () => {
+    expect(formatMonth('2026-11')).toBe('Nov 2026');
+    expect(formatMonth('2026-10')).toBe('Okt 2026');
+    expect(formatMonth('2026-05')).toBe('Mei 2026');
+  });
+
+  it('returns anything that is not a year and month as it was', () => {
+    expect(formatMonth('2026-13')).toBe('2026-13');
+    expect(formatMonth('November 2026')).toBe('November 2026');
+    expect(formatMonth('')).toBe('');
+  });
+});
+
 describe('formatShortDate', () => {
   it('writes the day and month without the year', () => {
     expect(formatShortDate('2026-10-01')).toBe('1 Okt');
@@ -81,6 +97,13 @@ describe('formatCompactMoney', () => {
 
   it('keeps the minus sign', () => {
     expect(formatCompactMoney(-700000)).toBe('-Rp 700K');
+  });
+});
+
+describe('formatWeekday', () => {
+  it('names the day of the week', () => {
+    expect(formatWeekday(new Date(2026, 10, 9))).toBe('Sen');
+    expect(formatWeekday(new Date(2026, 4, 30))).toBe('Sab');
   });
 });
 

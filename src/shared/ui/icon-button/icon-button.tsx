@@ -10,10 +10,12 @@ export interface IconButtonProps extends Omit<PressableProps, 'children' | 'styl
   /** What the button does, for screen readers. */
   label: string;
   active?: boolean;
+  /** `gray` fills the idle circle with `surface-gray`, for a button inside a white card. */
+  tone?: 'surface' | 'gray';
   disabled?: boolean;
   /**
    * `sm` draws a 40 circle inside the 48 press area, for a header where 56 is too heavy.
-   * `xs` draws a 32 lavender circle with a 16 icon in the same 48 press area, for row actions
+   * `xs` draws a 32 highlight circle with a 16 icon in the same 48 press area, for row actions
    * on a card (edit, remove).
    */
   size?: 'md' | 'sm' | 'xs';
@@ -25,12 +27,14 @@ export function IconButton({
   icon,
   label,
   active = false,
+  tone = 'surface',
   disabled = false,
   size = 'md',
   className,
   ...props
 }: IconButtonProps) {
-  const fill = active ? 'bg-primary' : size === 'xs' ? 'bg-lavender' : 'bg-surface';
+  const idle = size === 'xs' ? 'bg-highlight' : tone === 'gray' ? 'bg-surface-gray' : 'bg-surface';
+  const fill = active ? 'bg-primary' : idle;
   const pressed = active ? 'active:bg-primary-pressed' : 'active:bg-border';
   const iconColor = active ? 'on-primary' : size === 'xs' ? 'primary' : 'ink';
 

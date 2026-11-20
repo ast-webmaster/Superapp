@@ -10,6 +10,18 @@ export function slotStart(slot: string): string {
   return bounds(slot)[0];
 }
 
+/** Slots that start before noon, then the rest of the day. A part with no slots is left out. */
+export function slotsByPartOfDay(
+  slots: readonly string[],
+): { label: string; slots: string[] }[] {
+  const morning = slots.filter((slot) => slotStart(slot) < '12:00');
+  const rest = slots.filter((slot) => slotStart(slot) >= '12:00');
+  return [
+    { label: 'Pagi', slots: morning },
+    { label: 'Siang & sore', slots: rest },
+  ].filter((part) => part.slots.length > 0);
+}
+
 /** The slot overlaps a booking. HH:MM strings compare correctly as text. */
 export function isSlotTaken(
   slot: string,

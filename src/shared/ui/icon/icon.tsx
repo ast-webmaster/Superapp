@@ -1,73 +1,76 @@
-import AlertTriangle from 'lucide-react-native/icons/triangle-alert';
-import ArrowDown from 'lucide-react-native/icons/arrow-down';
-import ArrowRight from 'lucide-react-native/icons/arrow-right';
-import ArrowUp from 'lucide-react-native/icons/arrow-up';
-import BarChart3 from 'lucide-react-native/icons/chart-column';
-import Bell from 'lucide-react-native/icons/bell';
-import Bookmark from 'lucide-react-native/icons/bookmark';
-import Box from 'lucide-react-native/icons/box';
-import Building2 from 'lucide-react-native/icons/building-2';
-import Calendar from 'lucide-react-native/icons/calendar';
-import Check from 'lucide-react-native/icons/check';
-import ChevronLeft from 'lucide-react-native/icons/chevron-left';
-import ChevronRight from 'lucide-react-native/icons/chevron-right';
-import ClipboardCheck from 'lucide-react-native/icons/clipboard-check';
-import Copy from 'lucide-react-native/icons/copy';
-import Download from 'lucide-react-native/icons/download';
-import Ellipsis from 'lucide-react-native/icons/ellipsis';
-import Eye from 'lucide-react-native/icons/eye';
-import EyeOff from 'lucide-react-native/icons/eye-off';
-import FileText from 'lucide-react-native/icons/file-text';
-import Heart from 'lucide-react-native/icons/heart';
-import House from 'lucide-react-native/icons/house';
-import Info from 'lucide-react-native/icons/info';
-import LayoutGrid from 'lucide-react-native/icons/layout-grid';
-import List from 'lucide-react-native/icons/list';
-import Lock from 'lucide-react-native/icons/lock';
-import LogOut from 'lucide-react-native/icons/log-out';
-import History from 'lucide-react-native/icons/history';
-import Map from 'lucide-react-native/icons/map';
-import Mic from 'lucide-react-native/icons/mic';
-import MessageSquare from 'lucide-react-native/icons/message-square';
-import Minus from 'lucide-react-native/icons/minus';
-import Pencil from 'lucide-react-native/icons/pencil';
-import Pin from 'lucide-react-native/icons/pin';
-import Plus from 'lucide-react-native/icons/plus';
-import Search from 'lucide-react-native/icons/search';
-import Settings from 'lucide-react-native/icons/settings';
-import Share from 'lucide-react-native/icons/share';
-import ShoppingCart from 'lucide-react-native/icons/shopping-cart';
-import SlidersHorizontal from 'lucide-react-native/icons/sliders-horizontal';
-import Sparkles from 'lucide-react-native/icons/sparkles';
-import Star from 'lucide-react-native/icons/star';
-import Truck from 'lucide-react-native/icons/truck';
-import Upload from 'lucide-react-native/icons/upload';
-import User from 'lucide-react-native/icons/user';
-import Users from 'lucide-react-native/icons/users';
-import Wallet from 'lucide-react-native/icons/wallet';
-import X from 'lucide-react-native/icons/x';
+import AiMagic from '@hugeicons/core-free-icons/SparklesIcon';
+import Add from '@hugeicons/core-free-icons/Add01Icon';
+import Refresh from '@hugeicons/core-free-icons/RefreshIcon';
+import Alert from '@hugeicons/core-free-icons/Alert02Icon';
+import ArrowDown from '@hugeicons/core-free-icons/ArrowDown02Icon';
+import ArrowLeft from '@hugeicons/core-free-icons/ArrowLeft01Icon';
+import ArrowRight from '@hugeicons/core-free-icons/ArrowRight02Icon';
+import ArrowRightSmall from '@hugeicons/core-free-icons/ArrowRight01Icon';
+import ArrowUp from '@hugeicons/core-free-icons/ArrowUp02Icon';
+import Bell from '@hugeicons/core-free-icons/Notification01Icon';
+import Bookmark from '@hugeicons/core-free-icons/Bookmark01Icon';
+import Building from '@hugeicons/core-free-icons/Building03Icon';
+import Calendar from '@hugeicons/core-free-icons/Calendar03Icon';
+import Cart from '@hugeicons/core-free-icons/ShoppingCart01Icon';
+import Chart from '@hugeicons/core-free-icons/ChartColumnIcon';
+import Chat from '@hugeicons/core-free-icons/Message01Icon';
+import Check from '@hugeicons/core-free-icons/Tick02Icon';
+import Clipboard from '@hugeicons/core-free-icons/TaskDone01Icon';
+import Close from '@hugeicons/core-free-icons/Cancel01Icon';
+import Copy from '@hugeicons/core-free-icons/Copy01Icon';
+import Doc from '@hugeicons/core-free-icons/File01Icon';
+import Download from '@hugeicons/core-free-icons/Download01Icon';
+import Eye from '@hugeicons/core-free-icons/ViewIcon';
+import EyeOff from '@hugeicons/core-free-icons/ViewOffIcon';
+import Grid from '@hugeicons/core-free-icons/GridViewIcon';
+import Heart from '@hugeicons/core-free-icons/FavouriteIcon';
+import History from '@hugeicons/core-free-icons/Clock01Icon';
+import Home from '@hugeicons/core-free-icons/Home01Icon';
+import Info from '@hugeicons/core-free-icons/InformationCircleIcon';
+import List from '@hugeicons/core-free-icons/ListViewIcon';
+import Lock from '@hugeicons/core-free-icons/LockIcon';
+import LogOut from '@hugeicons/core-free-icons/Logout01Icon';
+import Map from '@hugeicons/core-free-icons/Location01Icon';
+import Mic from '@hugeicons/core-free-icons/Mic01Icon';
+import Minus from '@hugeicons/core-free-icons/MinusSignIcon';
+import More from '@hugeicons/core-free-icons/MoreHorizontalIcon';
+import Package from '@hugeicons/core-free-icons/PackageIcon';
+import Pencil from '@hugeicons/core-free-icons/PencilEdit01Icon';
+import Pin from '@hugeicons/core-free-icons/PinIcon';
+import Search from '@hugeicons/core-free-icons/Search01Icon';
+import Send from '@hugeicons/core-free-icons/SentIcon';
+import Settings from '@hugeicons/core-free-icons/Settings02Icon';
+import Share from '@hugeicons/core-free-icons/Share01Icon';
+import Sliders from '@hugeicons/core-free-icons/SlidersHorizontalIcon';
+import Star from '@hugeicons/core-free-icons/StarIcon';
+import Truck from '@hugeicons/core-free-icons/TruckIcon';
+import Upload from '@hugeicons/core-free-icons/Upload01Icon';
+import User from '@hugeicons/core-free-icons/UserIcon';
+import Users from '@hugeicons/core-free-icons/UserGroupIcon';
+import Wallet from '@hugeicons/core-free-icons/Wallet01Icon';
+import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react-native';
 import { View } from 'react-native';
 
 import { colors, type ColorToken } from '@/shared/theme/tokens';
 
 const icons = {
-  home: House,
-  grid: LayoutGrid,
+  home: Home,
+  grid: Grid,
   search: Search,
   bell: Bell,
   user: User,
   calendar: Calendar,
   settings: Settings,
-  building: Building2,
-  box: Box,
+  building: Building,
+  box: Package,
   wallet: Wallet,
   users: Users,
-  chart: BarChart3,
+  chart: Chart,
   truck: Truck,
-  clipboard: ClipboardCheck,
-  doc: FileText,
-  chat: MessageSquare,
-  ai: Sparkles,
+  clipboard: Clipboard,
+  doc: Doc,
+  chat: Chat,
+  ai: AiMagic,
   heart: Heart,
   bookmark: Bookmark,
   share: Share,
@@ -77,29 +80,31 @@ const icons = {
   pencil: Pencil,
   eye: Eye,
   'eye-off': EyeOff,
-  sliders: SlidersHorizontal,
+  sliders: Sliders,
   list: List,
   history: History,
   mic: Mic,
   map: Map,
-  cart: ShoppingCart,
+  cart: Cart,
   star: Star,
-  plus: Plus,
-  more: Ellipsis,
+  plus: Add,
+  more: More,
   copy: Copy,
   download: Download,
   upload: Upload,
   minus: Minus,
   check: Check,
-  x: X,
-  alert: AlertTriangle,
+  x: Close,
+  alert: Alert,
   info: Info,
+  send: Send,
+  refresh: Refresh,
   'arrow-up': ArrowUp,
   'arrow-down': ArrowDown,
   'arrow-right': ArrowRight,
-  'chevron-left': ChevronLeft,
-  'chevron-right': ChevronRight,
-} as const;
+  'chevron-left': ArrowLeft,
+  'chevron-right': ArrowRightSmall,
+} as const satisfies Record<string, IconSvgElement>;
 
 export type IconName = keyof typeof icons;
 
@@ -116,6 +121,11 @@ export interface IconProps {
   className?: string;
 }
 
+/** The free Hugeicons set is outline only, so a filled icon paints the same paths solid. */
+function fillShapes(shapes: IconSvgElement, fill: string): IconSvgElement {
+  return shapes.map(([tag, attrs]) => [tag, { ...attrs, fill }] as const);
+}
+
 export function Icon({
   name,
   size = 24,
@@ -124,8 +134,8 @@ export function Icon({
   label,
   className,
 }: IconProps) {
-  const Glyph = icons[name];
   const value = colors[color];
+  const shapes: IconSvgElement = filled ? fillShapes(icons[name], value) : icons[name];
 
   return (
     <View
@@ -133,7 +143,7 @@ export function Icon({
       {...(label
         ? { accessible: true, role: 'img' as const, 'aria-label': label }
         : { 'aria-hidden': true })}>
-      <Glyph size={size} color={value} strokeWidth={1.75} fill={filled ? value : 'none'} />
+      <HugeiconsIcon icon={shapes} size={size} color={value} strokeWidth={1.75} />
     </View>
   );
 }

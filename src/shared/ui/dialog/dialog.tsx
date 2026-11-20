@@ -136,7 +136,7 @@ function ConfirmDialog({
           </View>
           <View className="flex-row bg-primary-soft">
             <DialogAction label={cancelLabel} onPress={onCancel} />
-            <View aria-hidden className="w-px bg-lavender" />
+            <View aria-hidden className="w-px bg-highlight" />
             <DialogAction
               label={confirmLabel}
               tone={destructive ? 'danger' : 'primary'}

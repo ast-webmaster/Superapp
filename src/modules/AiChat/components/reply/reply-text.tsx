@@ -16,7 +16,7 @@ function Spans({ spans }: { spans: Span[] }) {
           </AppText>
         );
       case 'italic':
-        // Rubik has no italic face loaded; the platform slants the regular one.
+        // Plus Jakarta Sans has no italic face loaded; the platform slants the regular one.
         return (
           <AppText key={index} style={{ fontStyle: 'italic' }}>
             {span.text}
