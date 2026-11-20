@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
 import { View } from 'react-native';
 
@@ -32,6 +33,7 @@ export function PeriodSheet({ visible, onClose }: PeriodSheetProps) {
 
   const apply = () => {
     setPeriod(draft === LATEST ? null : draft);
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     onClose();
   };
 

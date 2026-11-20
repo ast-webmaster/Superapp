@@ -93,6 +93,12 @@
         "projectId": "42bc6a00-1f3e-403f-b1c3-9196da677ecf"
       }
     },
-    "owner": "gustierls-team"
+    "owner": "gustierls-team",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/42bc6a00-1f3e-403f-b1c3-9196da677ecf"
+    }
   }
 }

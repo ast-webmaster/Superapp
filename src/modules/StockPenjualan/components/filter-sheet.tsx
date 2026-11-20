@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
 import { View } from 'react-native';
 
@@ -31,6 +32,7 @@ export function FilterSheet({ visible, onClose }: FilterSheetProps) {
 
   const apply = () => {
     setFilters({ categoryCode: draft === ALL ? null : draft });
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     onClose();
   };
 

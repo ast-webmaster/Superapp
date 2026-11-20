@@ -1,10 +1,12 @@
 import { Stack } from 'expo-router/stack';
 
 import { useCan } from '@/core/permissions';
+import { useReducedMotion } from '@/shared/hooks/use-reduced-motion';
 import { colors } from '@/shared/theme/tokens';
 import { renderTopAppBar } from '@/shared/ui';
 
 import { moduleManifests } from './registry';
+import { UpdateBanner } from './update-banner';
 
 // Every route in this group requires a signed-in user (guarded in RootNavigator).
 // The tabs and each business module bring their own header; profile, its sub-screens and
@@ -12,15 +14,32 @@ import { moduleManifests } from './registry';
 const stackHeader = {
   headerShown: true,
   header: renderTopAppBar,
-  contentStyle: { backgroundColor: colors.ground },
 } as const;
 
 /** The stack behind sign-in: tabs, account screens and one screen per business module. */
 export function AppStack() {
+  return (
+    <>
+      <AppStackScreens />
+      <UpdateBanner />
+    </>
+  );
+}
+
+function AppStackScreens() {
   const can = useCan();
+  const reducedMotion = useReducedMotion();
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        // The ground behind every screen, so a module never flashes white mid-transition.
+        contentStyle: { backgroundColor: colors.ground },
+        // Pushes keep the platform's own transition, and its interactive swipe back. With
+        // reduce motion on, they fade instead of sliding.
+        animation: reducedMotion ? 'fade' : undefined,
+      }}>
       <Stack.Screen name="profile" options={{ ...stackHeader, title: 'Profile' }} />
       <Stack.Screen name="edit-profile" options={{ ...stackHeader, title: 'Edit profile' }} />
       <Stack.Screen name="change-password" options={{ ...stackHeader, title: 'Change password' }} />

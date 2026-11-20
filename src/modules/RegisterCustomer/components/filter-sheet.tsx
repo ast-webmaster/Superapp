@@ -1,4 +1,5 @@
 import { clsx } from 'clsx';
+import * as Haptics from 'expo-haptics';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 
@@ -57,6 +58,7 @@ export function FilterSheet({ visible, onClose }: FilterSheetProps) {
             disabled={halfRange}
             onPress={() => {
               setFilters(draft);
+              void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
               onClose();
             }}>
             Apply

@@ -3,6 +3,7 @@ import type { ComponentRef, Ref } from 'react';
 import { Pressable, View, type PressableProps } from 'react-native';
 
 import { focusRing } from '../focus';
+import { pressScale } from '../press';
 import { Icon, type IconName } from '../icon/icon';
 import { AppText } from '../text/text';
 
@@ -20,6 +21,7 @@ export function InfoCard({ title, description, icon, className, ...props }: Info
       role="button"
       className={clsx(
         'flex-row items-center gap-4 self-stretch rounded-lg bg-primary-soft p-4 active:bg-highlight',
+        pressScale,
         focusRing,
         className,
       )}

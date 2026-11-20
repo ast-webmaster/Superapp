@@ -2,6 +2,7 @@
 export { ActionBar, type ActionBarProps } from './action-bar/action-bar';
 export { Alert, type AlertProps, type AlertTone } from './alert/alert';
 export { focusRing } from './focus';
+export { pressScale } from './press';
 export { ToastProvider, useToast } from './alert/toast';
 export { Avatar, type AvatarProps } from './avatar/avatar';
 export { Badge, type BadgeProps } from './badge/badge';
@@ -36,6 +37,7 @@ export { ListGroup, ListRow, type ListGroupProps, type ListRowProps } from './li
 export { Loading, type LoadingProps } from './loading/loading';
 export { Logo, type LogoProps } from './logo/logo';
 export { ModuleCard, type ModuleCardProps } from './module-card/module-card';
+export { ProductImage, type ProductImageProps } from './product-image/product-image';
 export { ProgressBar, type ProgressBarProps } from './progress-bar/progress-bar';
 export { Screen, type ScreenProps } from './screen/screen';
 export {

@@ -1,4 +1,5 @@
 import { clsx } from 'clsx';
+import * as Haptics from 'expo-haptics';
 import type { ComponentRef, Ref } from 'react';
 import { Pressable, View, type PressableProps } from 'react-native';
 
@@ -6,6 +7,7 @@ import { useControllableState } from '@/shared/hooks/use-controllable-state';
 import { useRovingFocus } from '@/shared/hooks/use-roving-focus';
 
 import { focusRing } from '../focus';
+import { pressScale } from '../press';
 import { Icon, type IconName } from '../icon/icon';
 import { AppText } from '../text/text';
 
@@ -29,6 +31,7 @@ export function Chip({
   outlined = false,
   compact = false,
   className,
+  onPress,
   ...props
 }: ChipProps) {
   const leadingIcon = icon ?? (outlined && selected ? 'check' : undefined);
@@ -36,12 +39,18 @@ export function Chip({
   return (
     <Pressable
       role="button"
+      onPress={(event) => {
+        // A tick as the choice changes: the same moment the chip changes color.
+        void Haptics.selectionAsync();
+        onPress?.(event);
+      }}
       aria-pressed={selected}
       accessibilityState={{ selected }}
       className={clsx(
         'min-h-touch flex-row items-center justify-center rounded-pill',
         compact ? 'gap-1 px-2' : 'gap-2 px-5',
         selected ? 'border border-ink bg-ink' : 'border border-border bg-surface active:bg-border',
+        pressScale,
         focusRing,
         className,
       )}

@@ -19,6 +19,7 @@ import {
   ListRow,
   Logo,
   ModuleCard,
+  ProductImage,
   Skeleton,
   SkeletonGroup,
   SegmentedControl,
@@ -360,6 +361,15 @@ export default function BoardScreen() {
             <Avatar name="Diana Larussa" size="xl" />
             <Avatar name="Budi Santoso" />
             <Avatar name="Rina" />
+          </View>
+        </BoardCard>
+      </BoardRow>
+
+      <BoardRow>
+        <BoardCard number="17" title="Product image" span={6}>
+          <View className="flex-row items-center gap-4">
+            <ProductImage uri={null} className="size-16" />
+            <ProductImage uri={null} className="size-24 rounded-xl" />
           </View>
         </BoardCard>
       </BoardRow>

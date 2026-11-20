@@ -5,6 +5,7 @@ import { ActivityIndicator, Pressable, type PressableProps } from 'react-native'
 import { colors, type ColorToken } from '@/shared/theme/tokens';
 
 import { focusRing } from '../focus';
+import { pressScale } from '../press';
 import { Icon, type IconName } from '../icon/icon';
 import { AppText, type AppTextProps } from '../text/text';
 
@@ -77,6 +78,7 @@ export function Button({
         block ? 'self-stretch' : 'self-start',
         container,
         disabled && 'opacity-50',
+        pressScale,
         focusRing,
         className,
       )}

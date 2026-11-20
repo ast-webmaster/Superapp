@@ -299,6 +299,52 @@ The Product Borrowing module (`src/modules/ProductBorrowing`) talks to `v1/produ
 - **Export** (`GET /export`) is an `.xlsx` of a date range of at most 31 days (the sheet allows 30), without drafts. It does not carry the list's status filter or search: the file holds every document in the user's scope for those dates. Nothing is cached.
 - **Inbox and push:** the module id is `product-borrowing`, the slug the backend notifies with (`data.doc_uuid` is the document's `uuid`), and `detailRoute` opens the document.
 
+## Data Product
+
+The Data Product module (`src/modules/DataProduct`) is read-only and talks to `v1/product` (`digitalapproval/Modules/Product`). Manifest `permission` is `read_product`. Everyone who holds it sees every product; the server does not scope by category and hides deleted products. Stock is not here: it belongs to Stock Penjualan.
+
+- **List** (`GET /`) is searched on the server (`search` matches name, code or SKU), paged 15 at a time, newest first, rows de-duplicated by `id`. **Detail** (`GET /{id}`) adds group, specification, base `price`, `price_tiers` (null without a price list) and every picture. A product that is gone or deleted answers 404, shown as "Product not found".
+- **Keys:** `dataProductKeys.list(filters, search)`, `detail(id)` and `categories()` (loaded only while the filter sheet is open). The category filter sits in `store/dataProductFilterStore.ts` and resets on sign-out; the search text is `useState`. Both go to the server (`category_code`, `search`).
+- **Categories** come from `GET /categories` of the same module: only categories that still have a product, by name, not paged. The sheet edits a draft and writes the store on Apply.
+- **Pictures** are absolute URLs of server files, drawn with `expo-image`; a product without one shows a placeholder icon.
+- **Freshness:** a read-only detail keeps the default `staleTime` (60 s). There is no action, so nothing depends on it being current.
+
+## Data Customer
+
+The Data Customer module (`src/modules/DataCustomer`) is read-only and talks to `v1/customer` (`digitalapproval/Modules/Customer`). Adding, editing (with the finance approval of a change), deleting, attachments and import stay on the web. Manifest `permission` is `read_customer` or `read_all_customer`, the same either-or the backend middleware uses. The server scopes the rows: `read_all_customer` sees every office, `read_customer` only the user's own office, and a user without an office sees none. The app never filters by office.
+
+- **List** (`GET /`) is searched on the server (`search` matches name or code), paged 15 at a time, newest first, rows de-duplicated by `id`. Customers marked "(TIDAK DIPAKAI)" are not listed. **Detail** (`GET /{id}`, the numeric `id`, not `customer_id`) adds contact, person in charge, shipping and extra addresses, business and tax data, owner and the record's audit fields. A customer that is gone or outside the user's office answers 404, shown as "Customer not found".
+- **Locked customer:** `is_locked` means a change waits for finance. `pending_change` says who asked and when, never what; the detail shows it as an `Alert`.
+- **Keys:** `dataCustomerKeys.list(search)` and `detail(id)`. There is no filter store: the only filter is the search text, which is `useState`.
+- **No office or category filter yet.** The API accepts `office_code` and `category`, but offers no list of either to choose from (`category` is free text). Add the filters when the backend gives the module a lookup.
+- **Freshness:** a read-only detail keeps the default `staleTime` (60 s). There is no action, so nothing depends on it being current.
+
+## Stock Gimmick
+
+The Stock Gimmick module (`src/modules/StockGimmick`) is read-only and talks to `v1/stock-gimmick` (`digitalapproval/Modules/Stock`, the web menu Stock Item Marketing). Stock changes only through Inbound, Outbound and Request Gimmick, which stay on the web. One row is one item in one office. Manifest `permission` is `read_stock_marketing`, `read_all_stock_marketing` or `read_product_manager_stock_marketing`, the same either-or the backend middleware uses. The server scopes the rows (all offices, the user's office, or only the categories a product manager holds); a row outside the scope answers 404, shown as "Stock not found". The app never filters by office.
+
+- **List** (`GET /`) is searched on the server (`search` matches name or code), paged 15 at a time, newest first, rows de-duplicated by `id`. `product_name` and `office_name` can be `null` when the master is gone. **Detail** (`GET /{id}`, the numeric row `id`) adds `last_transaction_label`, `image_url` and `created_at`.
+- **Track Stock** (`GET /{id}/movements`) is a second query on the detail screen, not part of the detail, so a failed history never hides the stock. It answers the whole history unpaged, newest first, with a signed `qty` and the running `balance` after each event; `summary` holds the totals. The screen shows it under "History" with its own skeleton and its own retry. `kind` and `direction` stay `string`; an event with `pending: true` is shown as "Waiting for action" (stock is already taken, the document is not settled).
+- **Keys:** `stockGimmickKeys.list(search)`, `detail(id)` and `movements(id)`. There is no filter store: the only filter is the search text, which is `useState`.
+- **Export** (`GET /export`) is an unfiltered `.xlsx` of every row the user may see, through `apiClient.getFile` and `shareFile`, from the toolbar actions menu. Nothing is cached. For a product manager the file holds only the categories they hold, while the list also shows whole brands (SanDisk, Western Digital); the numbers can differ.
+- **Freshness:** a read-only detail keeps the default `staleTime` (60 s). Pull to refresh reloads the detail and its history together.
+
+## Audit
+
+The Audit module (`src/modules/Audit`) talks to `v1/audit` (`digitalapproval/Modules/Audit`). A card is one audit with its checklist, attachments, Audit Programs, Audit Findings and approval log. Manifest `permission` is any of `read_audit`, `read_all_audit`, `approve_audit`, the same either-or the list endpoint uses. The server scopes the rows (owner, Responsibility, finding PIC, approver); the app never filters them. The detail endpoints carry no module permission on purpose: a PIC or Responsibility without one of those can still open a card from a push, but the module tile and its routes stay hidden for them.
+
+- **Status:** `PLANNED` → (`start`) `ON PROGRESS` → (`submit`) `AWAITING FOLLOW UP` → (`follow_up`) `AWAITING APPROVAL` → (`approve` / `reject`) `COMPLETED` / `REJECTED`. The last two are final. Statuses stay `string`; `components/status.ts` labels the ones it knows.
+- **Actions:** `start`, `submit`, `follow_up`, `approve`, `reject` through `POST /{uuid}/actions` with `{action, remarks?}`. The server picks who may and `allowed_actions` follows it. **This API has no `updated_at` and no 409**: the server re-checks under a lock and refuses an action that is not the user's, does not fit the status or is not ready (a finding without PIC, a response or a due date) with **422 and the reason in `message`**, which the action bar shows as it is. A 422 therefore changes nothing and reloads nothing. `reject` needs a reason of at least 6 characters, checked on the device; the server does not require it.
+- **Keys:** `auditKeys.list(filters, search)`, `detail(uuid)`, `part(uuid, part)` and `actionCount()`. Every part of a card (`checklists`, `attachments`, `programs`, `findings`, `approvals`) sits **under** `detail(uuid)`, so invalidating the detail refreshes them all. After an action the detail is set from the response and the parts, lists and the count are invalidated.
+- **Detail views:** the detail is one screen with a four-way `SegmentedControl` (Overview, Program, Findings, History). Only the open view is mounted, so a part is requested only when the user opens it. Parts keep `staleTime: 0`, because what the user may do in them follows the card's status.
+- **List:** `tab` (`planned`, `on_progress` need `create_audit`; `follow_up`; `finding`; `approval` needs `approve_audit`) is a chip row and `status`, `year` and `month` (the month the Period Activity starts in; a month needs a year) are in the filter sheet. Both sit in `store/auditFilterStore.ts` and reset on sign-out. Search goes to the server. Rows are de-duplicated by `uuid`.
+- **Waiting count:** `GET /action-count` (Responsibility's `AWAITING FOLLOW UP` cards plus the approver's `AWAITING APPROVAL`) feeds a card above the list that opens the matching tab. It is a hint: a failure just hides it.
+- **Finding response:** the PIC or Responsibility fills the Auditee Response and Due Date with `PUT /{uuid}/findings/{id}/response` while the card is `AWAITING FOLLOW UP`, where the finding's `can_respond` is true. Either field may be empty (the server keeps a half-filled finding and clears what is sent empty). On success the findings list shows the server's copy of that finding and the card and count reload. A past due date is refused by the server (422); the app does not check it against the phone's clock.
+- **Evidence:** `POST /{uuid}/findings/{id}/attachments`, multipart (`file`, `description`), up to 30 MB of xlsx, xls, csv, doc, docx, pdf, jpg, png, jpeg, msg or zip, checked on the device first (`components/file-problem.ts`). The file comes from `pickFile`. A failed upload reloads the findings, because a lost connection may still have saved it.
+- **Files:** card and finding attachments go through `apiClient.getFile` and `shareFile`; the absolute `download_url` the server sends is not used.
+- **Not in the app:** creating or editing a card, assigning it, the checklist, program and finding CRUD, Excel upload and the two Excel exports stay on the web. The API has them; add them when mobile needs them.
+- **Inbox and push:** the module id is `audit`, the slug the backend notifies with (`data.doc_uuid` is the card's `uuid`), and `detailRoute` opens the card.
+
 ## Backend contract
 
 What a module's v1 API must provide for this to work. `PriceApproval` (`digitalapproval/Modules/PriceApproval`) is the reference.

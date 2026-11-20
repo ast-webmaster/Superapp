@@ -123,6 +123,36 @@ Shadows: Cards use `border border-border` (1px gray hairline) instead of a shado
 - **`active:` goes on the `Pressable` only.** On native, NativeWind turns a `View` with an `active:` class into a pressable of its own, so a tap on that `View` never reaches the parent's `onPress`. To color a shape inside the press area when pressed, use the `Pressable` children function: `{({ pressed }) => <View className={pressed ? 'bg-primary-pressed' : 'bg-primary'} />}`. Reference: the send button in `composer.tsx`.
 - **`className` is for layout only** (width, flex, margin, alignment). Looks come from `variant` and `tone`. CSS order decides conflicts, not class order.
 
+## Motion
+
+Motion explains a change; it never decorates. Only `transform` and `opacity` animate (never `height`, `elevation` or blur intensity), on the UI thread: Reanimated 4 shared values, no `setState` in a gesture handler. Feel can only be judged in a release build on the slowest Android device we support, not in a simulator or Expo Go.
+
+| Moment                          | Motion                                                                                                              |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `Sheet` opens                   | Sheet slides up 300ms, `Easing.bezier(0.32, 0.72, 0, 1)`, no overshoot. The scrim fades in on its own              |
+| `Sheet` closes                  | 200ms, `Easing.bezier(0.23, 1, 0.32, 1)`. Closing is faster than opening                                            |
+| `Sheet` dragged                 | The header follows the finger. On release a flick decides, not distance: it closes when `translateY + project(velocityY)` passes 40% of the sheet height. The finger's velocity goes into the spring. Close: `{ duration: 300, dampingRatio: 1, overshootClamping: true }`. Snap back: `{ duration: 300, dampingRatio: 0.8 }`. Pulling up past the top rubber-bands |
+| Press on `Button`, `Chip`, `InfoCard` | `pressScale` (`src/shared/ui/press.ts`): scale 0.97 in 120ms, `ease-press` (`cubic-bezier(0.23, 1, 0.32, 1)`). A full-width list row only changes its background |
+| Screen push                     | The platform transition, untouched, with its interactive swipe back. Tabs do not animate                            |
+
+**`Sheet`.** `visible` stays the only source of truth: the close button, the scrim, the Android back button and a drag all call `onClose`, and the parent hides the sheet. The `Modal` stays mounted until the closing animation ends. One shared value, `translateY`, drives the sheet, the scrim opacity and the drag. The sheet opens once it has been measured (`onLayout`), so it travels exactly its own height. Only the header (grabber and title row) carries the pan gesture, so the content keeps scrolling. A `Modal` is its own native window on Android, so the sheet has its own `GestureHandlerRootView`. Callers do not change.
+
+**Reduce motion** (`useReducedMotion` from `@/shared/hooks/use-reduced-motion`): the sheet and its scrim only fade (150ms), with no translation and no spring. The grabber and the drag are off; the close button remains. `AppStack` pushes fade instead of sliding.
+
+**Haptics** (`expo-haptics`), at most one per action and always beside a visual change, never the only feedback:
+
+| Moment                                          | Call                                      | Where                              |
+| ----------------------------------------------- | ----------------------------------------- | ---------------------------------- |
+| A drag is released and the sheet snaps back     | `impactAsync(Light)`                      | `Sheet`, from the gesture's end    |
+| A chip is pressed                               | `selectionAsync()`                        | `Chip`                             |
+| A filter or period is applied                   | `notificationAsync(Success)`              | The `apply` of each filter sheet   |
+
+From a worklet, call a haptic through `scheduleOnRN`, and only from `onDeactivate` (a gesture's end), never from `onUpdate`.
+
+### App update banner
+
+Over-the-air updates (EAS Update) download in the background and only run after a cold start. `UpdateBanner` (`src/navigation/update-banner.tsx`, mounted in `AppStack`) tells the user once a version is downloaded: a `surface` card with a hairline, under the status bar where toasts sit, an icon well, "Update ready" and a `soft` "Later" and a `primary` "Restart" (`Button size="sm"`). It never blocks, and "Later" hides it for that version only. Nothing shows while it downloads or when there is no update. It slides in 300ms (`FadeInUp`) and only fades with reduce motion. `useAppUpdate` also checks when the app returns to the foreground, at most every 15 minutes. Updates are off in Expo Go and development builds, so the banner only shows in a preview or production build.
+
 ## Component catalog
 
 All from `@/shared/ui`.
@@ -149,6 +179,7 @@ All from `@/shared/ui`.
 | `StackedList`           | A scrolling list of cards (a `FlatList` with the same props, minus `onScroll`). A card pins at the top and shrinks to 0.94 while the next one slides over it. Keep the `py-4` list padding (the pin offset is 16), give cards the same width, and note that reduce motion turns the effect off. Reference: `PriceApproval/screens/price-approval-list-screen.tsx` | `FlatList` props                                                                                         |
 | `Avatar`                | A person: their photo, or their initials on `highlight` when there is none. Named after the person for screen readers                                                                                                                                                                                                                                             | `name`, `uri`, `size` (`md` 56, `xl` 128)                                                                |
 | `Badge`                 | Status or count. Always has a text label                                                                                                                                                                                                                                                                                                                          | `label`, `tone` (`neutral`, `info`, `success`, `danger`, `warning`, `blue`), `icon`                              |
+| `ProductImage`          | A product or item picture from an absolute URL, with a placeholder icon when there is none. Decoration only: the name beside it carries the meaning                                                                                                                                                                                                              | `uri`, `className` (size and shape, for example `size-16`)                                               |
 | `Icon`                  | Glyphs. Decorative unless `label` is set                                                                                                                                                                                                                                                                                                                          | `name`, `size`, `color` (a color token), `filled`                                                        |
 
 Icon names: `home grid search bell user calendar settings building box wallet users chart truck clipboard doc chat heart bookmark share pin lock log-out pencil eye eye-off sliders list history mic map cart star plus more copy download upload minus check x alert info send refresh arrow-up arrow-down arrow-right chevron-left chevron-right`. Icons are Hugeicons (free, outline only), drawn at 24px, 1.75 stroke, imported one file per icon from `@hugeicons/core-free-icons/<Name>Icon` (never the package root). `filled` paints the same paths solid.
@@ -166,7 +197,7 @@ Icon names: `home grid search bell user calendar settings building box wallet us
 | `ListToolbar`                           | Top row of a module index: filter, actions buttons plus the module chips, and the search field while open (its button is in the top app bar). See the recipe           | `search`, `onFilter`, `filterCount`, `actions`, `children`                                                                                                                                                                              |
 | `DateRangePicker`                       | Month calendar to pick a start and end day (Monday first, same day twice for one day). Days are `YYYY-MM-DD` strings. JS only, so it works on web and needs no rebuild | `value: { from, to }`, `onChange`, `initialMonth`                                                                                                                                                                                       |
 | `Fab`                                   | Create button, floats at the bottom, full width with icon and label. Last child of `Screen`, only with the create permission                                                                            | `label`, `icon`                                                                                                                                                                                                                         |
-| `Sheet`                                 | Bottom sheet: filter form, action menu                                                                                                                                 | `visible`, `title`, `onClose`, `footer`, `fullHeight` (keeps full height with few rows: a searchable picker)                                                                                                                            |
+| `Sheet`                                 | Bottom sheet: filter form, action menu. Drag the header down to close ([Motion](#motion))                                                                              | `visible`, `title`, `onClose`, `footer`, `fullHeight` (keeps full height with few rows: a searchable picker)                                                                                                                            |
 | `Stepper`                               | A small number, such as a quantity                                                                                                                                     | `label`, `value`, `min`, `max`, `onChange`                                                                                                                                                                                              |
 
 Pinned bottom actions always use `ActionBar` (never a white bar with a hairline). Button choice: `primary` is the one main action per screen. `secondary` (white with shadow) is only a subtle lift on the white ground. Prefer `soft` on white, because `secondary` nearly disappears. Buttons stretch with `block` in forms and stay content-width elsewhere.
@@ -307,6 +338,7 @@ Before a screen is done:
 - [ ] One `primary` action at most; `soft` used on white cards.
 - [ ] Loading, empty, error, offline and stale states exist.
 - [ ] Touch targets ≥ 48, labels on icon-only controls, status not color only.
+- [ ] Motion uses only `transform` and `opacity`, has a reduce-motion path, and pressable controls carry `pressScale`.
 - [ ] Copy follows the rules above.
 - [ ] `npx tsc --noEmit`, `npx expo lint`, `npm test` pass; the screen was looked at at phone width.
 
