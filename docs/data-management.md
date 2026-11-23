@@ -76,13 +76,13 @@ export const priceApprovalKeys = {
 
 ### When data refreshes
 
-| Moment                        | Mechanism                                                |
-| ----------------------------- | -------------------------------------------------------- |
-| Screen opens                  | A stale query refetches on mount                         |
-| App returns to the foreground | `focusManager`, wired to `AppState` (native)             |
+| Moment                        | Mechanism                                                                    |
+| ----------------------------- | ---------------------------------------------------------------------------- |
+| Screen opens                  | A stale query refetches on mount                                             |
+| App returns to the foreground | `focusManager`, wired to `AppState` (native)                                 |
 | Connection returns            | `onlineManager`, wired to `expo-network` (native), and re-read on foreground |
-| After an action               | The mutation's `onSuccess` / `onError`                   |
-| User pulls down               | `refetch()` from `RefreshControl` / `FlatList onRefresh` |
+| After an action               | The mutation's `onSuccess` / `onError`                                       |
+| User pulls down               | `refetch()` from `RefreshControl` / `FlatList onRefresh`                     |
 
 There is no polling.
 
@@ -322,13 +322,26 @@ The Data Customer module (`src/modules/DataCustomer`) is read-only and talks to 
 
 ## Stock Gimmick
 
-The Stock Gimmick module (`src/modules/StockGimmick`) is read-only and talks to `v1/stock-gimmick` (`digitalapproval/Modules/Stock`, the web menu Stock Item Marketing). Stock changes only through Inbound, Outbound and Request Gimmick, which stay on the web. One row is one item in one office. Manifest `permission` is `read_stock_marketing`, `read_all_stock_marketing` or `read_product_manager_stock_marketing`, the same either-or the backend middleware uses. The server scopes the rows (all offices, the user's office, or only the categories a product manager holds); a row outside the scope answers 404, shown as "Stock not found". The app never filters by office.
+The Stock Gimmick module (`src/modules/StockGimmick`) is read-only and talks to `v1/stock-gimmick` (`digitalapproval/Modules/Stock`, the web menu Stock Item Marketing). Stock changes only through Marketing Inbound, Outbound and Request: Inbound and Request are in the app (see Marketing Gimmick), Outbound stays on the web. One row is one item in one office. Manifest `permission` is `read_stock_marketing`, `read_all_stock_marketing` or `read_product_manager_stock_marketing`, the same either-or the backend middleware uses. The server scopes the rows (all offices, the user's office, or only the categories a product manager holds); a row outside the scope answers 404, shown as "Stock not found". The app never filters by office.
 
 - **List** (`GET /`) is searched on the server (`search` matches name or code), paged 15 at a time, newest first, rows de-duplicated by `id`. `product_name` and `office_name` can be `null` when the master is gone. **Detail** (`GET /{id}`, the numeric row `id`) adds `last_transaction_label`, `image_url` and `created_at`.
 - **Track Stock** (`GET /{id}/movements`) is a second query on the detail screen, not part of the detail, so a failed history never hides the stock. It answers the whole history unpaged, newest first, with a signed `qty` and the running `balance` after each event; `summary` holds the totals. The screen shows it under "History" with its own skeleton and its own retry. `kind` and `direction` stay `string`; an event with `pending: true` is shown as "Waiting for action" (stock is already taken, the document is not settled).
 - **Keys:** `stockGimmickKeys.list(search)`, `detail(id)` and `movements(id)`. There is no filter store: the only filter is the search text, which is `useState`.
 - **Export** (`GET /export`) is an unfiltered `.xlsx` of every row the user may see, through `apiClient.getFile` and `shareFile`, from the toolbar actions menu. Nothing is cached. For a product manager the file holds only the categories they hold, while the list also shows whole brands (SanDisk, Western Digital); the numbers can differ.
 - **Freshness:** a read-only detail keeps the default `staleTime` (60 s). Pull to refresh reloads the detail and its history together.
+
+## Marketing Gimmick
+
+The Marketing Gimmick module (`src/modules/MarketingGimmick`) talks to `v1/marketing-inbound` and `v1/marketing-request` (`digitalapproval/Modules/TransaksiMasukMarketing` and `TransaksiKeluarMarketing`; the API docs group is `marketing-transactions`). Both flows share one table and one response shape, so one code base serves both, with `flow` (`inbound` | `request`) choosing the path, keys and rules (`flows.ts`). It exports **two manifests**, so Home and Apps show two tiles, each with its own permission. Outbound (`v1/marketing-outbound`) has the same shape and is not in the app yet: it needs a `receive` proof upload and a destination that may be "LAIN-LAIN"; add it as a third entry in `flows.ts`.
+
+- **Permissions** (manifest, either-or like the backend): Inbound `read_`, `read_all_`, `create_`, `approve_marketing_inbound_transactions`. Request `read_`, `create_`, `approve_`, `processed_`, `received_marketing_request_transactions`. The create button needs `create_marketing_<flow>_transactions`. The server scopes the rows (all offices, the user's office, or the user's own documents); the app never filters.
+- **Status:** Inbound `AWAITING` → `SUCCESS` or `REJECTED`. Request `AWAITING` → `AWAITING PROCESSED` → `AWAITING RECEIVED` → `RECEIVED`, with `REJECT` and `CANCEL`; a request to office 1 or 2 skips `AWAITING RECEIVED`. Statuses stay `string`; `components/status.ts` labels the ones it knows (`SUCCESS` reads "Approved").
+- **Actions** through `POST /{uuid}/actions` with `{action, remarks?, updated_at}`: `approve`, `reject`, `process`, `receive`, `cancel`. The server decides which the user may do (`allowed_actions`); the bar ignores any other name. A remark of at most 191 characters is required for `reject` on Inbound, and for `approve`, `reject` and `process` on Request (`flows.reasonRequired`); the confirm dialog asks for it and the server checks again. `cancel` and `receive` take none. 409 means the document changed or the action is gone; the detail and lists reload.
+- **Keys:** `marketingGimmickKeys.list(flow, filters, search)`, `detail(flow, uuid)`, `offices(flow)` and `items(flow, search)`. The first segment is the flow's manifest id (`marketing-inbound`, `marketing-request`), so the two flows never share a cache entry. Filters (status, date range) sit in `store/marketingGimmickFilterStore.ts`, one set per flow, and reset on sign-out. Search goes to the server (`do_no`, remarks, creator). The status filter may join several statuses with commas (the "Awaiting" chip).
+- **Create** (`/marketing-<flow>/new`) is one form, saved and submitted in one call as multipart (`api/buildCreateForm.ts`); the draft is `useState`. Fields: destination office (Request only, `GET /options`, narrowed on the device), remarks (required), a proof (Inbound: required) or attachment (Request: optional), and 1 to 50 items. A file is JPG, PNG or PDF up to 2 MB, checked on the device first. An item is a `code_item` from `GET /items` (a server search of at most 20) and a quantity of 1 to 100,000; an item may appear once. `available` is the stock the user may still use (Head Office stock for Request) and caps the quantity on the device; Inbound adds stock, so `available` is `null` and nothing caps it. The server locks and checks stock itself: a 422 on `items.N.qty` saves nothing. A timeout or lost connection may have saved it, so the lists reload and the user is told to check before sending again. After a save the item pickers reload, because stock moved.
+- **Files:** the proof or attachment is `attachments[]` of the detail (`slot` `doc`); it goes through `apiClient.getFile` at `/{uuid}/attachments/{slot}` and `shareFile`. The absolute `url` the server sends is not used.
+- **No export, no PDF:** the API has neither for these flows.
+- **Inbox and push:** the module ids are `marketing-inbound` and `marketing-request`, the slugs the backend notifies with (`data.doc_uuid` is the document's `uuid`), and each `detailRoute` opens the document.
 
 ## Audit
 
@@ -345,6 +358,19 @@ The Audit module (`src/modules/Audit`) talks to `v1/audit` (`digitalapproval/Mod
 - **Files:** card and finding attachments go through `apiClient.getFile` and `shareFile`; the absolute `download_url` the server sends is not used.
 - **Not in the app:** creating or editing a card, assigning it, the checklist, program and finding CRUD, Excel upload and the two Excel exports stay on the web. The API has them; add them when mobile needs them.
 - **Inbox and push:** the module id is `audit`, the slug the backend notifies with (`data.doc_uuid` is the card's `uuid`), and `detailRoute` opens the card.
+
+## Sales & Inventory Analysis
+
+The Sales & Inventory Analysis module (`src/modules/SalesInventoryAnalysis`) is read-only and talks to `v1/sales-inventory-analysis` (`digitalapproval/Modules/SalesInventoryAnalysis`). Manifest `permission` is any of `read_sales_inventory_analysis_by_all`, `read_sales_inventory_analysis_by_branch`, `read_sales_inventory_analysis_by_brand`, the same either-or the backend controller checks (`403` otherwise, shown as "No access"). The server scopes every figure (all, own branches, or the brands the user manages as PM); the app never filters by scope, and `meta.scope` is not shown.
+
+- **Four views, one screen.** Inventory, Target, Activity and Inactive dealers are chips in the toolbar (`useState`, not a route). Each view is its own component with its own query, so only the open view is requested. Every view is one `GET` that answers all of its data, unpaged.
+- **Keys:** `salesInventoryAnalysisKeys.inventory(selection)`, `achievement(selection)`, `dealerActivity(selection)`, `inactiveDealers(selection)` and `filters()` (loaded only while the filter sheet is open). The selection is part of every key.
+- **Filter:** branch and brand are multi-select, in `store/salesInventoryAnalysisFilterStore.ts` (reset on sign-out), edited as a draft in the sheet and written on Apply. They are sent as repeated `branch[]` and `brand[]` parameters: `apiClient` turns an array query value into that form, and an empty list is left out. The choices come from `GET /filters`, already limited to the user's scope.
+- **Not offered yet:** `periode` (Inventory) and `tanggal` (the other three) are left to the server: the last full month and today. `GET /filters` answers only the default months.
+- **Freshness:** default `staleTime` (60 s) with `keepPreviousData`, so a new filter keeps the old figures on screen under "Applying filters". The server caches Inventory for 15 minutes and clears it after a stock import or a wall report upload; the API has no forced refresh, so pull to refresh only asks the server again. Inventory shows "Stock as of" from `meta.last_stock_updated_at`.
+- **Statuses** (`NEED_ORDER`, `NORMAL`, `OVERSTOCK`, `NO_MOVEMENT`; `ABOVE_LINEARITY`, `ON_TRACK`, `WARNING`, `CRITICAL`, `NO_TARGET`) stay `string`. `components/status.ts` picks the badge tone by key, not from the server's `status_color`; an unknown one shows with its own label.
+- **Inactive dealers** are unpaged and can run to hundreds, so a branch draws its dealers only while it is open.
+- **Null figures:** `achievement_percentage`, `gap_percentage`, `moh` and `growth` are `null` when there is nothing to divide by; they show as a dash.
 
 ## Backend contract
 

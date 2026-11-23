@@ -3,6 +3,7 @@ import { dataCustomerManifest } from '@/modules/DataCustomer';
 import { dataProductManifest } from '@/modules/DataProduct';
 import { laporanPenjualanManifest } from '@/modules/LaporanPenjualan';
 import { marketingActivityManifest } from '@/modules/MarketingActivity';
+import { marketingInboundManifest, marketingRequestManifest } from '@/modules/MarketingGimmick';
 import { marketingPromoManifest } from '@/modules/MarketingPromo';
 import { meetingRoomManifest } from '@/modules/MeetingRoom';
 import { onDutyRequestManifest } from '@/modules/OnDutyRequest';
@@ -10,6 +11,7 @@ import { priceApprovalManifest } from '@/modules/PriceApproval';
 import { productBorrowingManifest } from '@/modules/ProductBorrowing';
 import { purchaseRequestManifest } from '@/modules/PurchaseRequest';
 import { registerCustomerManifest } from '@/modules/RegisterCustomer';
+import { salesInventoryAnalysisManifest } from '@/modules/SalesInventoryAnalysis';
 import { stockGimmickManifest } from '@/modules/StockGimmick';
 import { stockPenjualanManifest } from '@/modules/StockPenjualan';
 import type { ModuleManifest } from '@/shared/types/module';
@@ -32,4 +34,7 @@ export const moduleManifests: ModuleManifest[] = [
   dataProductManifest,
   dataCustomerManifest,
   auditManifest,
+  salesInventoryAnalysisManifest,
+  marketingInboundManifest,
+  marketingRequestManifest,
 ];

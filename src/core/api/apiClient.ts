@@ -3,7 +3,8 @@ import { fetch } from 'expo/fetch';
 import { env } from '@/core/config';
 import { AppError, type FieldErrors } from '@/core/errors';
 
-type Query = Record<string, string | number | boolean | undefined>;
+/** An array value is sent as a repeated `key[]` parameter, the form Laravel reads as an array. */
+type Query = Record<string, string | number | boolean | string[] | undefined>;
 
 export type RequestOptions = {
   query?: Query;
@@ -47,7 +48,11 @@ export function setForbiddenHandler(handler: (() => void) | undefined) {
 function buildUrl(path: string, query?: Query) {
   const url = new URL(`${env.apiUrl}${API_VERSION}${path}`);
   for (const [key, value] of Object.entries(query ?? {})) {
-    if (value !== undefined) url.searchParams.set(key, String(value));
+    if (Array.isArray(value)) {
+      for (const item of value) url.searchParams.append(`${key}[]`, item);
+    } else if (value !== undefined) {
+      url.searchParams.set(key, String(value));
+    }
   }
   return url.toString();
 }

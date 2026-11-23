@@ -42,6 +42,17 @@ describe('apiClient', () => {
     expect(init.headers).toMatchObject({ Accept: 'application/json', Authorization: 'Bearer tok' });
   });
 
+  it('sends an array query value as repeated key[] parameters', async () => {
+    respond(200, { success: true, message: 'ok', data: null, meta: null });
+
+    await apiClient.get('/report', { query: { branch: ['JAKARTA', 'BANDUNG'], brand: [] } });
+
+    const [url] = fetchMock.mock.calls[0];
+    expect(decodeURIComponent(url)).toBe(
+      'https://example.test/api/v1/report?branch[]=JAKARTA&branch[]=BANDUNG',
+    );
+  });
+
   it('sends a FormData body as is, leaving the multipart Content-Type to fetch', async () => {
     respond(200, { success: true, message: 'ok', data: null, meta: null });
     const form = new FormData();
