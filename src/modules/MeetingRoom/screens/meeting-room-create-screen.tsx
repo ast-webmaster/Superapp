@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams, type Href } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { clsx } from 'clsx';
 
@@ -120,140 +120,136 @@ export function MeetingRoomCreateScreen() {
 
   return (
     <Screen>
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerClassName="gap-4 px-5"
-          contentContainerStyle={{ paddingTop: sizes.screenTopGap, paddingBottom: bottom + 24 }}>
-          {formError ? <Alert tone="danger" message={formError} onDismiss={booking.reset} /> : null}
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        contentContainerClassName="gap-4 px-5"
+        contentContainerStyle={{ paddingTop: sizes.screenTopGap, paddingBottom: bottom + 24 }}>
+        {formError ? <Alert tone="danger" message={formError} onDismiss={booking.reset} /> : null}
 
-          <View className="gap-4 rounded-xl border border-border bg-surface p-4">
-            <View className="gap-2">
-              <FieldLabel required>Room</FieldLabel>
-              {rooms.data === undefined ? (
-                <AppText variant="caption" tone="muted">
-                  Loading rooms…
-                </AppText>
-              ) : (
-                <RoomPicker
-                  rooms={rooms.data.rooms}
-                  value={draft.roomUuid ?? ''}
-                  // Another room has other free times, so the chosen ones no longer apply.
-                  onChange={(roomUuid) => change({ roomUuid, slots: [] })}
-                />
-              )}
-              {errors.room ? (
-                <AppText variant="caption" tone="danger" aria-live="polite">
-                  {errors.room}
-                </AppText>
-              ) : null}
-              {room && (room.location || room.capacity) ? (
-                <AppText variant="caption" tone="muted">
-                  {[room.location, room.capacity ? `${room.capacity} seats` : null]
-                    .filter(Boolean)
-                    .join(' · ')}
-                </AppText>
-              ) : null}
-            </View>
-
-            <View className="gap-1">
-              <FieldLabel required>Date</FieldLabel>
-              <Pressable
-                role="button"
-                aria-label={`Date, ${formatDate(draft.date)}`}
-                onPress={() => setChoosingDate(true)}
-                className={clsx(
-                  'min-h-control flex-row items-center gap-3 rounded-lg border-2 bg-surface px-4',
-                  errors.date ? 'border-danger' : 'border-border',
-                  focusRing,
-                )}>
-                <AppText className="min-w-0 flex-1">{formatDate(draft.date)}</AppText>
-                <Icon name="calendar" color="ink-muted" />
-              </Pressable>
-              {errors.date ? (
-                <AppText variant="caption" tone="danger" aria-live="polite">
-                  {errors.date}
-                </AppText>
-              ) : null}
-            </View>
-            <DaySheet
-              visible={choosingDate}
-              title="Choose a date"
-              value={draft.date}
-              // Another day has other bookings, so the chosen times no longer apply.
-              onChange={(date) => change({ date, slots: [] })}
-              onClose={() => setChoosingDate(false)}
-            />
-
-            <SlotPicker
-              slots={allSlots}
-              taken={taken}
-              selected={draft.slots}
-              onChange={(slots) => change({ slots })}
-              loading={rooms.data === undefined}
-              hint={draft.roomUuid ? undefined : 'Choose a room to see its free times.'}
-              error={errors.slots}
-            />
+        <View className="gap-4 rounded-xl border border-border bg-surface p-4">
+          <View className="gap-2">
+            <FieldLabel required>Room</FieldLabel>
+            {rooms.data === undefined ? (
+              <AppText variant="caption" tone="muted">
+                Loading rooms…
+              </AppText>
+            ) : (
+              <RoomPicker
+                rooms={rooms.data.rooms}
+                value={draft.roomUuid ?? ''}
+                // Another room has other free times, so the chosen ones no longer apply.
+                onChange={(roomUuid) => change({ roomUuid, slots: [] })}
+              />
+            )}
+            {errors.room ? (
+              <AppText variant="caption" tone="danger" aria-live="polite">
+                {errors.room}
+              </AppText>
+            ) : null}
+            {room && (room.location || room.capacity) ? (
+              <AppText variant="caption" tone="muted">
+                {[room.location, room.capacity ? `${room.capacity} seats` : null]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </AppText>
+            ) : null}
           </View>
 
-          <View className="gap-4 rounded-xl border border-border bg-surface p-4">
+          <View className="gap-1">
+            <FieldLabel required>Date</FieldLabel>
+            <Pressable
+              role="button"
+              aria-label={`Date, ${formatDate(draft.date)}`}
+              onPress={() => setChoosingDate(true)}
+              className={clsx(
+                'min-h-control flex-row items-center gap-3 rounded-lg border-2 bg-surface px-4',
+                errors.date ? 'border-danger' : 'border-border',
+                focusRing,
+              )}>
+              <AppText className="min-w-0 flex-1">{formatDate(draft.date)}</AppText>
+              <Icon name="calendar" color="ink-muted" />
+            </Pressable>
+            {errors.date ? (
+              <AppText variant="caption" tone="danger" aria-live="polite">
+                {errors.date}
+              </AppText>
+            ) : null}
+          </View>
+          <DaySheet
+            visible={choosingDate}
+            title="Choose a date"
+            value={draft.date}
+            // Another day has other bookings, so the chosen times no longer apply.
+            onChange={(date) => change({ date, slots: [] })}
+            onClose={() => setChoosingDate(false)}
+          />
+
+          <SlotPicker
+            slots={allSlots}
+            taken={taken}
+            selected={draft.slots}
+            onChange={(slots) => change({ slots })}
+            loading={rooms.data === undefined}
+            hint={draft.roomUuid ? undefined : 'Choose a room to see its free times.'}
+            error={errors.slots}
+          />
+        </View>
+
+        <View className="gap-4 rounded-xl border border-border bg-surface p-4">
+          <TextField
+            label="Title"
+            required
+            value={draft.title}
+            onChangeText={(title) => change({ title })}
+            error={errors.title}
+            maxLength={TITLE_MAX}
+            returnKeyType="next"
+          />
+          <TextField
+            label="Description"
+            help="Optional. The agenda or what to prepare."
+            value={draft.description}
+            onChangeText={(description) => change({ description })}
+            error={errors.description}
+            maxLength={DESCRIPTION_MAX}
+            multiline
+            textAlignVertical="top"
+            className="min-h-24"
+          />
+          {needsSpecialRequest(room?.name) ? (
             <TextField
-              label="Title"
+              label="Special request"
               required
-              value={draft.title}
-              onChangeText={(title) => change({ title })}
-              error={errors.title}
-              maxLength={TITLE_MAX}
-              returnKeyType="next"
-            />
-            <TextField
-              label="Description"
-              help="Optional. The agenda or what to prepare."
-              value={draft.description}
-              onChangeText={(description) => change({ description })}
-              error={errors.description}
-              maxLength={DESCRIPTION_MAX}
+              help="Catering, seating or equipment this room needs."
+              value={draft.specialRequest}
+              onChangeText={(specialRequest) => change({ specialRequest })}
+              error={errors.specialRequest}
               multiline
               textAlignVertical="top"
-              className="min-h-24"
+              className="min-h-20"
             />
-            {needsSpecialRequest(room?.name) ? (
-              <TextField
-                label="Special request"
-                required
-                help="Catering, seating or equipment this room needs."
-                value={draft.specialRequest}
-                onChangeText={(specialRequest) => change({ specialRequest })}
-                error={errors.specialRequest}
-                multiline
-                textAlignVertical="top"
-                className="min-h-20"
-              />
-            ) : null}
-            <AttendeesField
-              value={draft.attendees}
-              onChange={(attendees) => change({ attendees })}
-              error={errors.attendees}
-            />
-          </View>
-        </ScrollView>
-        <ActionBar>
-          <Button
-            block
-            loading={booking.isPending}
-            disabled={!online || booking.isPending}
-            onPress={submit}>
-            Book room
-          </Button>
-          {!online ? (
-            <AppText variant="caption" tone="muted">
-              Connect to the internet to book a room.
-            </AppText>
           ) : null}
-        </ActionBar>
-      </KeyboardAvoidingView>
+          <AttendeesField
+            value={draft.attendees}
+            onChange={(attendees) => change({ attendees })}
+            error={errors.attendees}
+          />
+        </View>
+      </ScrollView>
+      <ActionBar>
+        <Button
+          block
+          loading={booking.isPending}
+          disabled={!online || booking.isPending}
+          onPress={submit}>
+          Book room
+        </Button>
+        {!online ? (
+          <AppText variant="caption" tone="muted">
+            Connect to the internet to book a room.
+          </AppText>
+        ) : null}
+      </ActionBar>
     </Screen>
   );
 }

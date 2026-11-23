@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { sizes } from '@/shared/theme/tokens';
 
+import { GroundGlow } from '../ground-glow/ground-glow';
 import { IconButton } from '../icon-button/icon-button';
 import type { IconName } from '../icon/icon';
 import { AppText } from '../text/text';
@@ -24,7 +25,7 @@ export interface TopAppBarProps {
   onBack?: () => void;
   /**
    * Round buttons on the right, such as history and new chat. The bar draws them at the header
-   * size (`IconButton size="sm"`: a 40 circle in a 48 press area), so every screen matches.
+   * size (`IconButton size="sm"`: a 40 rounded square in a 48 press area), so every screen matches.
    */
   actions?: readonly TopAppBarAction[];
   /**
@@ -92,13 +93,20 @@ interface StackHeaderProps {
   navigation: { goBack: () => void };
 }
 
-/** Use as a stack's `header` option: every pushed screen gets the same bar, with back when it can. */
+/**
+ * Use as a stack's `header` option: every pushed screen gets the same bar, with back when it can.
+ * The navigator draws the header apart from `Screen`, so it adds its own slice of the ground glow
+ * and stays without a background color.
+ */
 export function renderTopAppBar({ options, back, navigation }: StackHeaderProps) {
   return (
-    <TopAppBar
-      title={options.title ?? ''}
-      onBack={back ? () => navigation.goBack() : undefined}
-      right={options.headerRight?.({ canGoBack: Boolean(back) })}
-    />
+    <View>
+      <GroundGlow />
+      <TopAppBar
+        title={options.title ?? ''}
+        onBack={back ? () => navigation.goBack() : undefined}
+        right={options.headerRight?.({ canGoBack: Boolean(back) })}
+      />
+    </View>
   );
 }

@@ -13,7 +13,7 @@ export interface AttachmentChipProps {
 /** A file on a message: in the composer before sending, or on a sent message. */
 export function AttachmentChip({ name, onPress, onRemove }: AttachmentChipProps) {
   const body = (
-    <View className="flex-row items-center gap-2 rounded-pill border border-border bg-surface py-2 pl-3 pr-4">
+    <View className="flex-row items-center gap-2 rounded-lg border border-border bg-surface py-2 pl-3 pr-4">
       <Icon name="doc" size={16} color="ink-muted" />
       <AppText variant="caption" numberOfLines={1} className="shrink">
         {name}

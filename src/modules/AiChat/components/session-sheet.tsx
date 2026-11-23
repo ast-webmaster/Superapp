@@ -11,7 +11,6 @@ import {
   Skeleton,
   SkeletonGroup,
   useConfirm,
-  useToast,
 } from '@/shared/ui';
 
 import { useChatSessions } from '../hooks/use-chat-sessions';
@@ -29,7 +28,6 @@ export function SessionSheet({ visible, onClose, onOpen }: SessionSheetProps) {
   const sessions = useChatSessions(visible);
   const remove = useDeleteChatSession();
   const confirm = useConfirm();
-  const toast = useToast();
 
   const askDelete = (uuid: string) =>
     confirm({
@@ -37,11 +35,8 @@ export function SessionSheet({ visible, onClose, onOpen }: SessionSheetProps) {
       message: 'The messages and files in it are removed.',
       confirmLabel: 'Delete',
       destructive: true,
-      onConfirm: () =>
-        remove.mutate(uuid, {
-          onSuccess: () => toast.show({ tone: 'success', message: 'Chat deleted.' }),
-          onError: (error) => toast.show({ tone: 'danger', message: error.message }),
-        }),
+      success: { title: 'Chat deleted' },
+      onConfirm: () => remove.mutateAsync(uuid),
     });
 
   let body;

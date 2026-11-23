@@ -118,7 +118,7 @@ export function AuditActions({ detail, online }: AuditActionsProps) {
             requiredMessage: `Enter a reason of at least ${REJECT_MIN} characters.`,
           }
         : undefined,
-      onConfirm: (remarks) => action.mutate({ action: name, remarks }),
+      onConfirm: (remarks) => action.mutateAsync({ action: name, remarks }),
     });
   };
 

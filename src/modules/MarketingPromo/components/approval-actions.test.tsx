@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, userEvent, within } from '@testing-library/react-native';
+import { render, screen, userEvent } from '@testing-library/react-native';
 
 import { ConfirmProvider } from '@/shared/ui';
 
@@ -31,10 +31,9 @@ function renderActions(allowed: MarketingPromoAction[], online = true) {
   );
 }
 
-// Presses the confirm button of the dialog.
+// Presses the confirm button of the sheet, which is rendered after (below) the trigger button.
 async function confirmDialog(name: string) {
-  const dialog = screen.getByRole('alertdialog');
-  await userEvent.press(within(dialog).getByRole('button', { name }));
+  await userEvent.press(screen.getAllByRole('button', { name }).at(-1)!);
 }
 
 beforeEach(() => {

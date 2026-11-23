@@ -109,7 +109,7 @@ export function ApprovalActions({ kind, detail, online }: ApprovalActionsProps) 
         requiredMessage,
       },
       onConfirm: (remarks) =>
-        action.mutate({ action: name, remarks, updatedAt: detail.updated_at }),
+        action.mutateAsync({ action: name, remarks, updatedAt: detail.updated_at }),
     });
   };
 

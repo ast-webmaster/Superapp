@@ -124,7 +124,7 @@ export function DetailActions({ detail, online }: DetailActionsProps) {
           }
         : undefined,
       onConfirm: (remarks) =>
-        action.mutate({ action: name, remarks, updatedAt: detail.updated_at }),
+        action.mutateAsync({ action: name, remarks, updatedAt: detail.updated_at }),
     });
   };
 

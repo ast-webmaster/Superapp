@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FlatList, Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native';
+import { FlatList, Keyboard, Platform, View } from 'react-native';
 
 import type { PickedFile } from '@/core/files';
 import { useIsOnline } from '@/shared/hooks/use-is-online';
@@ -243,42 +243,39 @@ export function AiChatScreen() {
 
   return (
     <Screen>
-      {/* Both platforms: an edge-to-edge Android window no longer resizes for the keyboard. */}
-      <KeyboardAvoidingView behavior="padding" className="flex-1">
-        <TopAppBar
-          title="AI chat"
-          actions={[
-            {
-              icon: 'history',
-              label: 'Chat history',
-              disabled: isPending,
-              onPress: () => setHistoryOpen(true),
-            },
-            {
-              icon: 'pencil',
-              label: 'New chat',
-              disabled: isPending || (activeUuid === null && !failedDraft),
-              onPress: () => setActiveSession(null),
-            },
-          ]}
+      <TopAppBar
+        title="AI chat"
+        actions={[
+          {
+            icon: 'history',
+            label: 'Chat history',
+            disabled: isPending,
+            onPress: () => setHistoryOpen(true),
+          },
+          {
+            icon: 'pencil',
+            label: 'New chat',
+            disabled: isPending || (activeUuid === null && !failedDraft),
+            onPress: () => setActiveSession(null),
+          },
+        ]}
+      />
+      {body}
+      <View
+        testID="composer-dock"
+        className="px-5 pt-2"
+        style={{ paddingBottom: keyboardVisible ? KEYBOARD_GAP : navInset }}>
+        <Composer
+          value={text}
+          onChangeText={setText}
+          files={draftFiles}
+          onChangeFiles={setDraftFiles}
+          onSend={submit}
+          busy={isPending || !historyReady}
+          listening={voice.listening}
+          mic={<MicButton voice={voice} />}
         />
-        {body}
-        <View
-          testID="composer-dock"
-          className="px-5 pt-2"
-          style={{ paddingBottom: keyboardVisible ? KEYBOARD_GAP : navInset }}>
-          <Composer
-            value={text}
-            onChangeText={setText}
-            files={draftFiles}
-            onChangeFiles={setDraftFiles}
-            onSend={submit}
-            busy={isPending || !historyReady}
-            listening={voice.listening}
-            mic={<MicButton voice={voice} />}
-          />
-        </View>
-      </KeyboardAvoidingView>
+      </View>
       <SessionSheet
         visible={historyOpen}
         onClose={() => setHistoryOpen(false)}

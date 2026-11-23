@@ -45,10 +45,7 @@ export function DeltaChip({ percentage, level, surface = 'light' }: DeltaChipPro
     <View
       accessible
       aria-label={`${formatPercent(percentage)} of target`}
-      className={clsx(
-        'min-h-7 flex-row items-center gap-1 self-start rounded-pill px-2',
-        look.box,
-      )}>
+      className={clsx('min-h-7 flex-row items-center gap-1 self-start rounded-lg px-2', look.box)}>
       <Icon name={arrows[trend]} size={14} color={look.icon} />
       <AppText variant="caption-strong" tone={look.tone}>
         {formatPercent(percentage)}

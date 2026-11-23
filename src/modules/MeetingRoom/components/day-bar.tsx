@@ -33,7 +33,7 @@ export function DayBar({ value, onChange }: DayBarProps) {
           aria-label={`${label}. Choose another date`}
           onPress={() => setOpen(true)}
           className={clsx(
-            'min-h-touch flex-1 flex-row items-center gap-2 self-start rounded-pill',
+            'min-h-touch flex-1 flex-row items-center gap-2 self-start rounded-lg',
             'active:opacity-70',
             focusRing,
           )}>
@@ -71,7 +71,7 @@ export function DayBar({ value, onChange }: DayBarProps) {
               className={clsx('min-h-touch flex-1 px-0.5', focusRing)}>
               <View
                 className={clsx(
-                  'items-center gap-1 rounded-pill border py-3',
+                  'items-center gap-1 rounded-lg border py-3',
                   selected && 'border-ink bg-ink',
                   !selected && day === today && 'border-ink bg-surface',
                   !selected && day !== today && 'border-border bg-surface',

@@ -1,4 +1,4 @@
-import { router, useNavigation, usePreventRemove } from 'expo-router';
+import { router, usePreventRemove } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
@@ -38,9 +38,8 @@ function today() {
 export function PurchaseRequestCreateScreen() {
   const user = useCurrentUser();
   const confirm = useConfirm();
-  const navigation = useNavigation();
   const online = useIsOnline();
-  const { mutate, isPending, error, reset } = useCreatePurchaseRequest();
+  const { mutateAsync, isPending, error, reset } = useCreatePurchaseRequest();
 
   const [draft, setDraft] = useState<PurchaseRequestDraft>(emptyDraft);
   const [stepIndex, setStepIndex] = useState(0);
@@ -55,7 +54,7 @@ export function PurchaseRequestCreateScreen() {
   const errors = attempted ? validateStep(step, draft) : {};
 
   // Leaving with work in the form asks first. Once the server has saved it, nothing is lost.
-  usePreventRemove(isDirty(draft) && createdUuid === null, ({ data }) =>
+  usePreventRemove(isDirty(draft) && createdUuid === null, ({ repeat }) =>
     confirm({
       title: 'Discard this request?',
       message: 'What you entered will be lost.',
@@ -63,7 +62,7 @@ export function PurchaseRequestCreateScreen() {
       cancelLabel: 'Keep editing',
       icon: 'alert',
       destructive: true,
-      onConfirm: () => navigation.dispatch(data.action),
+      onConfirm: repeat,
     }),
   );
 
@@ -102,9 +101,10 @@ export function PurchaseRequestCreateScreen() {
       message: 'It goes into the approval flow straight away.',
       confirmLabel: 'Submit',
       icon: 'clipboard',
+      success: { title: 'Request submitted' },
       onConfirm: () => {
         if (isPending) return;
-        mutate(draft, { onSuccess: (detail) => setCreatedUuid(detail.uuid) });
+        return mutateAsync(draft).then((detail) => setCreatedUuid(detail.uuid));
       },
     });
   };

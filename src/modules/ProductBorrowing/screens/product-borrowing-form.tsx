@@ -1,4 +1,4 @@
-import { router, useNavigation, usePreventRemove } from 'expo-router';
+import { router, usePreventRemove } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
@@ -35,9 +35,8 @@ export interface ProductBorrowingFormProps {
 /** The stepped form behind both a new borrowing and the resubmit of one that was sent back. */
 export function ProductBorrowingForm({ options, initial, resubmit }: ProductBorrowingFormProps) {
   const confirm = useConfirm();
-  const navigation = useNavigation();
   const online = useIsOnline();
-  const { mutate, isPending, error, reset } = useSubmitProductBorrowing(resubmit);
+  const { mutateAsync, isPending, error, reset } = useSubmitProductBorrowing(resubmit);
 
   const [draft, setDraft] = useState<ProductBorrowingDraft>(initial);
   const [stepIndex, setStepIndex] = useState(0);
@@ -51,7 +50,7 @@ export function ProductBorrowingForm({ options, initial, resubmit }: ProductBorr
   const errors = attempted ? validateStep(step, draft) : {};
 
   // Leaving with work in the form asks first. Once the server has saved it, nothing is lost.
-  usePreventRemove(isDirty(draft, initial) && savedUuid === null, ({ data }) =>
+  usePreventRemove(isDirty(draft, initial) && savedUuid === null, ({ repeat }) =>
     confirm({
       title: resubmit ? 'Discard your changes?' : 'Discard this borrowing?',
       message: 'What you entered will be lost.',
@@ -59,7 +58,7 @@ export function ProductBorrowingForm({ options, initial, resubmit }: ProductBorr
       cancelLabel: 'Keep editing',
       icon: 'alert',
       destructive: true,
-      onConfirm: () => navigation.dispatch(data.action),
+      onConfirm: repeat,
     }),
   );
 
@@ -103,9 +102,10 @@ export function ProductBorrowingForm({ options, initial, resubmit }: ProductBorr
         : 'It goes into the approval flow straight away.',
       confirmLabel: resubmit ? 'Resubmit' : 'Submit',
       icon: 'clipboard',
+      success: { title: resubmit ? 'Borrowing resubmitted' : 'Borrowing submitted' },
       onConfirm: () => {
         if (isPending) return;
-        mutate(draft, { onSuccess: (detail) => setSavedUuid(detail.uuid) });
+        return mutateAsync(draft).then((detail) => setSavedUuid(detail.uuid));
       },
     });
   };

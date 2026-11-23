@@ -74,7 +74,7 @@ export function ListToolbar({
         <Pressable
           role="button"
           aria-label="Cancel search"
-          className={clsx('min-h-touch justify-center rounded-pill px-1', focusRing)}
+          className={clsx('min-h-touch justify-center rounded-lg px-1', focusRing)}
           onPress={() => {
             search.onChange('');
             search.onClose();

@@ -24,7 +24,9 @@
   --color-ink: #111113;
   --color-ink-muted: #6a6a72;
   --color-surface: #ffffff;
-  --color-ground: #f2f2f3;
+  --color-ground: #efefef;
+  /* The peach glow in the top-right corner of every screen's ground; a gradient stop, never a fill. */
+  --color-ground-glow: #f8e2cf;
   --color-surface-gray: #f6f6f7;
   --color-border: #e4e4e7;
   --color-scrim: rgba(17, 17, 19, 0.4);

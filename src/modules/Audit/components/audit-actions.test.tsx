@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, userEvent, within } from '@testing-library/react-native';
+import { render, screen, userEvent } from '@testing-library/react-native';
 
 import { ConfirmProvider } from '@/shared/ui';
 
@@ -30,10 +30,9 @@ function renderActions(allowed: AuditAction[], online = true) {
   );
 }
 
-// Presses the confirm button of the dialog.
+// Presses the confirm button of the sheet, which is rendered after (below) the trigger button.
 async function confirmDialog(name: string) {
-  const dialog = screen.getByRole('alertdialog');
-  await userEvent.press(within(dialog).getByRole('button', { name }));
+  await userEvent.press(screen.getAllByRole('button', { name }).at(-1)!);
 }
 
 beforeEach(() => actMock.mockReset());
@@ -87,9 +86,11 @@ it('shows the reason the server gave for a refused action', async () => {
   await userEvent.press(screen.getByRole('button', { name: 'Send follow up' }));
   await confirmDialog('Send follow up');
 
+  // The confirm sheet slides to the error, and the page's alert keeps it after the sheet closes.
+  expect(await screen.findByText('Something went wrong')).toBeOnTheScreen();
   expect(
-    await screen.findByText('There are still 2 audit finding(s) without an Auditee Response.'),
-  ).toBeOnTheScreen();
+    screen.getAllByText('There are still 2 audit finding(s) without an Auditee Response.'),
+  ).toHaveLength(2);
 });
 
 it('disables the actions offline and says why', async () => {

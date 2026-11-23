@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams, useNavigation, usePreventRemove } from 'expo-router';
+import { router, useLocalSearchParams, usePreventRemove } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
@@ -70,9 +70,8 @@ export function OnDutyRequestDeclarationScreen() {
 
 function DeclarationForm({ detail }: { detail: OnDutyRequestDetail }) {
   const confirm = useConfirm();
-  const navigation = useNavigation();
   const online = useIsOnline();
-  const { mutate, isPending, error, reset } = useSubmitDeclaration(detail.uuid);
+  const { mutateAsync, isPending, error, reset } = useSubmitDeclaration(detail.uuid);
 
   // Taken once: a later refetch of the detail must not replace what the user is typing.
   const [initial] = useState(() => draftFromDeclaration(detail));
@@ -82,7 +81,7 @@ function DeclarationForm({ detail }: { detail: OnDutyRequestDetail }) {
 
   const errors = attempted ? validateDeclaration(draft) : {};
 
-  usePreventRemove(isDeclarationDirty(draft, initial) && !saved, ({ data }) =>
+  usePreventRemove(isDeclarationDirty(draft, initial) && !saved, ({ repeat }) =>
     confirm({
       title: 'Discard your changes?',
       message: 'What you entered will be lost.',
@@ -90,7 +89,7 @@ function DeclarationForm({ detail }: { detail: OnDutyRequestDetail }) {
       cancelLabel: 'Keep editing',
       icon: 'alert',
       destructive: true,
-      onConfirm: () => navigation.dispatch(data.action),
+      onConfirm: repeat,
     }),
   );
 
@@ -126,9 +125,10 @@ function DeclarationForm({ detail }: { detail: OnDutyRequestDetail }) {
       message: 'It goes to the approvers straight away.',
       confirmLabel: 'Send',
       icon: 'clipboard',
+      success: { title: 'Declaration sent' },
       onConfirm: () => {
         if (isPending) return;
-        mutate(draft, { onSuccess: () => setSaved(true) });
+        return mutateAsync(draft).then(() => setSaved(true));
       },
     });
   };

@@ -1,4 +1,4 @@
-import { router, useNavigation, usePreventRemove } from 'expo-router';
+import { router, usePreventRemove } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
@@ -60,9 +60,8 @@ export interface OnDutyRequestFormProps {
 export function OnDutyRequestForm({ options, initial, resubmitUuid }: OnDutyRequestFormProps) {
   const user = useCurrentUser();
   const confirm = useConfirm();
-  const navigation = useNavigation();
   const online = useIsOnline();
-  const { mutate, isPending, error, reset } = useSubmitOnDutyRequest(resubmitUuid);
+  const { mutateAsync, isPending, error, reset } = useSubmitOnDutyRequest(resubmitUuid);
 
   const [draft, setDraft] = useState<OnDutyRequestDraft>(initial);
   const [stepIndex, setStepIndex] = useState(0);
@@ -81,7 +80,7 @@ export function OnDutyRequestForm({ options, initial, resubmitUuid }: OnDutyRequ
   const errors = attempted ? validateStep(step, draft, context) : {};
 
   // Leaving with work in the form asks first. Once the server has saved it, nothing is lost.
-  usePreventRemove(isDirty(draft, initial) && savedUuid === null, ({ data }) =>
+  usePreventRemove(isDirty(draft, initial) && savedUuid === null, ({ repeat }) =>
     confirm({
       title: resubmitUuid ? 'Discard your changes?' : 'Discard this request?',
       message: 'What you entered will be lost.',
@@ -89,7 +88,7 @@ export function OnDutyRequestForm({ options, initial, resubmitUuid }: OnDutyRequ
       cancelLabel: 'Keep editing',
       icon: 'alert',
       destructive: true,
-      onConfirm: () => navigation.dispatch(data.action),
+      onConfirm: repeat,
     }),
   );
 
@@ -133,9 +132,10 @@ export function OnDutyRequestForm({ options, initial, resubmitUuid }: OnDutyRequ
         : 'It goes into the approval flow straight away.',
       confirmLabel: resubmitUuid ? 'Resubmit' : 'Submit',
       icon: 'clipboard',
+      success: { title: resubmitUuid ? 'Request resubmitted' : 'Request submitted' },
       onConfirm: () => {
         if (isPending) return;
-        mutate(draft, { onSuccess: (detail) => setSavedUuid(detail.uuid) });
+        return mutateAsync(draft).then((detail) => setSavedUuid(detail.uuid));
       },
     });
   };

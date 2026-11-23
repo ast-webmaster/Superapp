@@ -20,6 +20,11 @@ const variants = {
     tone: 'ink',
     icon: 'ink',
   },
+  outline: {
+    container: 'bg-surface border border-border active:bg-surface-gray',
+    tone: 'ink',
+    icon: 'ink',
+  },
   soft: {
     container: 'bg-primary-soft active:bg-highlight',
     tone: 'primary',
@@ -73,7 +78,7 @@ export function Button({
       disabled={inactive}
       hitSlop={size === 'sm' ? 4 : undefined}
       className={clsx(
-        'flex-row items-center justify-center rounded-pill',
+        'flex-row items-center justify-center rounded-lg',
         sizeContainer,
         block ? 'self-stretch' : 'self-start',
         container,

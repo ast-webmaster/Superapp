@@ -117,7 +117,7 @@ export function HeroCard({
             {eyebrow}
           </AppText>
           {badge ? (
-            <View className="min-h-6 shrink-0 flex-row items-center gap-1 rounded-pill bg-ink-raised px-2">
+            <View className="min-h-6 shrink-0 flex-row items-center gap-1 rounded-lg bg-ink-raised px-2">
               <Icon name="calendar" size={12} color="on-ink-muted" />
               <AppText variant="label" tone="on-primary">
                 {badge}
@@ -138,7 +138,7 @@ export function HeroCard({
           minimumFontScale={0.6}
         />
         {/* The accent pill is a fill with dark text on it: the gold fails contrast under light text. */}
-        <View className="min-h-6 self-start justify-center rounded-pill bg-accent px-2">
+        <View className="min-h-6 self-start justify-center rounded-lg bg-accent px-2">
           <AppText variant="label" tone="ink">
             {`Target ${formatMoney(target)}`}
           </AppText>

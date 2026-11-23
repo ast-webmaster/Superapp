@@ -109,7 +109,7 @@ export function ModuleCard(props: ModuleCardProps) {
               aria-label={`Open ${title}`}
               onPress={onOpen}
               className={clsx(
-                'min-h-touch -my-2 flex-row items-center gap-1 rounded-pill',
+                'min-h-touch -my-2 flex-row items-center gap-1 rounded-lg',
                 focusRing,
               )}>
               <AppText variant="body-strong" tone="primary">

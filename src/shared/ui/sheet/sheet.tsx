@@ -3,6 +3,7 @@ import * as Haptics from 'expo-haptics';
 import { useEffect, useState, type ReactNode } from 'react';
 import {
   Dimensions,
+  KeyboardAvoidingView,
   Modal,
   Pressable,
   ScrollView,
@@ -50,6 +51,7 @@ const DISMISS_FRACTION = 0.4;
 const PARKED = Math.max(Dimensions.get('window').width, Dimensions.get('window').height);
 
 const fill = { flex: 1 } as const;
+const noop = () => {};
 const scrim = { backgroundColor: colors.scrim };
 
 // What the sheet is doing, derived from `visible` and from whether it has been measured yet.
@@ -84,6 +86,15 @@ export interface SheetProps {
   fullHeight?: boolean;
   /** Pinned under the scrolling content, such as an "Apply" button. */
   footer?: ReactNode;
+  /** `alertdialog` for a sheet that asks the user to confirm an action. */
+  role?: 'dialog' | 'alertdialog';
+  /** The X in the header. Off for a sheet that asks a question, where the buttons answer it; the title then centers. */
+  closeButton?: boolean;
+  /**
+   * Off while the sheet is busy (a request is running): the dim area, the back button and the drag
+   * no longer close it. Defaults to on.
+   */
+  dismissible?: boolean;
 }
 
 /**
@@ -97,6 +108,9 @@ export function Sheet({
   onClose,
   children,
   footer,
+  role = 'dialog',
+  closeButton = true,
+  dismissible = true,
   fullHeight = false,
 }: SheetProps) {
   const { top, bottom } = useSafeAreaInsets();
@@ -148,7 +162,7 @@ export function Sheet({
   );
 
   const pan = usePanGesture({
-    enabled: !reducedMotion,
+    enabled: !reducedMotion && dismissible,
     activeOffsetY: [-10, 10],
     onActivate: (event) => {
       // Grabbing the sheet mid-animation continues from where it is, and the finger's travel so
@@ -193,16 +207,21 @@ export function Sheet({
       transparent
       animationType="none"
       statusBarTranslucent
-      onRequestClose={onClose}>
+      onRequestClose={dismissible ? onClose : noop}>
       {/* A `Modal` is its own native window on Android, so gestures need a root view inside it. */}
       <GestureHandlerRootView style={fill}>
-        <View className="flex-1 items-center justify-end" style={{ paddingTop: top }}>
+        {/* `padding` on both platforms, so a field in the sheet stays above the keyboard: the sheet
+            shrinks and its content scrolls. */}
+        <KeyboardAvoidingView
+          behavior="padding"
+          className="flex-1 items-center justify-end"
+          style={{ paddingTop: top }}>
           <Animated.View style={[StyleSheet.absoluteFill, scrim, scrimStyle]} />
           <Pressable
             aria-hidden
             importantForAccessibility="no-hide-descendants"
             className="absolute inset-0"
-            onPress={onClose}
+            onPress={dismissible ? onClose : undefined}
           />
           <Animated.View
             onLayout={measure}
@@ -212,7 +231,7 @@ export function Sheet({
               sheetStyle,
             ]}>
             <View
-              role="dialog"
+              role={role}
               aria-modal
               aria-label={title}
               className={clsx(
@@ -229,8 +248,11 @@ export function Sheet({
                     </View>
                   )}
                   <View className="flex-row items-center gap-3 px-5 py-4">
-                    <IconButton icon="x" label="Close" onPress={onClose} />
-                    <AppText variant="title" role="heading" className="min-w-0 flex-1">
+                    {closeButton ? <IconButton icon="x" label="Close" onPress={onClose} /> : null}
+                    <AppText
+                      variant="title"
+                      role="heading"
+                      className={clsx('min-w-0 flex-1', !closeButton && 'text-center')}>
                       {title}
                     </AppText>
                   </View>
@@ -245,7 +267,7 @@ export function Sheet({
               {footer ? <View className="px-5 pb-4 pt-2">{footer}</View> : null}
             </View>
           </Animated.View>
-        </View>
+        </KeyboardAvoidingView>
       </GestureHandlerRootView>
     </Modal>
   );

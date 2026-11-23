@@ -57,7 +57,7 @@ export function GroupCard({ group }: GroupCardProps) {
           <View className="min-w-0 shrink gap-1">
             <Amount value={achievement.value} variant="title" numberOfLines={1} />
             {/* An accent fill with `ink` text on it: the gold fails contrast under light text. */}
-            <View className="min-h-6 self-start justify-center rounded-pill bg-accent px-2">
+            <View className="min-h-6 self-start justify-center rounded-lg bg-accent px-2">
               <AppText variant="label" tone="ink" numberOfLines={1}>
                 {`Target ${formatMoney(target.monthly_amount)}`}
               </AppText>

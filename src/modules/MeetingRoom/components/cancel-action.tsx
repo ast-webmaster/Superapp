@@ -62,7 +62,8 @@ export function CancelAction({ detail, online }: CancelActionProps) {
         maxLength: REASON_MAX_LENGTH,
         requiredMessage: `Enter a reason of at least ${REASON_MIN_LENGTH} characters.`,
       },
-      onConfirm: (remarks) => cancel.mutate(remarks),
+      success: { title: 'Booking cancelled' },
+      onConfirm: (remarks) => cancel.mutateAsync(remarks),
     });
   };
 

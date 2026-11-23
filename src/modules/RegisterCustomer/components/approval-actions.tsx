@@ -111,7 +111,7 @@ export function ApprovalActions({ detail, online }: ApprovalActionsProps) {
         requiredMessage: `Enter a reason of at least ${REASON_MIN} characters.`,
       },
       onConfirm: (remarks) =>
-        action.mutate({ action: name, remarks, updatedAt: detail.updated_at }),
+        action.mutateAsync({ action: name, remarks, updatedAt: detail.updated_at }),
     });
   };
 
@@ -136,7 +136,9 @@ export function ApprovalActions({ detail, online }: ApprovalActionsProps) {
       {outcome ? (
         <Alert tone={outcome.tone} message={outcome.message} onDismiss={action.reset} />
       ) : null}
-      {available.length > 0 ? <View className="flex-row gap-2">{available.map(button)}</View> : null}
+      {available.length > 0 ? (
+        <View className="flex-row gap-2">{available.map(button)}</View>
+      ) : null}
       {available.length > 0 && !online ? (
         <AppText variant="caption" tone="muted">
           Connect to the internet to act on this registration.

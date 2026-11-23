@@ -27,8 +27,3 @@ export function levelTrend(level: AchievementLevel): Trend {
 export function formatPercent(value: number): string {
   return `${Math.round(value)}%`;
 }
-
-/** How far from the target, in words: what is left to sell, or how far above it the sales are. */
-export function describeBalance(balance: number, formatAmount: (value: number) => string): string {
-  return balance < 0 ? `${formatAmount(-balance)} to go` : `${formatAmount(balance)} above target`;
-}

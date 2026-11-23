@@ -1,4 +1,4 @@
-import { render, screen, userEvent, within } from '@testing-library/react-native';
+import { render, screen, userEvent } from '@testing-library/react-native';
 
 import { useAuthStore } from '@/core/auth';
 import { ConfirmProvider } from '@/shared/ui';
@@ -71,9 +71,8 @@ describe('ProfileScreen', () => {
     await userEvent.press(screen.getByRole('button', { name: 'Sign out' }));
     expect(signOut).not.toHaveBeenCalled();
 
-    await userEvent.press(
-      within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Sign out' }),
-    );
+    // The confirm sheet comes after the trigger button.
+    await userEvent.press(screen.getAllByRole('button', { name: 'Sign out' }).at(-1)!);
     expect(signOut).toHaveBeenCalledTimes(1);
   });
 });

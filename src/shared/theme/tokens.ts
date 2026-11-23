@@ -13,7 +13,8 @@ export const colors = {
   ink: '#111113',
   'ink-muted': '#6a6a72',
   surface: '#ffffff',
-  ground: '#f2f2f3',
+  ground: '#efefef',
+  'ground-glow': '#f8e2cf',
   'surface-gray': '#f6f6f7',
   border: '#e4e4e7',
   'ink-raised': '#1c1c21',
@@ -45,6 +46,9 @@ export const sizes = {
   toastOffset: 8,
   screenTopGap: 16,
 } as const;
+
+/** The `rounded-lg` radius, for native views that cannot take a class and must follow a `rounded-lg` shell. */
+export const radiusLg = 16;
 
 /** The glass pill radius, for GlassView on iOS, which needs it as a number. */
 export const radiusPill = 999;

@@ -65,7 +65,7 @@ export function HomeScreen() {
               <Pressable
                 role="link"
                 onPress={() => router.push('/manage-apps' as Href)}
-                className={clsx('min-h-touch justify-center rounded-pill px-2', focusRing)}>
+                className={clsx('min-h-touch justify-center rounded-lg px-2', focusRing)}>
                 <AppText variant="body-strong" tone="primary">
                   Manage apps
                 </AppText>

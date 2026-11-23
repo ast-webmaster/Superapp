@@ -28,9 +28,10 @@ export function ProfileScreen() {
       confirmLabel: 'Sign out',
       icon: 'log-out',
       destructive: true,
+      success: { title: 'Signed out' },
       onConfirm: () => {
         setSigningOut(true);
-        void signOut();
+        return signOut();
       },
     });
 

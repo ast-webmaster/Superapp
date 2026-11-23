@@ -48,7 +48,7 @@ export function Badge({
   return (
     <View
       className={clsx(
-        'flex-row items-center gap-1 self-start rounded-pill',
+        'flex-row items-center gap-1 self-start rounded-lg',
         sizes[size].container,
         style.container,
         className,

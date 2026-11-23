@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, Easing, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { colors, radiusPill, sizes } from '@/shared/theme/tokens';
+import { colors, radiusLg, sizes } from '@/shared/theme/tokens';
 
 import { focusRing } from '../focus';
 import { Icon, type IconName } from '../icon/icon';
@@ -20,6 +20,11 @@ const ITEM_WIDTH = 68;
  */
 const PILL_WIDTH = ITEM_WIDTH;
 const PILL_HEIGHT = 52;
+/**
+ * The bar is `rounded-lg`. The pill sits 10px inside it (top and bottom), so its corner radius is
+ * the bar's minus that gap: the two curves then run parallel, with an even band of bar between.
+ */
+const PILL_RADIUS = radiusLg - (sizes.tabBar - PILL_HEIGHT) / 2;
 
 export interface BottomNavItem {
   key: string;
@@ -95,7 +100,7 @@ export function BottomNav({
       className={clsx('items-center', floating && 'absolute inset-x-0', className)}
       style={floating ? { bottom: bottom + sizes.tabBarOffset } : undefined}>
       {/* A dark bar floating on the ground. The active item is one accent pill holding its icon and its label, both black. */}
-      <View className="h-tabbar flex-row items-center gap-1 rounded-pill bg-ink px-4 shadow-glass">
+      <View className="h-tabbar flex-row items-center gap-1 rounded-lg bg-ink px-4 shadow-glass">
         <Animated.View
           pointerEvents="none"
           style={{
@@ -104,7 +109,7 @@ export function BottomNav({
             top: (sizes.tabBar - PILL_HEIGHT) / 2,
             width: PILL_WIDTH,
             height: PILL_HEIGHT,
-            borderRadius: radiusPill,
+            borderRadius: PILL_RADIUS,
             backgroundColor: colors.accent,
             transform: [{ translateX: offset }],
           }}
@@ -121,7 +126,7 @@ export function BottomNav({
               accessibilityState={{ selected: active }}
               onPress={() => onChange(item.key)}
               className={clsx(
-                'h-14 w-17 items-center justify-center gap-0.5 rounded-pill',
+                'h-14 w-17 items-center justify-center gap-0.5 rounded-lg',
                 focusRing,
               )}>
               <View className="size-6 items-center justify-center">

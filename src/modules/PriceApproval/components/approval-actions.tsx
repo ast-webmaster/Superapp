@@ -103,7 +103,7 @@ export function ApprovalActions({ detail, online }: ApprovalActionsProps) {
           }
         : undefined,
       onConfirm: (remarks) =>
-        action.mutate({ action: name, remarks, updatedAt: detail.updated_at }),
+        action.mutateAsync({ action: name, remarks, updatedAt: detail.updated_at }),
     });
   };
 

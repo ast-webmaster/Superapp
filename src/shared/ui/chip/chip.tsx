@@ -47,7 +47,7 @@ export function Chip({
       aria-pressed={selected}
       accessibilityState={{ selected }}
       className={clsx(
-        'min-h-touch flex-row items-center justify-center rounded-pill',
+        'min-h-touch flex-row items-center justify-center rounded-lg',
         compact ? 'gap-1 px-2' : 'gap-2 px-5',
         selected ? 'border border-ink bg-ink' : 'border border-border bg-surface active:bg-border',
         pressScale,

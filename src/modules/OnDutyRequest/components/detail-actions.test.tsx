@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, userEvent, within } from '@testing-library/react-native';
+import { render, screen, userEvent } from '@testing-library/react-native';
 import { router } from 'expo-router';
 
 import { ConfirmProvider } from '@/shared/ui';
@@ -38,8 +38,7 @@ function renderActions(value: OnDutyRequestDetail, online = true) {
 }
 
 async function confirmDialog(name: string) {
-  const dialog = screen.getByRole('alertdialog');
-  await userEvent.press(within(dialog).getByRole('button', { name }));
+  await userEvent.press(screen.getAllByRole('button', { name }).at(-1)!);
 }
 
 beforeEach(() => {

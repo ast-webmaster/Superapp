@@ -1,12 +1,15 @@
+import { Image } from 'expo-image';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { KeyboardAvoidingView, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useAuthStore } from '@/core/auth';
 import { toAppError } from '@/core/errors';
 import { sizes } from '@/shared/theme/tokens';
 import { Alert, AppText, Button, Logo, Screen, TextField } from '@/shared/ui';
+
+const illustration = require('@/assets/illustrations/login-key.png');
 
 export function LoginScreen() {
   const { top, bottom } = useSafeAreaInsets();
@@ -45,97 +48,100 @@ export function LoginScreen() {
   };
 
   return (
-    <Screen>
+    <Screen variant="plain">
       <StatusBar style="dark" />
-      {/* `padding` on both platforms: Expo apps are edge-to-edge on Android, so the window does not
-          resize for the keyboard (docs/ui-foundation.md, Keyboard). */}
-      <KeyboardAvoidingView behavior="padding" className="flex-1">
-        <ScrollView
-          bounces={false}
-          contentContainerClassName="gap-12 px-5"
-          contentContainerStyle={{
-            paddingTop: top + sizes.screenTopGap,
-            paddingBottom: bottom + sizes.screenTopGap,
-          }}
-          keyboardShouldPersistTaps="handled">
-          <Logo width={112} />
-          <View className="gap-8">
-            <View className="gap-2">
-              <AppText variant="display" role="heading">
-                Sign in
-              </AppText>
-              <AppText tone="muted">Use your employee account to continue.</AppText>
-            </View>
-            <View className="gap-4">
-              <TextField
-                label="Email"
-                value={email}
-                onChangeText={setEmail}
-                error={error?.fieldErrors?.email?.[0]}
-                autoCapitalize="none"
-                autoComplete="email"
-                keyboardType="email-address"
-                textContentType="username"
-              />
-              <TextField
-                label="Password"
-                type="password"
-                value={password}
-                onChangeText={setPassword}
-                error={error?.fieldErrors?.password?.[0]}
-                autoCapitalize="none"
-                autoComplete="current-password"
-                textContentType="password"
-                onSubmitEditing={needsCode ? undefined : submit}
-              />
-              {needsCode ? (
-                <>
-                  <AppText variant="caption" tone="muted">
-                    {useRecoveryCode
-                      ? 'Enter one of your recovery codes. Each code works once.'
-                      : 'Enter the 6-digit code from your authenticator app.'}
-                  </AppText>
-                  <TextField
-                    label={useRecoveryCode ? 'Recovery code' : 'Authentication code'}
-                    value={code}
-                    onChangeText={setCode}
-                    error={error?.fieldErrors?.code?.[0]}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    autoComplete="one-time-code"
-                    keyboardType={useRecoveryCode ? 'default' : 'number-pad'}
-                    textContentType="oneTimeCode"
-                    onSubmitEditing={submit}
-                  />
-                  <Button
-                    block
-                    variant="soft"
-                    onPress={() => {
-                      setUseRecoveryCode((value) => !value);
-                      setCode('');
-                      setError(null);
-                    }}>
-                    {useRecoveryCode ? 'Use authenticator code' : 'Use a recovery code'}
-                  </Button>
-                </>
-              ) : null}
-            </View>
-            {error && !error.fieldErrors ? <Alert tone="danger" message={error.message} /> : null}
-            <View className="gap-4">
-              <Button
-                block
-                onPress={submit}
-                loading={submitting}
-                disabled={!email || !password || (needsCode && !trimmedCode)}>
-                Sign in
-              </Button>
-              <AppText variant="caption" tone="muted" className="text-center">
-                Only registered employees can access the app.
-              </AppText>
-            </View>
+      <ScrollView
+        bounces={false}
+        contentContainerClassName="gap-1 px-5"
+        contentContainerStyle={{
+          paddingTop: top + 24,
+          paddingBottom: bottom + sizes.screenTopGap,
+        }}
+        keyboardShouldPersistTaps="handled">
+        <Logo width={112} className="self-center" />
+        {/* Decoration only: the heading below says what the screen is. */}
+        <Image
+          aria-hidden
+          contentFit="contain"
+          source={illustration}
+          style={{ width: '100%', maxWidth: 300, aspectRatio: 1, alignSelf: 'center' }}
+        />
+        <View className="gap-8">
+          <View className="gap-2">
+            <AppText variant="display" role="heading">
+              Sign in
+            </AppText>
+            <AppText tone="muted">Use your employee account to continue.</AppText>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+          <View className="gap-4">
+            <TextField
+              label="Email"
+              value={email}
+              onChangeText={setEmail}
+              error={error?.fieldErrors?.email?.[0]}
+              autoCapitalize="none"
+              autoComplete="email"
+              keyboardType="email-address"
+              textContentType="username"
+            />
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChangeText={setPassword}
+              error={error?.fieldErrors?.password?.[0]}
+              autoCapitalize="none"
+              autoComplete="current-password"
+              textContentType="password"
+              onSubmitEditing={needsCode ? undefined : submit}
+            />
+            {needsCode ? (
+              <>
+                <AppText variant="caption" tone="muted">
+                  {useRecoveryCode
+                    ? 'Enter one of your recovery codes. Each code works once.'
+                    : 'Enter the 6-digit code from your authenticator app.'}
+                </AppText>
+                <TextField
+                  label={useRecoveryCode ? 'Recovery code' : 'Authentication code'}
+                  value={code}
+                  onChangeText={setCode}
+                  error={error?.fieldErrors?.code?.[0]}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="one-time-code"
+                  keyboardType={useRecoveryCode ? 'default' : 'number-pad'}
+                  textContentType="oneTimeCode"
+                  onSubmitEditing={submit}
+                />
+                <Button
+                  block
+                  variant="soft"
+                  onPress={() => {
+                    setUseRecoveryCode((value) => !value);
+                    setCode('');
+                    setError(null);
+                  }}>
+                  {useRecoveryCode ? 'Use authenticator code' : 'Use a recovery code'}
+                </Button>
+              </>
+            ) : null}
+          </View>
+          {error && !error.fieldErrors ? <Alert tone="danger" message={error.message} /> : null}
+          <View className="gap-4">
+            <Button
+              block
+              onPress={submit}
+              loading={submitting}
+              disabled={!email || !password || (needsCode && !trimmedCode)}>
+              Sign in
+            </Button>
+            <AppText variant="caption" tone="muted" className="text-center">
+              Only registered employees can access the app.
+            </AppText>
+          </View>
+        </View>
+      </ScrollView>
     </Screen>
   );
 }

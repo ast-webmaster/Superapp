@@ -41,7 +41,7 @@ export function Stepper({
       role="group"
       aria-label={label}
       className={clsx(
-        'flex-row items-center self-start rounded-pill bg-surface shadow-card',
+        'flex-row items-center self-start rounded-lg bg-surface shadow-card',
         className,
       )}>
       <StepButton

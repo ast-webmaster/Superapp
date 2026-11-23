@@ -70,7 +70,7 @@ export function AreaChart({ data, target, label, tone = 'default' }: AreaChartPr
     <View className="gap-3">
       {/* The picked day: a dark date pill over a big amount, so it reads as the active one. */}
       <View aria-live="polite" className="items-start gap-2">
-        <View className="min-h-6 justify-center rounded-pill bg-ink px-3">
+        <View className="min-h-6 justify-center rounded-lg bg-ink px-3">
           <AppText variant="label" tone="on-primary">
             {formatDate(point.date)}
           </AppText>

@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, userEvent, within } from '@testing-library/react-native';
+import { render, screen, userEvent } from '@testing-library/react-native';
 
 import { ConfirmProvider } from '@/shared/ui';
 
@@ -16,7 +16,10 @@ jest.mock('../api/registerCustomerApi', () => ({ registerCustomerApi: { act: jes
 const actMock = registerCustomerApi.act as jest.Mock;
 const SEEN = '2026-11-08T10:00:00+07:00';
 
-function detail(allowed: RegisterCustomerAction[], stage: RegisterCustomerStage | null = 'MANAGER') {
+function detail(
+  allowed: RegisterCustomerAction[],
+  stage: RegisterCustomerStage | null = 'MANAGER',
+) {
   return {
     uuid: 'rc-1',
     status: 'AWAITING APPROVAL',
@@ -40,10 +43,9 @@ function renderActions(
   );
 }
 
-// Presses the confirm button of the dialog.
+// Presses the confirm button of the sheet, which is rendered after (below) the trigger button.
 async function confirmDialog(name: string) {
-  const dialog = screen.getByRole('alertdialog');
-  await userEvent.press(within(dialog).getByRole('button', { name }));
+  await userEvent.press(screen.getAllByRole('button', { name }).at(-1)!);
 }
 
 beforeEach(() => {
@@ -96,7 +98,6 @@ it('asks finance for the customer code and sends it with the approval', async ()
 
   await userEvent.press(screen.getByRole('button', { name: 'Approve' }));
   // A sheet, not the confirm dialog: nothing is sent until a code is entered.
-  expect(screen.queryByRole('alertdialog')).not.toBeOnTheScreen();
   await userEvent.type(screen.getByLabelText('Customer code', { exact: false }), ' C-1001 ');
   await userEvent.press(screen.getAllByRole('button', { name: 'Approve' }).at(-1)!);
 
