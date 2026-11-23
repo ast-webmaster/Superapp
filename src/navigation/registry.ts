@@ -11,6 +11,7 @@ import { priceApprovalManifest } from '@/modules/PriceApproval';
 import { productBorrowingManifest } from '@/modules/ProductBorrowing';
 import { purchaseRequestManifest } from '@/modules/PurchaseRequest';
 import { registerCustomerManifest } from '@/modules/RegisterCustomer';
+import { requestDesignManifest } from '@/modules/RequestDesign';
 import { salesInventoryAnalysisManifest } from '@/modules/SalesInventoryAnalysis';
 import { stockGimmickManifest } from '@/modules/StockGimmick';
 import { stockPenjualanManifest } from '@/modules/StockPenjualan';
@@ -37,4 +38,5 @@ export const moduleManifests: ModuleManifest[] = [
   salesInventoryAnalysisManifest,
   marketingInboundManifest,
   marketingRequestManifest,
+  requestDesignManifest,
 ];
