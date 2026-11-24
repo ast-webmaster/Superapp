@@ -13,6 +13,7 @@ import { purchaseRequestManifest } from '@/modules/PurchaseRequest';
 import { registerCustomerManifest } from '@/modules/RegisterCustomer';
 import { requestDesignManifest } from '@/modules/RequestDesign';
 import { salesInventoryAnalysisManifest } from '@/modules/SalesInventoryAnalysis';
+import { salesVisitationManifest } from '@/modules/SalesVisitation';
 import { stockGimmickManifest } from '@/modules/StockGimmick';
 import { stockPenjualanManifest } from '@/modules/StockPenjualan';
 import type { ModuleManifest } from '@/shared/types/module';
@@ -39,4 +40,5 @@ export const moduleManifests: ModuleManifest[] = [
   marketingInboundManifest,
   marketingRequestManifest,
   requestDesignManifest,
+  salesVisitationManifest,
 ];
