@@ -72,17 +72,22 @@ function ChoiceRow({
   );
 }
 
+/** A pasted Google Maps link, with or without the scheme. Anything else is searched as an address. */
+const looksLikeLink = (text: string) =>
+  /^https?:\/\//i.test(text) ||
+  /^(www\.)?(google\.[a-z.]+\/maps|maps\.google\.|maps\.app\.goo\.gl|goo\.gl\/maps)/i.test(text);
+
 /**
- * Where the visit takes place. A point comes from one of: this device's position, an address
- * search, a pasted Google Maps link or "lat, lng", or (for a registered customer) a point it was
- * visited at before or one of its registered addresses. The server later measures check-in and
- * check-out against this point. There is no map inside the app: the point is shown as text.
+ * Where the visit takes place, chosen in one box like the web form: type a building, place or
+ * address and search, or paste a Google Maps link or "lat, lng". The box decides which it is.
+ * Besides it: this device's position and, for a registered customer, a point it was visited at
+ * before or one of its registered addresses. The server later measures check-in and check-out
+ * against this point. There is no map inside the app: the point is shown as text.
  */
 export function LocationField({ value, onChange, customerId, error }: LocationFieldProps) {
   const [open, setOpen] = useState(false);
-  const [addressText, setAddressText] = useState('');
+  const [text, setText] = useState('');
   const [searched, setSearched] = useState<string | null>(null);
-  const [linkText, setLinkText] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [locating, setLocating] = useState(false);
 
@@ -95,15 +100,33 @@ export function LocationField({ value, onChange, customerId, error }: LocationFi
     setOpen(false);
   };
 
-  const searchAddress = (text: string) => {
-    const term = text.trim();
-    if (term.length < GEOCODE_MIN_CHARS) {
-      setMessage(`Type at least ${GEOCODE_MIN_CHARS} characters of the address.`);
+  /** One entry point for the box: coordinates and links are read, everything else is searched. */
+  const submit = (raw: string) => {
+    const input = raw.trim();
+    setMessage(null);
+    setText(input);
+    if (!input) return;
+
+    // Plain coordinates need no round trip.
+    const plain = parseCoordinates(input);
+    if (plain) {
+      pick({ ...plain, label: 'Pinned location' });
       return;
     }
-    setMessage(null);
-    setAddressText(term);
-    setSearched(term);
+    if (looksLikeLink(input)) {
+      setSearched(null);
+      mapLink.mutate(/^https?:\/\//i.test(input) ? input : `https://${input}`, {
+        onSuccess: ({ lat, lng }) =>
+          pick({ latitude: lat, longitude: lng, label: 'Pinned location' }),
+        onError: (failure) => setMessage(toAppError(failure).message),
+      });
+      return;
+    }
+    if (input.length < GEOCODE_MIN_CHARS) {
+      setMessage(`Type at least ${GEOCODE_MIN_CHARS} characters, or paste a Google Maps link.`);
+      return;
+    }
+    setSearched(input);
   };
 
   const locateMe = async () => {
@@ -112,32 +135,16 @@ export function LocationField({ value, onChange, customerId, error }: LocationFi
     try {
       const fix = await readPosition();
       pick({ latitude: fix.latitude, longitude: fix.longitude, label: 'Current location' });
-    } catch (error) {
-      setMessage(toAppError(error).message);
+    } catch (failure) {
+      setMessage(toAppError(failure).message);
     } finally {
       setLocating(false);
     }
   };
 
-  const readLink = () => {
-    const text = linkText.trim();
-    if (!text) return;
-    setMessage(null);
-    // Plain coordinates need no round trip; anything else is a link the server reads.
-    const plain = parseCoordinates(text);
-    if (plain) {
-      pick({ ...plain, label: 'Pinned location' });
-      return;
-    }
-    mapLink.mutate(text, {
-      onSuccess: ({ lat, lng }) =>
-        pick({ latitude: lat, longitude: lng, label: 'Pinned location' }),
-      onError: (error) => setMessage(toAppError(error).message),
-    });
-  };
-
   const previous = suggestions.data?.previous_visits ?? [];
   const addresses = suggestions.data?.addresses ?? [];
+  const busy = mapLink.isPending || geocode.isFetching;
 
   return (
     <>
@@ -155,10 +162,53 @@ export function LocationField({ value, onChange, customerId, error }: LocationFi
         error={error}
       />
       <Sheet visible={open} fullHeight title="Visit location" onClose={() => setOpen(false)}>
+        <TextField
+          icon="search"
+          label="Building, place, address or map link"
+          placeholder="Search, or paste a Google Maps link or coordinates"
+          value={text}
+          onChangeText={setText}
+          autoCapitalize="none"
+          autoCorrect={false}
+          returnKeyType="search"
+          onSubmitEditing={() => submit(text)}
+          help="A link with only a place name has no coordinates. Pick the point in Google Maps first."
+          trailing={
+            <Button size="sm" variant="soft" loading={busy} onPress={() => submit(text)}>
+              Search
+            </Button>
+          }
+        />
         {message ? (
           <AppText variant="caption" tone="danger" aria-live="polite">
             {message}
           </AppText>
+        ) : null}
+
+        {geocode.isFetching ? (
+          <Loading label="Searching the address" />
+        ) : geocode.error ? (
+          <AppText variant="caption" tone="danger">
+            {toAppError(geocode.error).message}
+          </AppText>
+        ) : geocode.data ? (
+          geocode.data.length > 0 ? (
+            <View className="gap-1">
+              {geocode.data.map((hit) => (
+                <ChoiceRow
+                  key={`${hit.lat},${hit.lng},${hit.label}`}
+                  icon="search"
+                  title={hit.label}
+                  caption={formatCoordinates(hit.lat, hit.lng)}
+                  onPress={() => pick({ latitude: hit.lat, longitude: hit.lng, label: hit.label })}
+                />
+              ))}
+            </View>
+          ) : (
+            <AppText variant="caption" tone="muted">
+              No place found. Try fewer words, or paste a Google Maps link.
+            </AppText>
+          )
         ) : null}
 
         <Button
@@ -169,63 +219,6 @@ export function LocationField({ value, onChange, customerId, error }: LocationFi
           onPress={() => void locateMe()}>
           Use my current location
         </Button>
-
-        <View className="gap-2">
-          <TextField
-            label="Search an address"
-            placeholder="Street, building or place name"
-            value={addressText}
-            onChangeText={setAddressText}
-            returnKeyType="search"
-            onSubmitEditing={() => searchAddress(addressText)}
-            trailing={
-              <Button size="sm" variant="soft" onPress={() => searchAddress(addressText)}>
-                Search
-              </Button>
-            }
-          />
-          {geocode.isFetching ? (
-            <Loading label="Searching the address" />
-          ) : geocode.error ? (
-            <AppText variant="caption" tone="danger">
-              {toAppError(geocode.error).message}
-            </AppText>
-          ) : geocode.data ? (
-            geocode.data.length > 0 ? (
-              geocode.data.map((hit) => (
-                <ChoiceRow
-                  key={`${hit.lat},${hit.lng},${hit.label}`}
-                  icon="search"
-                  title={hit.label}
-                  caption={formatCoordinates(hit.lat, hit.lng)}
-                  onPress={() => pick({ latitude: hit.lat, longitude: hit.lng, label: hit.label })}
-                />
-              ))
-            ) : (
-              <AppText variant="caption" tone="muted">
-                No place found. Try fewer words, or paste a Google Maps link below.
-              </AppText>
-            )
-          ) : null}
-        </View>
-
-        <View className="gap-2">
-          <TextField
-            label="Google Maps link or coordinates"
-            placeholder="https://maps.app.goo.gl/… or -6.2, 106.8"
-            value={linkText}
-            onChangeText={setLinkText}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="url"
-            help="A link with only a place name has no coordinates. Pick the point in Google Maps first."
-            trailing={
-              <Button size="sm" variant="soft" loading={mapLink.isPending} onPress={readLink}>
-                Use
-              </Button>
-            }
-          />
-        </View>
 
         {customerId ? (
           <View className="gap-1 pb-2">
@@ -261,7 +254,7 @@ export function LocationField({ value, onChange, customerId, error }: LocationFi
                     icon="building"
                     title={item.address}
                     caption="Tap to search this address"
-                    onPress={() => searchAddress(item.address)}
+                    onPress={() => submit(item.address)}
                   />
                 ))}
               </>
