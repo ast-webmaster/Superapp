@@ -11,7 +11,7 @@ import { formatSyncedAt } from '@/shared/utils/format';
 
 function CardSkeleton() {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       <View className="flex-row justify-between gap-3">
         <Skeleton className="h-5 w-1/2" />
         <Skeleton className="h-6 w-20 rounded-pill" />

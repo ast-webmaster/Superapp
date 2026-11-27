@@ -56,7 +56,7 @@ export function AttendeesField({ value, onChange, error }: AttendeesFieldProps) 
           {value.map((email) => (
             <View
               key={email}
-              className="min-h-touch flex-row items-center gap-3 rounded-lg bg-surface-gray pl-3">
+              className="min-h-touch flex-row items-center gap-3 rounded-sm bg-surface-gray pl-3">
               <AppText numberOfLines={1} className="min-w-0 flex-1">
                 {email}
               </AppText>

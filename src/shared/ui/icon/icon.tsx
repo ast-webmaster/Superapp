@@ -15,6 +15,7 @@ import Cart from '@hugeicons/core-free-icons/ShoppingCart01Icon';
 import Chart from '@hugeicons/core-free-icons/ChartColumnIcon';
 import Chat from '@hugeicons/core-free-icons/Message01Icon';
 import Check from '@hugeicons/core-free-icons/Tick02Icon';
+import Bolt from '@hugeicons/core-free-icons/ZapIcon';
 import Clipboard from '@hugeicons/core-free-icons/TaskDone01Icon';
 import Close from '@hugeicons/core-free-icons/Cancel01Icon';
 import Copy from '@hugeicons/core-free-icons/Copy01Icon';
@@ -94,6 +95,7 @@ const icons = {
   upload: Upload,
   minus: Minus,
   check: Check,
+  bolt: Bolt,
   x: Close,
   alert: Alert,
   info: Info,

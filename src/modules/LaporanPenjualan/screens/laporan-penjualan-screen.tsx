@@ -8,7 +8,6 @@ import { useIsOnline } from '@/shared/hooks/use-is-online';
 import { sizes } from '@/shared/theme/tokens';
 import {
   Alert,
-  AppText,
   Button,
   EmptyState,
   IconButton,
@@ -16,18 +15,21 @@ import {
   ListRow,
   Loading,
   Screen,
+  SegmentedControl,
   Sheet,
   type IconName,
 } from '@/shared/ui';
 import { formatMonth, formatSyncedAt } from '@/shared/utils/format';
 
 import { AreaChart } from '../components/charts/area-chart';
-import { BarList } from '../components/charts/bar-list';
+import { BranchShares } from '../components/branch-shares';
 import { GroupCard } from '../components/group-card';
+import { FullAmountsRow } from '../components/full-amounts-row';
 import { filterGroups, GroupFilter, NO_GROUP_FILTERS } from '../components/group-filter';
 import { PeriodChips } from '../components/period-chips';
 import { ReportCard } from '../components/report-card';
 import { ReportSkeleton } from '../components/report-skeletons';
+import { TileGrid } from '../components/ticker-tile';
 import { TotalCard } from '../components/total-card';
 import { useExportReport, type ExportFormat } from '../hooks/use-export-report';
 import { useRefreshReport } from '../hooks/use-refresh-report';
@@ -41,22 +43,13 @@ const exportActions: readonly { format: ExportFormat; label: string; icon: IconN
   { format: 'pdf', label: 'Export to PDF', icon: 'doc' },
 ];
 
-function SectionTitle({ title, note }: { title: string; note?: string }) {
-  return (
-    <View className="gap-1 pt-2">
-      <AppText variant="title" role="heading">
-        {title}
-      </AppText>
-      {note ? (
-        <AppText variant="caption" tone="muted">
-          {note}
-        </AppText>
-      ) : null}
-    </View>
-  );
-}
+/** The report by group, or each branch's share of sales: the floating switch. */
+const VIEWS = [
+  { value: 'group', label: 'Group' },
+  { value: 'branch', label: 'Branch' },
+] as const;
 
-function Report({ summary }: { summary: ReportSummary }) {
+function Report({ summary, view }: { summary: ReportSummary; view: string }) {
   const [filters, setFilters] = useState(NO_GROUP_FILTERS);
   const groups = filterGroups(summary.groups, filters);
   const dailyTarget = summary.groups.reduce((sum, group) => sum + group.target.daily_amount, 0);
@@ -64,38 +57,53 @@ function Report({ summary }: { summary: ReportSummary }) {
 
   return (
     <>
-      <TotalCard summary={summary} />
-      {dailyTotals.length > 0 ? (
-        <ReportCard title="Daily sales" note="All groups together. Touch the chart to read a day.">
-          <AreaChart data={dailyTotals} target={dailyTarget || undefined} label="Daily sales" />
-        </ReportCard>
-      ) : null}
-      <SectionTitle title="Groups" />
-      <GroupFilter groups={summary.groups} value={filters} onChange={setFilters} />
-      {groups.map((group) => (
-        <GroupCard key={group.group} group={group} />
-      ))}
-      {groups.length === 0 ? (
-        <EmptyState icon="chart" title="No groups match" description="Try another status or group.">
-          <Button variant="soft" onPress={() => setFilters(NO_GROUP_FILTERS)}>
-            Clear filters
-          </Button>
-        </EmptyState>
-      ) : null}
-      {summary.branches.length > 0 ? (
+      {view === 'branch' ? (
+        summary.branches.length > 0 ? (
+          <BranchShares
+            items={summary.branches.map((item) => ({
+              key: item.branch,
+              label: item.branch,
+              value: item.achievement,
+            }))}
+          />
+        ) : (
+          <EmptyState
+            icon="building"
+            title="No branch sales"
+            description={`No branch has sales for ${formatMonth(summary.period)}.`}
+          />
+        )
+      ) : (
         <>
-          <SectionTitle title="Sales by branch" note="All groups together, largest first." />
-          <View className="rounded-xl border border-border bg-surface p-4">
-            <BarList
-              items={summary.branches.map((item) => ({
-                key: item.branch,
-                label: item.branch,
-                value: item.achievement,
-              }))}
-            />
-          </View>
+          <TotalCard summary={summary} />
+          {dailyTotals.length > 0 ? (
+            <ReportCard title="Daily sales" note="Touch the chart to read a day." tone="accent">
+              <AreaChart
+                data={dailyTotals}
+                target={dailyTarget || undefined}
+                label="Daily sales"
+                tone="accent"
+              />
+            </ReportCard>
+          ) : null}
+          <GroupFilter groups={summary.groups} value={filters} onChange={setFilters} />
+          <TileGrid
+            items={groups}
+            keyOf={(group) => group.group}
+            render={(group) => <GroupCard group={group} />}
+          />
+          {groups.length === 0 ? (
+            <EmptyState
+              icon="chart"
+              title="No groups match"
+              description="Try another status or group.">
+              <Button variant="soft" onPress={() => setFilters(NO_GROUP_FILTERS)}>
+                Clear filters
+              </Button>
+            </EmptyState>
+          ) : null}
         </>
-      ) : null}
+      )}
     </>
   );
 }
@@ -103,6 +111,7 @@ function Report({ summary }: { summary: ReportSummary }) {
 export function LaporanPenjualanScreen() {
   const { bottom } = useSafeAreaInsets();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [view, setView] = useState<string>(VIEWS[0].value);
   const period = useLaporanPenjualanPeriod((state) => state.period);
   const online = useIsOnline();
   const exportReport = useExportReport();
@@ -158,6 +167,7 @@ export function LaporanPenjualanScreen() {
               void refresh();
             }}
           />
+          <FullAmountsRow />
           {exportActions.map((action) => (
             <ListRow
               key={action.format}
@@ -206,7 +216,11 @@ export function LaporanPenjualanScreen() {
         // is limited to once an hour, so a pull must not be a way around that.
         <ScrollView
           contentContainerClassName="gap-4 px-5"
-          contentContainerStyle={{ paddingBottom: bottom + sizes.screenTopGap, flexGrow: 1 }}>
+          contentContainerStyle={{
+            // Room for the floating switch, so it never covers the last card.
+            paddingBottom: bottom + sizes.screenTopGap * 2 + sizes.touch,
+            flexGrow: 1,
+          }}>
           {isPlaceholderData ? (
             <Loading label="Loading period" />
           ) : isRefetching ? (
@@ -223,7 +237,7 @@ export function LaporanPenjualanScreen() {
             />
           ) : null}
           {data.groups.length > 0 ? (
-            <Report summary={data} />
+            <Report summary={data} view={view} />
           ) : (
             <EmptyState
               icon="chart"
@@ -233,6 +247,18 @@ export function LaporanPenjualanScreen() {
           )}
         </ScrollView>
       )}
+      {/* Floats over the report, within reach of the thumb. */}
+      <View
+        className="absolute left-5 right-5 rounded-pill bg-surface shadow-card"
+        style={{ bottom: bottom + sizes.screenTopGap }}>
+        <SegmentedControl
+          label="Break down by"
+          fullWidth
+          options={VIEWS}
+          value={view}
+          onChange={setView}
+        />
+      </View>
     </Screen>
   );
 }

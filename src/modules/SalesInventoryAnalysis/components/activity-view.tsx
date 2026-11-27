@@ -23,7 +23,7 @@ function ComparisonCard({ title, data }: { title: string; data: ActivityComparis
     <View
       accessible
       aria-label={`${title}, ${active.current} active dealers against ${active.previous}, ${data.new} new, ${data.repeat} repeat, ${data.lost} lost`}
-      className="gap-3 rounded-xl border border-border bg-surface p-4">
+      className="gap-3 rounded-xl shadow-card bg-surface p-4">
       <View className="flex-row items-start justify-between gap-3">
         <View className="min-w-0 shrink gap-1">
           <AppText variant="module-title" role="heading">
@@ -92,7 +92,7 @@ export function ActivityView({ data }: { data: DealerActivity }) {
       <ComparisonCard title="Month over month" data={data.mom} />
       <ComparisonCard title="Quarter over quarter" data={data.qoq} />
       <SectionTitle title="Monthly trend" note={`Last ${data.meta.trend_months} months.`} />
-      <View className="gap-4 rounded-xl border border-border bg-surface p-4">
+      <View className="gap-4 rounded-xl shadow-card bg-surface p-4">
         {trend.map((month) => (
           <TrendRow key={month.key} month={month} max={max} />
         ))}

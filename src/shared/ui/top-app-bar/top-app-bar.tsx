@@ -4,7 +4,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { sizes } from '@/shared/theme/tokens';
 
-import { GroundGlow } from '../ground-glow/ground-glow';
 import { IconButton } from '../icon-button/icon-button';
 import type { IconName } from '../icon/icon';
 import { AppText } from '../text/text';
@@ -95,18 +94,14 @@ interface StackHeaderProps {
 
 /**
  * Use as a stack's `header` option: every pushed screen gets the same bar, with back when it can.
- * The navigator draws the header apart from `Screen`, so it adds its own slice of the ground glow
- * and stays without a background color.
+ * It has no background color of its own: the navigator's `ground` shows through.
  */
 export function renderTopAppBar({ options, back, navigation }: StackHeaderProps) {
   return (
-    <View>
-      <GroundGlow />
-      <TopAppBar
-        title={options.title ?? ''}
-        onBack={back ? () => navigation.goBack() : undefined}
-        right={options.headerRight?.({ canGoBack: Boolean(back) })}
-      />
-    </View>
+    <TopAppBar
+      title={options.title ?? ''}
+      onBack={back ? () => navigation.goBack() : undefined}
+      right={options.headerRight?.({ canGoBack: Boolean(back) })}
+    />
   );
 }

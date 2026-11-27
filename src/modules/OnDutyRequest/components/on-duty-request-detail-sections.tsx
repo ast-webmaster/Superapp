@@ -25,7 +25,7 @@ const isPending = (download: Download, file: OnDutyRequestFile) =>
 /** One card of the detail screen. The screen spaces the cards with `gap-4`. */
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       {title ? (
         <AppText variant="caption-strong" role="heading">
           {title}
@@ -79,7 +79,7 @@ function FileRow({
       disabled={busy}
       onPress={onPress}
       className={clsx(
-        'min-h-control flex-row items-center gap-3 rounded-lg bg-surface-gray px-3 py-2 active:bg-border',
+        'min-h-control flex-row items-center gap-3 rounded-sm bg-surface-gray px-3 py-2 active:bg-border',
         focusRing,
       )}>
       <Icon name="doc" color="primary" />
@@ -181,7 +181,7 @@ export function InfoSection({ detail }: { detail: OnDutyRequestDetail }) {
 
 function DestinationBlock({ row }: { row: OnDutyDestination }) {
   return (
-    <View className="gap-1 rounded-lg border border-border p-3">
+    <View className="gap-1 rounded-sm border border-border p-3">
       <AppText variant="caption-strong">{row.destination ?? '-'}</AppText>
       <AppText variant="caption">
         {`${formatDate(row.start_date)} - ${formatDate(row.end_date)} · ${row.days} ${row.days === 1 ? 'day' : 'days'}`}
@@ -226,7 +226,7 @@ function CostBlock({ cost, download }: { cost: OnDutyCost; download: Download })
   };
 
   return (
-    <View className="gap-2 rounded-lg border border-border p-3">
+    <View className="gap-2 rounded-sm border border-border p-3">
       <AppText variant="caption-strong">{cost.item_description ?? cost.item_code}</AppText>
       <View className="flex-row flex-wrap items-center gap-2">
         {cost.need_pr ? (

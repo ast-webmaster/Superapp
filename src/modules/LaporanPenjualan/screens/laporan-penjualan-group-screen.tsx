@@ -7,40 +7,47 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { toAppError } from '@/core/errors';
 import { useIsOnline } from '@/shared/hooks/use-is-online';
 import { colors, sizes } from '@/shared/theme/tokens';
-import { Alert, AppText, Button, EmptyState, Screen } from '@/shared/ui';
+import {
+  Alert,
+  AppText,
+  Button,
+  EmptyState,
+  IconButton,
+  ListGroup,
+  Screen,
+  Sheet,
+} from '@/shared/ui';
 import { formatMonth, formatSyncedAt } from '@/shared/utils/format';
 
 import { BranchCard } from '../components/branch-card';
 import { BranchFilter, filterBranches, NO_BRANCH_FILTERS } from '../components/branch-filter';
 import { AreaChart } from '../components/charts/area-chart';
 import { ColumnChart } from '../components/charts/column-chart';
-import { HeroCard } from '../components/hero-card';
+import { daysLeftBadge, HeroCard } from '../components/hero-card';
 import { formatPercent, levelBadge } from '../components/level';
 import { ReportCard } from '../components/report-card';
 import { GroupSkeleton } from '../components/report-skeletons';
-import { cumulative } from '../components/series';
+import { TileGrid } from '../components/ticker-tile';
+import { FullAmountsRow } from '../components/full-amounts-row';
+import { dayBars } from '../components/series';
 import { useReportGroup } from '../hooks/use-report-group';
 import { useLaporanPenjualanPeriod } from '../store/laporanPenjualanPeriodStore';
 import type { GroupDetail } from '../types';
-
-/** The working days left in the month, from the server: "1 day left", "12 days left". */
-function daysLeft(days: number): string {
-  return `${days} ${days === 1 ? 'day' : 'days'} left`;
-}
 
 function SummaryCard({ detail }: { detail: GroupDetail }) {
   const { achievement, target } = detail;
 
   return (
     <HeroCard
+      tone="primary"
       eyebrow={formatMonth(detail.period)}
-      badge={target.day_left > 0 ? daysLeft(target.day_left) : undefined}
+      badge={daysLeftBadge(target.day_left)}
       amount={achievement.value}
       target={target.monthly_amount}
       percentage={achievement.percentage}
       level={achievement.level}
       status={levelBadge(achievement.level)}
-      series={cumulative(detail.daily_totals.map((day) => day.amount))}
+      bars={dayBars(detail.daily_totals, target.daily_amount)}
       stats={[
         { label: 'Daily target', value: target.daily_amount },
         {
@@ -95,9 +102,11 @@ function GroupReport({ detail }: { detail: GroupDetail }) {
             Branches
           </AppText>
           <BranchFilter branches={detail.branches} value={filters} onChange={setFilters} />
-          {branches.map((branch) => (
-            <BranchCard key={branch.branch} branch={branch} />
-          ))}
+          <TileGrid
+            items={branches}
+            keyOf={(branch) => branch.branch}
+            render={(branch) => <BranchCard branch={branch} />}
+          />
           {branches.length === 0 ? (
             <EmptyState
               icon="building"
@@ -119,6 +128,7 @@ export function LaporanPenjualanGroupScreen() {
   const { bottom } = useSafeAreaInsets();
   const period = useLaporanPenjualanPeriod((state) => state.period);
   const online = useIsOnline();
+  const [menuOpen, setMenuOpen] = useState(false);
   const { data, error, fetchStatus, dataUpdatedAt, isRefetching, refetch } = useReportGroup(
     period,
     group,
@@ -132,7 +142,26 @@ export function LaporanPenjualanGroupScreen() {
 
   return (
     <Screen>
-      <Stack.Screen options={{ title: data?.group ?? group }} />
+      <Stack.Screen
+        options={{
+          title: data?.group ?? group,
+          headerRight: data
+            ? () => (
+                <IconButton
+                  size="sm"
+                  icon="more"
+                  label="Actions"
+                  onPress={() => setMenuOpen(true)}
+                />
+              )
+            : undefined,
+        }}
+      />
+      <Sheet visible={menuOpen} title="Actions" onClose={() => setMenuOpen(false)}>
+        <ListGroup>
+          <FullAmountsRow />
+        </ListGroup>
+      </Sheet>
       {data === undefined ? (
         error ? (
           toAppError(error).code === 'not_found' ? (

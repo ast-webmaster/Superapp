@@ -5,7 +5,7 @@ import { Skeleton, SkeletonGroup } from '@/shared/ui';
 /** Same shape as `StockCard`. */
 function CardSkeleton() {
   return (
-    <View className="gap-4 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-4 rounded-xl shadow-card bg-surface p-4">
       <View className="gap-1">
         <Skeleton className="h-4 w-1/3" />
         <Skeleton className="h-5 w-3/4" />

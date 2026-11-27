@@ -31,7 +31,7 @@ export function CustomerCard({ item }: { item: CustomerListItem }) {
         role="button"
         aria-label={`Open ${item.customer_name}`}
         className={clsx(
-          'gap-3 rounded-xl border border-border bg-surface p-4 active:bg-surface-gray',
+          'gap-3 rounded-xl shadow-card bg-surface p-4 active:bg-surface-gray',
           focusRing,
         )}>
         <View className="flex-row items-center justify-between gap-3">

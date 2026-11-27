@@ -18,7 +18,7 @@ export interface DeclarationCostCardProps {
 /** One cost row of the declaration: what was estimated, and the real amount, note and receipt. */
 export function DeclarationCostCard({ cost, errors, onChange }: DeclarationCostCardProps) {
   return (
-    <View className="gap-4 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-4 rounded-xl shadow-card bg-surface p-4">
       <View className="gap-1">
         <AppText variant="module-title">{cost.label}</AppText>
         <AppText variant="caption" tone="muted">

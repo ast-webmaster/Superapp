@@ -17,7 +17,7 @@ export function StockCard({ item }: { item: StockListItem }) {
         role="button"
         aria-label={`Open ${name}, ${formatQuantity(item.qty)} in stock`}
         className={clsx(
-          'flex-row items-center gap-4 rounded-xl border border-border bg-surface p-4 active:bg-surface-gray',
+          'flex-row items-center gap-4 rounded-xl shadow-card bg-surface p-4 active:bg-surface-gray',
           focusRing,
         )}>
         <View className="min-w-0 flex-1 gap-1">

@@ -17,10 +17,10 @@ export function ProductCard({ item }: { item: ProductListItem }) {
         role="button"
         aria-label={`Open ${item.product_name}`}
         className={clsx(
-          'flex-row items-center gap-4 rounded-xl border border-border bg-surface p-3 active:bg-surface-gray',
+          'flex-row items-center gap-4 rounded-xl shadow-card bg-surface p-3 active:bg-surface-gray',
           focusRing,
         )}>
-        <ProductImage uri={item.image_url} className="size-20 shrink-0" />
+        <ProductImage uri={item.image_url} radius="md" className="size-20 shrink-0" />
         <View className="min-w-0 flex-1 gap-1">
           <AppText variant="label" tone="muted" numberOfLines={1}>
             {item.category_name ?? item.category_code}

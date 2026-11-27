@@ -27,7 +27,7 @@ export function UpdateBanner() {
         entering={entering}
         pointerEvents="box-none"
         style={{ position: 'absolute', left: 20, right: 20, top: top + sizes.toastOffset }}>
-        <View className="mx-auto w-full max-w-phone gap-3 rounded-lg border border-border bg-surface p-4">
+        <View className="mx-auto w-full max-w-phone gap-3 rounded-lg shadow-card bg-surface p-4">
           <View className="flex-row items-center gap-3">
             <View className="size-touch items-center justify-center rounded-md bg-primary-soft">
               <Icon name="refresh" color="primary" />

@@ -58,7 +58,7 @@ export function SegmentedControl({
       role="radiogroup"
       aria-label={label}
       className={clsx(
-        'flex-row rounded-lg bg-surface px-0.5',
+        'flex-row rounded-pill bg-surface px-0.5',
         fullWidth ? 'self-stretch' : 'self-start',
         className,
       )}>
@@ -74,7 +74,7 @@ export function SegmentedControl({
             aria-checked={selected}
             onPress={() => setCurrent(option.value)}
             className={clsx(
-              'min-h-touch justify-center rounded-lg py-0.5',
+              'min-h-touch justify-center rounded-pill py-0.5',
               fullWidth && 'flex-1',
               focusRing,
             )}
@@ -82,9 +82,11 @@ export function SegmentedControl({
             <View
               className={clsx(
                 // One line always: a label that wrapped would turn the pill into a tall block.
-                'h-11 flex-row items-center justify-center gap-2 rounded-lg',
+                'h-11 flex-row items-center justify-center gap-2 rounded-pill',
                 fullWidth ? 'px-2' : 'px-5',
-                selected && 'bg-primary',
+                // Never leave it unpainted: Android drops the radius of a view that gains its
+                // first background later, so the newly selected segment turns square.
+                selected ? 'bg-primary' : 'bg-surface',
               )}>
               {option.icon ? (
                 <Icon name={option.icon} color={selected ? 'on-primary' : 'ink'} />

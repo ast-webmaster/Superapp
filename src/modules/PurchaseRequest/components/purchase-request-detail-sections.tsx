@@ -27,7 +27,7 @@ type Download = {
 /** One card of the detail screen. The screen spaces the cards with `gap-4`. */
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       {title ? (
         <AppText variant="caption-strong" role="heading">
           {title}
@@ -81,7 +81,7 @@ function FileRow({
       disabled={busy}
       onPress={onPress}
       className={clsx(
-        'min-h-control flex-row items-center gap-3 rounded-lg bg-surface-gray px-3 py-2 active:bg-border',
+        'min-h-control flex-row items-center gap-3 rounded-sm bg-surface-gray px-3 py-2 active:bg-border',
         focusRing,
       )}>
       <Icon name="doc" color="primary" />
@@ -271,7 +271,7 @@ export function ItemsSection({
   return (
     <Section title={`Items (${detail.items.length})`}>
       {detail.items.map((line) => (
-        <View key={line.id} className="rounded-lg border border-border p-3">
+        <View key={line.id} className="rounded-sm border border-border p-3">
           <ItemBlock line={line} download={download} />
         </View>
       ))}

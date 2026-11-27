@@ -24,7 +24,7 @@ export function DeclarationDestinationCard({
   const days = daysInRange(row.startDate, row.endDate);
 
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       <View className="gap-1">
         <AppText variant="module-title">{row.destination}</AppText>
         <AppText variant="caption" tone="muted">

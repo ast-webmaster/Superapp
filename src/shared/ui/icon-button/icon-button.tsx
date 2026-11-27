@@ -10,8 +10,11 @@ export interface IconButtonProps extends Omit<PressableProps, 'children' | 'styl
   /** What the button does, for screen readers. */
   label: string;
   active?: boolean;
-  /** `gray` fills the idle shape with `surface-gray`, for a button inside a white card. */
-  tone?: 'surface' | 'gray';
+  /**
+   * `gray` fills the idle shape with `surface-gray`, for a button inside a white card. `outline`
+   * is white with a hairline, for a button that sits on a white surface.
+   */
+  tone?: 'surface' | 'gray' | 'outline';
   disabled?: boolean;
   /**
    * `sm` draws a 40 rounded square inside the 48 press area, for a header where 56 is too heavy.
@@ -23,6 +26,12 @@ export interface IconButtonProps extends Omit<PressableProps, 'children' | 'styl
   ref?: Ref<ComponentRef<typeof Pressable>>;
 }
 
+const tones = {
+  surface: 'bg-surface',
+  gray: 'bg-surface-gray',
+  outline: 'border border-border bg-surface',
+} as const;
+
 export function IconButton({
   icon,
   label,
@@ -33,7 +42,7 @@ export function IconButton({
   className,
   ...props
 }: IconButtonProps) {
-  const idle = size === 'xs' ? 'bg-highlight' : tone === 'gray' ? 'bg-surface-gray' : 'bg-surface';
+  const idle = size === 'xs' ? 'bg-highlight' : tones[tone];
   const fill = active ? 'bg-primary' : idle;
   const pressed = active ? 'active:bg-primary-pressed' : 'active:bg-border';
   const iconColor = active ? 'on-primary' : size === 'xs' ? 'primary' : 'ink';

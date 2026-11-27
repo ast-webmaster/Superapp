@@ -1,8 +1,7 @@
-import { clsx } from 'clsx';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
-import { AppText, Button, focusRing, Icon, Sheet, TextField } from '@/shared/ui';
+import { AppText, Button, Sheet, TextField, OptionRow } from '@/shared/ui';
 
 import { PickerField } from './picker-field';
 
@@ -73,6 +72,7 @@ export function MultiPickField({
         {options.length > 8 ? (
           <TextField
             icon="search"
+            variant="search"
             placeholder="Search"
             aria-label={`Search ${label.toLowerCase()}`}
             value={query}
@@ -84,26 +84,18 @@ export function MultiPickField({
         {shown.length === 0 ? (
           <AppText tone="muted">Nothing matches your search.</AppText>
         ) : (
-          <View className="gap-1 pb-2">
+          <View className="gap-2 pb-2">
             {shown.map((option) => {
               const selected = value.includes(option.value);
               return (
-                <Pressable
+                <OptionRow
                   key={option.value}
                   role="checkbox"
-                  aria-checked={selected}
                   aria-label={option.label}
+                  label={option.label}
+                  selected={selected}
                   onPress={() => toggle(option.value)}
-                  className={clsx(
-                    'min-h-control flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-surface-gray',
-                    selected && 'bg-primary-soft',
-                    focusRing,
-                  )}>
-                  <AppText variant="body-strong" className="min-w-0 flex-1">
-                    {option.label}
-                  </AppText>
-                  {selected ? <Icon name="check" color="primary" /> : null}
-                </Pressable>
+                />
               );
             })}
           </View>

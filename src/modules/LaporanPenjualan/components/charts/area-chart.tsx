@@ -12,6 +12,7 @@ import {
 } from '@/shared/utils/format';
 
 import type { DailyAmount } from '../../types';
+import { Amount } from '../amount';
 import { gridTicks } from './scale';
 import { smoothArea, smoothLine } from './smooth-path';
 import { Reveal } from './reveal';
@@ -68,16 +69,21 @@ export function AreaChart({ data, target, label, tone = 'default' }: AreaChartPr
 
   return (
     <View className="gap-3">
-      {/* The picked day: a dark date pill over a big amount, so it reads as the active one. */}
-      <View aria-live="polite" className="items-start gap-2">
+      {/* The picked day: a big amount, and a dark date pill at the far right so it reads as active. */}
+      <View aria-live="polite" className="flex-row items-center justify-between gap-3">
+        <Amount
+          value={point.amount}
+          variant="display"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.7}
+          className="min-w-0 shrink"
+        />
         <View className="min-h-6 justify-center rounded-lg bg-ink px-3">
           <AppText variant="label" tone="on-primary">
             {formatDate(point.date)}
           </AppText>
         </View>
-        <AppText variant="display" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
-          {formatMoney(point.amount)}
-        </AppText>
       </View>
       <Reveal>
         <View

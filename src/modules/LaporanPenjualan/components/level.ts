@@ -16,7 +16,7 @@ export function levelBadge(level: AchievementLevel): Pick<BadgeProps, 'label' | 
 
 export type Trend = 'gain' | 'flat' | 'loss';
 
-/** How a level reads on a market surface: `achieved` is a gain, `below` a loss, the rest flat. */
+/** How a level reads as a trend: `achieved` is a gain, `below` a loss, the rest flat. */
 export function levelTrend(level: AchievementLevel): Trend {
   if (level === 'achieved') return 'gain';
   if (level === 'below') return 'loss';

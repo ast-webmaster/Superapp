@@ -1,18 +1,8 @@
-import { clsx } from 'clsx';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { toAppError } from '@/core/errors';
-import {
-  AppText,
-  Button,
-  focusRing,
-  Icon,
-  Loading,
-  Sheet,
-  TextField,
-  type IconName,
-} from '@/shared/ui';
+import { AppText, Button, Loading, Sheet, TextField, OptionRow } from '@/shared/ui';
 
 import { readPosition } from '../../capture/gps';
 import { formatCoordinates, parseCoordinates } from '../../create/draft';
@@ -35,42 +25,6 @@ export interface LocationFieldProps {
 
 const describe = (point: LocationPoint) =>
   point.label.trim() || formatCoordinates(point.latitude, point.longitude);
-
-/** A tappable result row: a title with the coordinates or a hint under it. */
-function ChoiceRow({
-  title,
-  caption,
-  icon,
-  onPress,
-}: {
-  title: string;
-  caption?: string;
-  icon: IconName;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      role="button"
-      aria-label={title}
-      onPress={onPress}
-      className={clsx(
-        'min-h-control flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-surface-gray',
-        focusRing,
-      )}>
-      <Icon name={icon} color="ink-muted" />
-      <View className="min-w-0 flex-1">
-        <AppText variant="caption-strong" numberOfLines={2}>
-          {title}
-        </AppText>
-        {caption ? (
-          <AppText variant="label" tone="muted" numberOfLines={1}>
-            {caption}
-          </AppText>
-        ) : null}
-      </View>
-    </Pressable>
-  );
-}
 
 /** A pasted Google Maps link, with or without the scheme. Anything else is searched as an address. */
 const looksLikeLink = (text: string) =>
@@ -164,6 +118,7 @@ export function LocationField({ value, onChange, customerId, error }: LocationFi
       <Sheet visible={open} fullHeight title="Visit location" onClose={() => setOpen(false)}>
         <TextField
           icon="search"
+          variant="search"
           label="Building, place, address or map link"
           placeholder="Search, or paste a Google Maps link or coordinates"
           value={text}
@@ -193,12 +148,13 @@ export function LocationField({ value, onChange, customerId, error }: LocationFi
           </AppText>
         ) : geocode.data ? (
           geocode.data.length > 0 ? (
-            <View className="gap-1">
+            <View className="gap-2">
               {geocode.data.map((hit) => (
-                <ChoiceRow
+                <OptionRow
                   key={`${hit.lat},${hit.lng},${hit.label}`}
                   icon="search"
-                  title={hit.label}
+                  aria-label={hit.label}
+                  label={hit.label}
                   caption={formatCoordinates(hit.lat, hit.lng)}
                   onPress={() => pick({ latitude: hit.lat, longitude: hit.lng, label: hit.label })}
                 />
@@ -227,10 +183,13 @@ export function LocationField({ value, onChange, customerId, error }: LocationFi
               <>
                 <AppText variant="body-strong">Visited before</AppText>
                 {previous.map((point) => (
-                  <ChoiceRow
+                  <OptionRow
                     key={`${point.latitude},${point.longitude}`}
                     icon="history"
-                    title={
+                    aria-label={
+                      point.label?.trim() || formatCoordinates(point.latitude, point.longitude)
+                    }
+                    label={
                       point.label?.trim() || formatCoordinates(point.latitude, point.longitude)
                     }
                     caption={formatCoordinates(point.latitude, point.longitude)}
@@ -249,10 +208,11 @@ export function LocationField({ value, onChange, customerId, error }: LocationFi
               <>
                 <AppText variant="body-strong">Registered addresses</AppText>
                 {addresses.map((item) => (
-                  <ChoiceRow
+                  <OptionRow
                     key={item.uuid}
                     icon="building"
-                    title={item.address}
+                    aria-label={item.address}
+                    label={item.address}
                     caption="Tap to search this address"
                     onPress={() => submit(item.address)}
                   />

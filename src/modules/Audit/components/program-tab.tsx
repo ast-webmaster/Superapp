@@ -13,7 +13,7 @@ function ProgramBlock({ program }: { program: AuditProgram }) {
   const schedule = formatPeriod(program.schedule_start, program.schedule_end);
 
   return (
-    <View className="gap-3 rounded-xl bg-surface p-4 border border-border">
+    <View className="gap-3 rounded-xl bg-surface p-4 shadow-card">
       <View className="gap-1">
         {program.div_dept ? (
           <AppText variant="label" tone="muted">

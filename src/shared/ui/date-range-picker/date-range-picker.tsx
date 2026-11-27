@@ -129,7 +129,8 @@ export function DateRangePicker({
               accessibilityState={{ selected: isEdge || inRange, disabled }}
               className={clsx(
                 'h-touch w-[14.2857%] items-center justify-center rounded-pill',
-                isEdge ? 'bg-primary' : inRange && 'bg-primary-soft',
+                // Always painted, or Android turns a newly selected day square.
+                isEdge ? 'bg-primary' : inRange ? 'bg-primary-soft' : 'bg-surface',
                 focusRing,
               )}
               onPress={() => onChange(pick(value, iso))}>

@@ -5,7 +5,7 @@ import { Skeleton, SkeletonGroup } from '@/shared/ui';
 /** Same shape as `GimmickCard`. */
 function CardSkeleton() {
   return (
-    <View className="gap-4 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-4 rounded-xl shadow-card bg-surface p-4">
       <View className="gap-1">
         <Skeleton className="h-4 w-1/3" />
         <Skeleton className="h-5 w-3/4" />
@@ -45,18 +45,18 @@ export function GimmickDetailSkeleton() {
 
   return (
     <SkeletonGroup label="Loading document" className="gap-4 px-5 pt-4">
-      <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+      <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
         <View className="flex-row items-center justify-between gap-3">
           <Skeleton className="h-6 w-1/2" />
           <Skeleton className="h-8 w-20 rounded-pill" />
         </View>
         <Skeleton className="h-4 w-1/3" />
       </View>
-      <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+      <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
         <Skeleton className="h-6 w-16" />
         {rows(5)}
       </View>
-      <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+      <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
         <Skeleton className="h-6 w-16" />
         {rows(3)}
       </View>

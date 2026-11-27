@@ -35,7 +35,7 @@ export function HomeScreen() {
   useRefreshInboxOnFocus();
 
   return (
-    <Screen>
+    <Screen variant="glow">
       <ScrollView
         contentContainerClassName="grow"
         contentContainerStyle={{ paddingBottom: bottomInset }}>
@@ -72,7 +72,14 @@ export function HomeScreen() {
               </Pressable>
             </View>
             {!ready ? (
-              <Skeleton className="h-24 w-full rounded-lg" />
+              <View className="flex-row gap-3">
+                {Array.from({ length: 4 }, (_, index) => (
+                  <View key={index} className="flex-1 items-center gap-2">
+                    <Skeleton className="size-control rounded-pill" />
+                    <Skeleton className="h-4 w-12" />
+                  </View>
+                ))}
+              </View>
             ) : favorites.length === 0 ? (
               <AppText tone="muted">No favorite apps yet. Choose some with Manage apps.</AppText>
             ) : (

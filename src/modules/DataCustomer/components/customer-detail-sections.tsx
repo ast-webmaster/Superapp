@@ -9,7 +9,7 @@ import type { CustomerDetail } from '../types';
 /** One card of the detail screen. The screen spaces the cards with `gap-4`. */
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       {title ? (
         <AppText variant="caption-strong" role="heading">
           {title}

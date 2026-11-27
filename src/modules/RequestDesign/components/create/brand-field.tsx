@@ -1,8 +1,7 @@
-import { clsx } from 'clsx';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
-import { AppText, Button, focusRing, Icon, Sheet, TextField } from '@/shared/ui';
+import { AppText, Button, Sheet, TextField, OptionRow } from '@/shared/ui';
 
 import type { Brand } from '../../types';
 import { PickerField } from './picker-field';
@@ -59,6 +58,7 @@ export function BrandField({ brands, value, onChange, error }: BrandFieldProps) 
         }>
         <TextField
           icon="search"
+          variant="search"
           placeholder="Search"
           aria-label="Search brands"
           value={query}
@@ -69,26 +69,18 @@ export function BrandField({ brands, value, onChange, error }: BrandFieldProps) 
         {shown.length === 0 ? (
           <AppText tone="muted">Nothing matches your search.</AppText>
         ) : (
-          <View className="gap-1 pb-2">
+          <View className="gap-2 pb-2">
             {shown.map((brand) => {
               const selected = value.includes(brand.category_code);
               return (
-                <Pressable
+                <OptionRow
                   key={brand.category_code}
                   role="checkbox"
-                  aria-checked={selected}
                   aria-label={brand.category_name}
+                  label={brand.category_name}
+                  selected={selected}
                   onPress={() => toggle(brand.category_code)}
-                  className={clsx(
-                    'min-h-control flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-surface-gray',
-                    selected && 'bg-primary-soft',
-                    focusRing,
-                  )}>
-                  <AppText variant="body-strong" className="min-w-0 flex-1">
-                    {brand.category_name}
-                  </AppText>
-                  {selected ? <Icon name="check" color="primary" /> : null}
-                </Pressable>
+                />
               );
             })}
           </View>

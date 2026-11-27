@@ -1,10 +1,10 @@
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { toAppError } from '@/core/errors';
 import { useDebouncedValue } from '@/shared/hooks/use-debounced-value';
-import { Alert, AppText, Button, focusRing, Loading, Sheet, TextField } from '@/shared/ui';
+import { Alert, AppText, Button, Loading, Sheet, TextField, OptionRow } from '@/shared/ui';
 
 import { LOOKUP_LIMIT, LOOKUP_MIN_CHARS, lookupSearchTerm } from '../../create/lookup-search';
 import { PickerField } from './picker-field';
@@ -71,6 +71,7 @@ export function LookupField<T>({
       <Sheet visible={open} fullHeight title={sheetTitle} onClose={close}>
         <TextField
           icon="search"
+          variant="search"
           placeholder="Search"
           aria-label={`Search ${label.toLowerCase()}`}
           value={query}
@@ -100,29 +101,24 @@ export function LookupField<T>({
             {search ? 'Nothing matches your search.' : 'Nothing to choose.'}
           </AppText>
         ) : (
-          <View className="gap-1 pb-2">
+          <View className="gap-2 pb-2">
             {data.map((option) => {
               const caption = getCaption?.(option);
               return (
-                <Pressable
+                <OptionRow
                   key={getKey(option)}
-                  role="button"
-                  className={`min-h-control justify-center rounded-md px-3 py-2 active:bg-surface-gray ${focusRing}`}
+                  label={getTitle(option)}
+                  caption={caption}
+                  selected={value !== null && getKey(value) === getKey(option)}
                   onPress={() => {
                     onChange(option);
                     close();
-                  }}>
-                  <AppText variant="body-strong">{getTitle(option)}</AppText>
-                  {caption ? (
-                    <AppText variant="caption" tone="muted">
-                      {caption}
-                    </AppText>
-                  ) : null}
-                </Pressable>
+                  }}
+                />
               );
             })}
             {!localSearch && data.length >= LOOKUP_LIMIT ? (
-              <AppText variant="caption" tone="muted" className="px-3 pt-2">
+              <AppText variant="caption" tone="muted" className="px-5 pt-2">
                 {`Showing the first ${LOOKUP_LIMIT}. Type to narrow the list.`}
               </AppText>
             ) : null}

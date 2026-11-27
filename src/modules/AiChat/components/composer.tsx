@@ -80,7 +80,7 @@ export function Composer({
           ))}
         </View>
       ) : null}
-      <View className="rounded-xl border border-border bg-surface pl-4 pr-1 pt-3">
+      <View className="rounded-xl shadow-card bg-surface pl-4 pr-1 pt-3">
         <TextInput
           value={value}
           onChangeText={onChangeText}
@@ -90,7 +90,7 @@ export function Composer({
           multiline
           maxLength={MAX_LENGTH}
           textAlignVertical="top"
-          className="max-h-32 min-h-14 pr-3 font-jakarta text-body text-ink outline-none"
+          className="max-h-32 min-h-14 pr-3 font-sora text-body text-ink outline-none"
         />
         <View className="flex-row items-center justify-between">
           <View className="flex-row">

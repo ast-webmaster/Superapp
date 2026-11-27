@@ -31,7 +31,7 @@ export function ItemsStep({ items, errors, onAdd, onEdit, onRemove }: ItemsStepP
     <>
       {errors.items ? <Alert tone="danger" message={errors.items} /> : null}
       {items.length === 0 ? (
-        <View className="items-center gap-4 rounded-xl border border-border bg-surface p-5">
+        <View className="items-center gap-4 rounded-xl shadow-card bg-surface p-5">
           <View className="size-control items-center justify-center rounded-pill bg-primary-soft">
             <Icon name="box" color="primary" />
           </View>
@@ -48,7 +48,7 @@ export function ItemsStep({ items, errors, onAdd, onEdit, onRemove }: ItemsStepP
         items.map((item) => {
           const name = itemName(item);
           return (
-            <View key={item.id} className="gap-2 rounded-xl border border-border bg-surface p-4">
+            <View key={item.id} className="gap-2 rounded-xl shadow-card bg-surface p-4">
               <View className="flex-row items-start justify-between gap-3">
                 <AppText variant="module-title" className="min-w-0 flex-1 pt-2">
                   {name}

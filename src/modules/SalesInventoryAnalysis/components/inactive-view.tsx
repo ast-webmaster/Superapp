@@ -11,7 +11,7 @@ import { SectionTitle } from './section-title';
 
 function DealerCard({ dealer }: { dealer: InactiveDealer }) {
   return (
-    <View className="gap-3 rounded-lg bg-surface-gray p-3">
+    <View className="gap-3 rounded-sm bg-surface-gray p-3">
       <View className="flex-row items-start justify-between gap-3">
         <View className="min-w-0 shrink gap-1">
           <AppText variant="body-strong" numberOfLines={2}>
@@ -43,7 +43,7 @@ function BranchCard({ branch, initiallyOpen }: { branch: InactiveBranch; initial
   const [open, setOpen] = useState(initiallyOpen);
 
   return (
-    <View className="rounded-xl border border-border bg-surface">
+    <View className="rounded-xl shadow-card bg-surface">
       <Pressable
         role="button"
         aria-expanded={open}
@@ -102,7 +102,7 @@ export function InactiveView({ data }: { data: InactiveDealers }) {
       <AppText variant="caption" tone="muted">
         {`As of ${formatDate(data.acuan.tanggal)}. A dealer is listed when its last order of a brand group is older than that group's limit.`}
       </AppText>
-      <View className="gap-1 rounded-xl border border-border bg-surface p-4">
+      <View className="gap-1 rounded-xl shadow-card bg-surface p-4">
         <AppText variant="module-title">
           {`${formatNumber(data.summary.dealers)} dealers in ${formatNumber(data.summary.branches)} branches`}
         </AppText>

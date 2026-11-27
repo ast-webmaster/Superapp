@@ -16,6 +16,8 @@ export interface TextFieldProps extends Omit<TextInputProps, 'style' | 'secureTe
   /** Marks the label with a red asterisk. Leave it off for an optional field. */
   required?: boolean;
   type?: 'text' | 'password';
+  /** `search` is the gray pill used for the search field in a sheet. */
+  variant?: 'outline' | 'search';
   icon?: IconName;
   help?: string;
   error?: string;
@@ -28,6 +30,7 @@ export function TextField({
   label,
   required,
   type = 'text',
+  variant = 'outline',
   icon,
   help,
   error,
@@ -53,11 +56,17 @@ export function TextField({
       {label ? <FieldLabel required={required}>{label}</FieldLabel> : null}
       <View
         className={clsx(
-          'min-h-control flex-row items-center gap-3 rounded-lg border-2 px-4',
-          'bg-surface',
-          error ? 'border-danger' : focused ? 'border-primary' : 'border-border',
+          'min-h-control flex-row items-center gap-3 border-2 px-4',
+          variant === 'search' ? 'rounded-pill bg-surface-gray' : 'rounded-lg bg-surface',
+          error
+            ? 'border-danger'
+            : focused
+              ? 'border-primary'
+              : variant === 'search'
+                ? 'border-transparent'
+                : 'border-border',
         )}>
-        {icon ? <Icon name={icon} color="ink" /> : null}
+        {icon ? <Icon name={icon} color={variant === 'search' ? 'ink-muted' : 'ink'} /> : null}
         <TextInput
           aria-label={ariaLabel ?? label ?? placeholder}
           aria-invalid={Boolean(error)}
@@ -66,7 +75,7 @@ export function TextField({
           placeholder={placeholder}
           placeholderTextColor={colors['ink-muted']}
           secureTextEntry={type === 'password' && !revealed}
-          className="min-w-0 flex-1 self-stretch font-jakarta text-body text-ink outline-none"
+          className="min-w-0 flex-1 self-stretch font-sora text-body text-ink outline-none"
           onFocus={(event) => {
             setFocused(true);
             onFocus?.(event);

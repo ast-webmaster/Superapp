@@ -31,7 +31,7 @@ function FindingCard({ uuid, finding, online, onRespond, onAddEvidence }: Findin
   ];
 
   return (
-    <View className="gap-3 rounded-xl bg-surface p-4 border border-border">
+    <View className="gap-3 rounded-xl bg-surface p-4 shadow-card">
       <View className="gap-2">
         <View className="flex-row flex-wrap items-center gap-2">
           <Badge size="sm" {...categoryBadge(finding.category)} />

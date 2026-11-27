@@ -88,7 +88,7 @@ export function SalesVisitationForm({ options, initial, edit }: SalesVisitationF
         keyboardShouldPersistTaps="handled"
         contentContainerClassName="gap-4 px-5 pb-6 pt-4">
         {resultOnly ? (
-          <View className="gap-1 rounded-xl border border-border bg-surface p-4">
+          <View className="gap-1 rounded-xl shadow-card bg-surface p-4">
             <AppText variant="caption-strong">{draft.title}</AppText>
             <AppText variant="label" tone="muted">
               {`${draft.unregistered ? draft.customerName : (draft.customer?.customer_name ?? '')} · ${draft.date ? formatDate(draft.date) : ''}`}

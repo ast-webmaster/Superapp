@@ -78,7 +78,7 @@ export function Button({
       disabled={inactive}
       hitSlop={size === 'sm' ? 4 : undefined}
       className={clsx(
-        'flex-row items-center justify-center rounded-lg',
+        'flex-row items-center justify-center rounded-pill',
         sizeContainer,
         block ? 'self-stretch' : 'self-start',
         container,

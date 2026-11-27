@@ -15,7 +15,7 @@ import { flagText, noteBadge, statusBadge } from './status';
 /** One card of the detail screen. The screen spaces the cards with `gap-4`. */
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       {title ? (
         <AppText variant="caption-strong" role="heading">
           {title}
@@ -63,7 +63,7 @@ function MapLink({ latitude, longitude }: { latitude: number; longitude: number 
       aria-label="Open this point in maps"
       onPress={() => void Linking.openURL(mapUrl(latitude, longitude))}
       className={clsx(
-        'min-h-control flex-row items-center gap-3 rounded-lg bg-surface-gray px-3 py-2 active:bg-border',
+        'min-h-control flex-row items-center gap-3 rounded-sm bg-surface-gray px-3 py-2 active:bg-border',
         focusRing,
       )}>
       <Icon name="map" color="primary" />
@@ -138,7 +138,7 @@ function ProofPhoto({ uuid, type }: { uuid: string; type: 'in' | 'out' }) {
   const { data, isPending, isError, refetch } = useProofPhoto(uuid, type, true);
 
   return (
-    <View className="aspect-4/3 items-center justify-center overflow-hidden rounded-lg bg-surface-gray">
+    <View className="aspect-4/3 items-center justify-center overflow-hidden rounded-sm bg-surface-gray">
       {data ? (
         <Image
           contentFit="cover"
@@ -188,7 +188,7 @@ function PhaseBody({
       ) : null}
       {phase.photo_url ? <ProofPhoto uuid={uuid} type={type} /> : null}
       {phase.flags.length > 0 ? (
-        <View className="gap-1 rounded-lg bg-warning-bg p-3">
+        <View className="gap-1 rounded-sm bg-warning-bg p-3">
           {phase.flags.map((flag) => (
             <View key={flag} className="flex-row items-start gap-2">
               <Icon name="alert" size={14} color="warning" />

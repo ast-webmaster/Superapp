@@ -37,7 +37,7 @@ export function Skeleton({ className }: SkeletonProps) {
   // `Animated.View` takes `style` only, so a plain View carries the size and shape.
   return (
     <View className={clsx('overflow-hidden rounded-sm', className)}>
-      <Animated.View style={{ flex: 1, opacity, backgroundColor: colors['surface-gray'] }} />
+      <Animated.View style={{ flex: 1, opacity, backgroundColor: colors['primary-soft'] }} />
     </View>
   );
 }

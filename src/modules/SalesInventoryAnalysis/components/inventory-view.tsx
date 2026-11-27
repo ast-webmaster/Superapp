@@ -25,7 +25,7 @@ function InventoryCard({
     <View
       accessible
       aria-label={`${row.group}, ${row.status_label}, stock ${formatNumber(row.stock_available)}, months on hand ${formatMoh(row.moh)}`}
-      className="gap-3 rounded-xl border border-border bg-surface p-4">
+      className="gap-3 rounded-xl shadow-card bg-surface p-4">
       <View className="flex-row items-start justify-between gap-3">
         <AppText variant="caption-strong" numberOfLines={2} className="min-w-0 shrink">
           {row.group}

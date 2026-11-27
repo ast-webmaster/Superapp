@@ -32,7 +32,7 @@ interface ModuleCardContentProps extends ModuleCardBaseProps {
 
 export type ModuleCardProps = ModuleCardLoadingProps | ModuleCardContentProps;
 
-const cardStyle = 'flex-row gap-4 rounded-xl bg-surface p-3 border border-border';
+const cardStyle = 'flex-row gap-4 rounded-xl bg-surface p-3 shadow-card';
 
 export function ModuleCard(props: ModuleCardProps) {
   if (props.loading) return <ModuleCardSkeleton className={props.className} />;
@@ -52,7 +52,7 @@ export function ModuleCard(props: ModuleCardProps) {
 
   return (
     <View className={clsx(cardStyle, className)}>
-      <View className="size-tile items-center justify-center overflow-hidden rounded-lg bg-primary">
+      <View className="size-tile items-center justify-center overflow-hidden rounded-md bg-primary">
         {imageSrc ? (
           <Image source={imageSrc} contentFit="cover" style={{ width: '100%', height: '100%' }} />
         ) : (
@@ -132,7 +132,7 @@ function ModuleCardSkeleton({ className }: { className?: string }) {
       aria-label="Loading module"
       aria-busy
       className={clsx(cardStyle, className)}>
-      <View className="size-tile rounded-lg bg-surface-gray" />
+      <View className="size-tile rounded-md bg-surface-gray" />
       <View className="min-w-0 flex-1 gap-3 py-1">
         <View className="h-5 w-3/4 rounded-sm bg-surface-gray" />
         <View className="h-4 w-1/2 rounded-sm bg-surface-gray" />

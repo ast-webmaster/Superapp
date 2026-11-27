@@ -11,7 +11,7 @@ const divider = <View role="separator" className="h-px bg-border" />;
 /** One card of the detail screen. The screen spaces the cards with `gap-4`. */
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       {title ? (
         <AppText variant="caption-strong" role="heading">
           {title}
@@ -45,7 +45,7 @@ function pictures(detail: ProductDetail): string[] {
 export function GallerySection({ detail }: { detail: ProductDetail }) {
   const uris = pictures(detail);
 
-  if (uris.length === 0) return <ProductImage uri={null} className="h-48 w-full rounded-xl" />;
+  if (uris.length === 0) return <ProductImage uri={null} radius="xl" className="h-48 w-full" />;
 
   return (
     // The cards use `px-5`; the pictures scroll edge to edge, so the list cancels it and re-adds it inside.
@@ -55,7 +55,7 @@ export function GallerySection({ detail }: { detail: ProductDetail }) {
       className="-mx-5 grow-0"
       contentContainerClassName="gap-4 px-5">
       {uris.map((uri) => (
-        <ProductImage key={uri} uri={uri} className="size-64 rounded-xl" />
+        <ProductImage key={uri} uri={uri} radius="xl" className="size-64" />
       ))}
     </ScrollView>
   );

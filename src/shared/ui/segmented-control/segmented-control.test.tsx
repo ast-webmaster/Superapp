@@ -37,6 +37,17 @@ describe('SegmentedControl', () => {
     expect(screen.getByRole('radio', { name: 'List' })).not.toBeChecked();
   });
 
+  // Android drops the corner radius of a view that goes from no background to a colored one
+  // (facebook/react-native#52415), so every segment is painted from the first render.
+  it('paints every segment, so a newly selected one stays round', async () => {
+    await render(<SegmentedControl label="View as" options={options} />);
+    const segment = (name: string) =>
+      screen.getByRole('radio', { name }).children[0] as ReturnType<typeof screen.getByRole>;
+
+    expect(segment('List').props.className).toContain('bg-primary');
+    expect(segment('Grid').props.className).toContain('bg-surface');
+  });
+
   it('moves with the arrow keys', async () => {
     await render(<SegmentedControl label="View as" options={options} />);
 

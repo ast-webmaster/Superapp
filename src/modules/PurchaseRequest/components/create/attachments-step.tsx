@@ -45,7 +45,7 @@ export function AttachmentsStep({ attachments, errors, onChange }: AttachmentsSt
         <Alert tone="danger" message={pickError} onDismiss={() => setPickError(undefined)} />
       ) : null}
       {attachments.map(({ id, description, file }) => (
-        <View key={id} className="gap-3 rounded-xl border border-border bg-surface p-4">
+        <View key={id} className="gap-3 rounded-xl shadow-card bg-surface p-4">
           <View className="flex-row items-center gap-3">
             <View className="size-control items-center justify-center rounded-md bg-primary-soft">
               <Icon name="doc" color="primary" />

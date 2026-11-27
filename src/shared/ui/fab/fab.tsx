@@ -28,7 +28,7 @@ export function Fab({ label, icon = 'plus', className, ...props }: FabProps) {
       role="button"
       aria-label={label}
       className={clsx(
-        'absolute right-5 left-5 min-h-control flex-row items-center justify-center gap-3 rounded-lg bg-primary px-6 shadow-card active:bg-primary-pressed',
+        'absolute right-5 left-5 min-h-control flex-row items-center justify-center gap-3 rounded-pill bg-primary px-6 shadow-card active:bg-primary-pressed',
         focusRing,
         className,
       )}

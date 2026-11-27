@@ -5,7 +5,7 @@ import { Skeleton, SkeletonGroup } from '@/shared/ui';
 /** Same shape as `RoomCard`. */
 function RoomSkeleton() {
   return (
-    <View className="gap-4 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-4 rounded-xl shadow-card bg-surface p-4">
       <View className="gap-2">
         <View className="flex-row items-center justify-between gap-3">
           <Skeleton className="h-6 w-1/2" />
@@ -44,7 +44,7 @@ export function BookingDetailSkeleton() {
 
   return (
     <SkeletonGroup label="Loading booking" className="gap-4 px-5 pt-4">
-      <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+      <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
         <View className="flex-row items-center justify-between gap-3">
           <Skeleton className="h-6 w-1/2" />
           <Skeleton className="h-8 w-20 rounded-pill" />
@@ -52,11 +52,11 @@ export function BookingDetailSkeleton() {
         <Skeleton className="h-4 w-1/3" />
         <Skeleton className="h-5 w-2/3" />
       </View>
-      <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+      <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
         <Skeleton className="h-6 w-16" />
         {rows(4)}
       </View>
-      <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+      <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
         <Skeleton className="h-6 w-24" />
         {rows(2)}
       </View>

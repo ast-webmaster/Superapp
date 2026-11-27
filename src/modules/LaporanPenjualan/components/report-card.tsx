@@ -22,11 +22,7 @@ export function ReportCard({
   const accent = tone === 'accent';
 
   return (
-    <View
-      className={clsx(
-        'gap-4 rounded-xl p-4',
-        accent ? 'bg-accent' : 'border border-border bg-surface',
-      )}>
+    <View className={clsx('gap-4 rounded-xl p-4', accent ? 'bg-accent' : 'shadow-card bg-surface')}>
       <View className="gap-1">
         <AppText variant="module-title" role="heading">
           {title}

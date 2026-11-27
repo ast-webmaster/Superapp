@@ -26,7 +26,7 @@ export function MarketingActivityCard({
         aria-label={`Open ${item.activity_no}`}
 
         className={clsx(
-          'gap-4 rounded-xl border border-border bg-surface p-4 active:bg-surface-gray',
+          'gap-4 rounded-xl shadow-card bg-surface p-4 active:bg-surface-gray',
           focusRing,
         )}>
         <View className="gap-1">

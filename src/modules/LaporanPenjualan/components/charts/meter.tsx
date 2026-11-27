@@ -1,4 +1,3 @@
-import { clsx } from 'clsx';
 import { Animated, View } from 'react-native';
 
 import { colors, radiusPill, type ColorToken } from '@/shared/theme/tokens';
@@ -10,25 +9,19 @@ export interface MeterProps {
   percentage: number;
   /** The color of the bar. Defaults to `primary`. */
   fill?: ColorToken;
-  /** For the `ink` market card: a dark track. */
-  dark?: boolean;
 }
 
 /**
  * How much of a target is reached, as a soft rounded bar that grows in. Decorative: the card
  * beside it states the percentage in text, so screen readers skip it.
  */
-export function Meter({ percentage, fill: fillColor = 'primary', dark }: MeterProps) {
+export function Meter({ percentage, fill: fillColor = 'primary' }: MeterProps) {
   const fill = Math.min(Math.max(percentage, 0), 100);
   const progress = useReveal(fill, { layout: true });
 
   return (
     <View aria-hidden className="h-4 justify-center">
-      <View
-        className={clsx(
-          'h-2 overflow-hidden rounded-pill',
-          dark ? 'bg-ink-raised' : 'bg-primary-soft',
-        )}>
+      <View className="h-2 overflow-hidden rounded-pill bg-primary-soft">
         <Animated.View
           style={{
             height: '100%',

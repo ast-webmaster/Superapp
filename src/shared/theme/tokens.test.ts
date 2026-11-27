@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { colors, radiusLg, radiusPill, sizes } from './tokens';
+import { colors, radiusPill, sizes } from './tokens';
 
 const css = readFileSync(join(process.cwd(), 'src/global.css'), 'utf8');
 
@@ -50,7 +50,6 @@ describe('design tokens', () => {
 
   it('keeps the native sizes identical to global.css', () => {
     expect(css).toContain(`--spacing-tabbar: ${sizes.tabBar}px;`);
-    expect(css).toContain(`--radius-lg: ${radiusLg}px;`);
     expect(css).toContain(`--radius-pill: ${radiusPill}px;`);
   });
 });

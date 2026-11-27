@@ -14,7 +14,7 @@ function BookingRow({ booking }: { booking: MeetingRoomBookingSummary }) {
         role="button"
         aria-label={`${booking.title}, ${booking.start_time} to ${booking.end_time}, by ${booking.organizer_name}`}
         className={clsx(
-          'min-h-touch flex-row items-center gap-3 rounded-lg bg-surface-gray px-3 py-2 active:bg-border',
+          'min-h-touch flex-row items-center gap-3 rounded-sm bg-surface-gray px-3 py-2 active:bg-border',
           focusRing,
         )}>
         <View className="w-24">
@@ -42,7 +42,7 @@ export interface RoomCardProps {
 /** One room: what it offers and who has it on the chosen day. Booking is the screen's button. */
 export function RoomCard({ room }: RoomCardProps) {
   return (
-    <View className="gap-4 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-4 rounded-xl shadow-card bg-surface p-4">
       <View className="gap-2">
         <View className="flex-row items-start justify-between gap-3">
           <AppText variant="module-title" className="min-w-0 flex-1">

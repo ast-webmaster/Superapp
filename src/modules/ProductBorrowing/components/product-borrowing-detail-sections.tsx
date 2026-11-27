@@ -20,7 +20,7 @@ const divider = <View role="separator" className="h-px bg-border" />;
 /** One card of the detail screen. The screen spaces the cards with `gap-4`. */
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       {title ? (
         <AppText variant="caption-strong" role="heading">
           {title}
@@ -104,7 +104,7 @@ export function InfoSection({ detail }: { detail: ProductBorrowingDetail }) {
 
 function ExtendBlock({ extend }: { extend: ProductBorrowingExtend }) {
   return (
-    <View className="gap-1 rounded-md bg-surface-gray p-3">
+    <View className="gap-1 rounded-sm bg-surface-gray p-3">
       <View className="flex-row items-center justify-between gap-2">
         <AppText variant="caption" className="min-w-0 flex-1">
           {`Until ${formatDate(extend.end_date)}`}
@@ -127,7 +127,7 @@ function ItemBlock({ item }: { item: ProductBorrowingItem }) {
   ];
 
   return (
-    <View className="gap-2 rounded-lg border border-border p-3">
+    <View className="gap-2 rounded-sm border border-border p-3">
       <View className="flex-row items-start justify-between gap-2">
         <View className="min-w-0 flex-1">
           <AppText variant="caption-strong">{item.product_name ?? item.product_code}</AppText>
@@ -191,7 +191,7 @@ export function PdfSection({ busy, onPress }: { busy: boolean; onPress: () => vo
         disabled={busy}
         onPress={onPress}
         className={clsx(
-          'min-h-control flex-row items-center gap-3 rounded-lg bg-surface-gray px-3 py-2 active:bg-border',
+          'min-h-control flex-row items-center gap-3 rounded-sm bg-surface-gray px-3 py-2 active:bg-border',
           focusRing,
         )}>
         <Icon name="doc" color="primary" />

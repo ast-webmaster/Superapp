@@ -38,6 +38,7 @@ export { Loading, type LoadingProps } from './loading/loading';
 export { Logo, type LogoProps } from './logo/logo';
 export { MorphLink, type MorphLinkProps } from './morph-link/morph-link';
 export { ModuleCard, type ModuleCardProps } from './module-card/module-card';
+export { OptionRow, type OptionRowProps } from './option-row/option-row';
 export { ProductImage, type ProductImageProps } from './product-image/product-image';
 export { ProgressBar, type ProgressBarProps } from './progress-bar/progress-bar';
 export { Screen, type ScreenProps } from './screen/screen';

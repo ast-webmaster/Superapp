@@ -56,6 +56,19 @@ describe('DateRangePicker', () => {
     expect(latest).toEqual({ from: '2026-11-10', to: null });
   });
 
+  // Android drops the corner radius of a view that goes from no background to a colored one
+  // (facebook/react-native#52415), so every day is painted from the first render.
+  it('paints every day, so a newly selected one stays round', async () => {
+    await render(<Harness />);
+
+    expect(day(10).props.className).toContain('bg-surface');
+
+    await userEvent.press(day(10));
+
+    expect(day(10).props.className).toContain('bg-primary');
+    expect(day(11).props.className).toContain('bg-surface');
+  });
+
   it('moves between months', async () => {
     await render(<Harness />);
 

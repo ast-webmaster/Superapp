@@ -126,7 +126,7 @@ export function MeetingRoomCreateScreen() {
         contentContainerStyle={{ paddingTop: sizes.screenTopGap, paddingBottom: bottom + 24 }}>
         {formError ? <Alert tone="danger" message={formError} onDismiss={booking.reset} /> : null}
 
-        <View className="gap-4 rounded-xl border border-border bg-surface p-4">
+        <View className="gap-4 rounded-xl shadow-card bg-surface p-4">
           <View className="gap-2">
             <FieldLabel required>Room</FieldLabel>
             {rooms.data === undefined ? (
@@ -195,7 +195,7 @@ export function MeetingRoomCreateScreen() {
           />
         </View>
 
-        <View className="gap-4 rounded-xl border border-border bg-surface p-4">
+        <View className="gap-4 rounded-xl shadow-card bg-surface p-4">
           <TextField
             label="Title"
             required

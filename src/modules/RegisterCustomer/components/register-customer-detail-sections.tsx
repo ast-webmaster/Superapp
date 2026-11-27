@@ -12,7 +12,7 @@ import { statusBadge, stepBadge } from './status';
 /** One card of the detail screen. The screen spaces the cards with `gap-4`. */
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl bg-surface p-4 border border-border">
+    <View className="gap-3 rounded-xl bg-surface p-4 shadow-card">
       {title ? (
         <AppText variant="caption-strong" role="heading">
           {title}
@@ -49,7 +49,9 @@ export function SummarySection({ detail }: { detail: RegisterCustomerDetail }) {
       </View>
       <View className="flex-row flex-wrap items-center gap-2">
         <Badge size="sm" {...statusBadge(detail.status)} />
-        {detail.awaiting_me ? <Badge size="sm" tone="info" icon="bell" label="Waiting for you" /> : null}
+        {detail.awaiting_me ? (
+          <Badge size="sm" tone="info" icon="bell" label="Waiting for you" />
+        ) : null}
       </View>
       <DetailRow label="Number" value={detail.register_customer_no} />
       <DetailRow label="Registered" value={formatDate(detail.register_date)} />
@@ -114,9 +116,7 @@ export function ContactSection({ detail }: { detail: RegisterCustomerDetail }) {
         <DetailRow
           label="Current address"
           value={
-            detail.owner_address_now_type === 'SAME'
-              ? 'Same as address'
-              : detail.owner_address_now
+            detail.owner_address_now_type === 'SAME' ? 'Same as address' : detail.owner_address_now
           }
         />
       </Section>
@@ -145,7 +145,7 @@ function FileRow({
       disabled={busy}
       onPress={onPress}
       className={clsx(
-        'min-h-control flex-row items-center gap-3 rounded-lg border border-border p-3 active:bg-surface-gray',
+        'min-h-control flex-row items-center gap-3 rounded-sm border border-border p-3 active:bg-surface-gray',
         focusRing,
       )}>
       <View className="size-10 items-center justify-center rounded-md bg-primary-soft">

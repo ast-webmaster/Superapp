@@ -28,7 +28,7 @@ function Section({
         </AppText>
         <IconButton size="sm" icon="pencil" label={editLabel} onPress={onEdit} />
       </View>
-      <View className="gap-3 rounded-xl border border-border bg-surface p-4">{children}</View>
+      <View className="gap-3 rounded-xl shadow-card bg-surface p-4">{children}</View>
     </View>
   );
 }

@@ -64,7 +64,7 @@ export function ListGroup({ children, className }: ListGroupProps) {
   const rows = Children.toArray(children);
 
   return (
-    <View className={clsx('rounded-xl bg-surface px-4 border border-border', className)}>
+    <View className={clsx('rounded-xl bg-surface px-4 shadow-card', className)}>
       {rows.map((row, index) => (
         <Fragment key={index}>
           {row}

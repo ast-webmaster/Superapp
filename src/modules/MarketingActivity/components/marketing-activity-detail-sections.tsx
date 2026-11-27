@@ -20,7 +20,7 @@ const divider = <View role="separator" className="h-px bg-border" />;
 /** One card of the detail screen. The screen spaces the cards with `gap-4`. */
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       {title ? (
         <AppText variant="caption-strong" role="heading">
           {title}
@@ -195,7 +195,7 @@ export function CostsSection({ detail }: { detail: MarketingActivityDetail }) {
       {detail.supports.map((line, index) => (
         <View
           key={`${line.activity_support}-${index}`}
-          className="rounded-lg border border-border p-3">
+          className="rounded-sm border border-border p-3">
           <SupportBlock line={line} />
         </View>
       ))}
@@ -286,7 +286,7 @@ export function FinanceSection({ detail }: { detail: MarketingActivityDetail }) 
         const usage = formatMoney(row.total_cn_usage).replace('Rp', row.currency ?? 'Rp');
 
         return (
-          <View key={row.id} className="gap-2 rounded-lg border border-border p-3">
+          <View key={row.id} className="gap-2 rounded-sm border border-border p-3">
             <View className="flex-row items-center justify-between gap-3">
               <AppText variant="caption-strong" className="min-w-0 flex-1" numberOfLines={1}>
                 {row.inv_ar_no ?? '-'}
@@ -340,7 +340,7 @@ export function AttachmentsSection({
               onDownload({ type: 'attachment', id: attachment.id, name: attachment.file })
             }
             className={clsx(
-              'min-h-control flex-row items-center gap-3 rounded-lg bg-surface-gray px-3 py-2 active:bg-border',
+              'min-h-control flex-row items-center gap-3 rounded-sm bg-surface-gray px-3 py-2 active:bg-border',
               focusRing,
             )}>
             <Icon name="doc" color="primary" />

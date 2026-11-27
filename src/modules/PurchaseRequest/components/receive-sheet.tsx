@@ -1,9 +1,8 @@
-import { clsx } from 'clsx';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { toAppError } from '@/core/errors';
-import { Alert, AppText, Button, Icon, Sheet, useToast } from '@/shared/ui';
+import { Alert, AppText, Button, Sheet, useToast, OptionRow } from '@/shared/ui';
 
 import { useReceivePurchaseRequest } from '../hooks/use-receive-purchase-request';
 import type { PurchaseRequestDetail, PurchaseRequestLine } from '../types';
@@ -17,44 +16,6 @@ export interface ReceiveSheetProps {
 
 const itemName = (line: PurchaseRequestLine) =>
   line.item_description ?? line.item_no ?? line.item_code ?? '-';
-
-/** A row of the list: the label on the left, the checkbox on the right. */
-function CheckRow({
-  label,
-  checked,
-  strong,
-  disabled,
-  onToggle,
-}: {
-  label: string;
-  checked: boolean;
-  strong?: boolean;
-  disabled: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    // The whole row is the 48 tall press area; the visible box is 24.
-    <Pressable
-      role="checkbox"
-      aria-checked={checked}
-      accessibilityState={{ checked, disabled }}
-      accessible
-      disabled={disabled}
-      onPress={onToggle}
-      className="min-h-touch flex-row items-center gap-3 rounded-md active:bg-surface-gray">
-      <AppText variant={strong ? 'body-strong' : 'body'} className="min-w-0 flex-1">
-        {label}
-      </AppText>
-      <View
-        className={clsx(
-          'size-6 items-center justify-center rounded-sm border',
-          checked ? 'border-primary bg-primary' : 'border-control-off bg-surface',
-        )}>
-        {checked ? <Icon name="check" size={16} color="on-primary" /> : null}
-      </View>
-    </Pressable>
-  );
-}
 
 /**
  * Lists the items the user may receive, each with a checkbox, and sends the ticked ones. Nothing
@@ -112,23 +73,24 @@ export function ReceiveSheet({ detail, online, onClose }: ReceiveSheetProps) {
       <AppText variant="caption" tone="muted">
         Tick the items you have received in good condition.
       </AppText>
-      <View>
+      <View className="gap-2">
         {items.length > 1 ? (
-          <CheckRow
-            strong
+          <OptionRow
+            role="checkbox"
             label="Select all"
-            checked={allSelected}
+            selected={allSelected}
             disabled={isPending}
-            onToggle={() => setSelected(allSelected ? new Set() : new Set(items.map((i) => i.id)))}
+            onPress={() => setSelected(allSelected ? new Set() : new Set(items.map((i) => i.id)))}
           />
         ) : null}
         {items.map((line) => (
-          <CheckRow
+          <OptionRow
             key={line.id}
+            role="checkbox"
             label={itemName(line)}
-            checked={selected.has(line.id)}
+            selected={selected.has(line.id)}
             disabled={isPending}
-            onToggle={() => toggle(line.id)}
+            onPress={() => toggle(line.id)}
           />
         ))}
       </View>

@@ -5,7 +5,7 @@ import { Skeleton, SkeletonGroup } from '@/shared/ui';
 /** Same shape as `CustomerCard`. */
 function CardSkeleton() {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       <View className="flex-row items-center justify-between gap-3">
         <Skeleton className="h-4 w-1/3" />
         <Skeleton className="h-6 w-16 rounded-pill" />
@@ -37,13 +37,13 @@ export function CustomerListSkeleton() {
 export function CustomerDetailSkeleton() {
   return (
     <SkeletonGroup label="Loading customer" className="gap-4 px-5 pt-4">
-      <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+      <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
         <Skeleton className="h-4 w-1/3" />
         <Skeleton className="h-6 w-3/4" />
         <Skeleton className="h-6 w-20 rounded-pill" />
       </View>
       {Array.from({ length: 2 }, (_, card) => (
-        <View key={card} className="gap-3 rounded-xl border border-border bg-surface p-4">
+        <View key={card} className="gap-3 rounded-xl shadow-card bg-surface p-4">
           {Array.from({ length: 4 }, (_, row) => (
             <View key={row} className="flex-row justify-between gap-4">
               <Skeleton className="h-4 w-16" />

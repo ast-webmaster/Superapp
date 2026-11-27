@@ -19,7 +19,7 @@ export function Section({
   trailing?: ReactNode;
 }) {
   return (
-    <View className="gap-3 rounded-xl bg-surface p-4 border border-border">
+    <View className="gap-3 rounded-xl bg-surface p-4 shadow-card">
       {title ? (
         <View className="flex-row items-center justify-between gap-3">
           <AppText variant="caption-strong" role="heading">
@@ -53,7 +53,7 @@ function PartSkeleton({ label }: { label: string }) {
   return (
     <SkeletonGroup label={label} className="gap-4">
       {Array.from({ length: 2 }, (_, index) => (
-        <View key={index} className="gap-3 rounded-xl bg-surface p-4 border border-border">
+        <View key={index} className="gap-3 rounded-xl bg-surface p-4 shadow-card">
           <Skeleton className="h-5 w-1/3" />
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-2/3" />

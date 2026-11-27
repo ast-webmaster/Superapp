@@ -3,15 +3,7 @@ import { View } from 'react-native';
 
 import { toAppError } from '@/core/errors';
 import { pickFile } from '@/core/files';
-import {
-  Alert,
-  AppText,
-  Button,
-  FieldLabel,
-  Icon,
-  IconButton,
-  TextField,
-} from '@/shared/ui';
+import { Alert, AppText, Button, FieldLabel, Icon, IconButton, TextField } from '@/shared/ui';
 
 import { documentProblem, documentRequirement, type Errors } from '../../create/draft';
 import { DOCUMENTS, YES_NO } from '../../create/options';
@@ -90,9 +82,7 @@ export function DocumentsStep({ draft, onChange, errors }: DocumentsStepProps) {
           const file = draft.documents[key];
 
           return (
-            <View
-              key={key}
-              className="gap-3 rounded-xl border border-border bg-surface p-4">
+            <View key={key} className="gap-3 rounded-xl shadow-card bg-surface p-4">
               <FieldLabel required={requirement === 'required'}>{label}</FieldLabel>
               {file ? (
                 <View className="flex-row items-center gap-3">

@@ -2,67 +2,54 @@ import { View } from 'react-native';
 
 import { Skeleton, SkeletonGroup } from '@/shared/ui';
 
-function CardSkeleton() {
+/** A row of two ticker tiles. */
+function TileRowSkeleton({ className }: { className: string }) {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
-      <View className="flex-row justify-between gap-3">
-        <Skeleton className="h-5 w-1/2" />
-        <Skeleton className="h-6 w-20 rounded-pill" />
-      </View>
-      <Skeleton className="h-2 w-full rounded-pill" />
-      <View className="flex-row items-end justify-between">
-        <View className="gap-1">
-          <Skeleton className="h-4 w-24" />
-          <Skeleton className="h-5 w-32" />
-        </View>
-        <Skeleton className="h-6 w-12" />
-      </View>
+    <View className="flex-row gap-3">
+      <Skeleton className={`flex-1 rounded-xl ${className}`} />
+      <Skeleton className={`flex-1 rounded-xl ${className}`} />
     </View>
   );
 }
 
-/** The dark market card: eyebrow and chip, the amount, the sparkline, the bar and two figures. */
+/** The headline card: title, amount, chip, the bars and two figures. */
 function HeroSkeleton() {
   return (
-    <View className="gap-4 rounded-2xl bg-ink p-5">
-      <View className="flex-row items-center justify-between gap-3">
-        <Skeleton className="h-4 w-1/2" />
-        <Skeleton className="h-7 w-16 rounded-pill" />
-      </View>
+    <View className="items-center gap-4 rounded-2xl shadow-card bg-surface p-5">
+      <Skeleton className="h-5 w-1/2" />
       <Skeleton className="h-10 w-3/4" />
-      <Skeleton className="h-16 w-full" />
-      <Skeleton className="h-2 w-full rounded-pill" />
+      <Skeleton className="h-7 w-1/3 rounded-pill" />
+      <Skeleton className="h-40 w-full" />
       <View className="flex-row gap-3">
-        <Skeleton className="h-14 flex-1 rounded-lg" />
-        <Skeleton className="h-14 flex-1 rounded-lg" />
+        <Skeleton className="h-14 flex-1 rounded-md" />
+        <Skeleton className="h-14 flex-1 rounded-md" />
       </View>
     </View>
   );
 }
 
-/** Same order as the report: the total, then group cards. */
+/** Same order as the report: the total, then group tiles two to a row. */
 export function ReportSkeleton() {
   return (
     <SkeletonGroup label="Loading report" className="gap-4 px-5 pt-4">
       <HeroSkeleton />
-      {Array.from({ length: 3 }, (_, index) => (
-        <CardSkeleton key={index} />
-      ))}
+      <TileRowSkeleton className="h-40" />
+      <TileRowSkeleton className="h-40" />
     </SkeletonGroup>
   );
 }
 
-/** Same order as a group: the summary, the daily chart, then branch cards. */
+/** Same order as a group: the summary, the daily chart, then branch tiles. */
 export function GroupSkeleton() {
   return (
     <SkeletonGroup label="Loading group" className="gap-4 px-5 pt-4">
       <HeroSkeleton />
-      <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+      <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-5 w-32" />
         <Skeleton className="h-40 w-full" />
       </View>
-      <CardSkeleton />
+      <TileRowSkeleton className="h-28" />
     </SkeletonGroup>
   );
 }

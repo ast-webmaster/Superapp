@@ -16,7 +16,7 @@ const divider = <View role="separator" className="h-px bg-border" />;
 /** One card of the detail screen. The screen spaces the cards with `gap-4`. */
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       {title ? (
         <AppText variant="caption-strong" role="heading">
           {title}
@@ -99,7 +99,7 @@ export function ItemsSection({ detail }: { detail: GimmickDetail }) {
       {detail.items.map((item) => (
         <View
           key={item.id}
-          className="flex-row items-center justify-between gap-3 rounded-lg border border-border p-3">
+          className="flex-row items-center justify-between gap-3 rounded-sm border border-border p-3">
           <View className="min-w-0 flex-1">
             <AppText variant="caption-strong">{item.name_item ?? item.code_item}</AppText>
             <AppText variant="label" tone="muted">
@@ -137,7 +137,7 @@ export function FilesSection({ flow, files, pending, onDownload }: FilesSectionP
             disabled={pending !== undefined}
             onPress={() => onDownload(file)}
             className={clsx(
-              'min-h-control flex-row items-center gap-3 rounded-lg bg-surface-gray px-3 py-2 active:bg-border',
+              'min-h-control flex-row items-center gap-3 rounded-sm bg-surface-gray px-3 py-2 active:bg-border',
               focusRing,
             )}>
             <Icon name="doc" color="primary" />

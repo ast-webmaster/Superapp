@@ -40,7 +40,7 @@ export function DocumentField({ required, value, onChange, error }: DocumentFiel
     <View className="gap-2">
       <FieldLabel required={required}>Supporting document</FieldLabel>
       {value ? (
-        <View className="flex-row items-center gap-3 rounded-lg border border-border bg-surface p-3">
+        <View className="flex-row items-center gap-3 rounded-lg shadow-card bg-surface p-3">
           <Icon name="doc" color="primary" />
           <View className="min-w-0 flex-1">
             <AppText variant="body-strong" numberOfLines={1}>

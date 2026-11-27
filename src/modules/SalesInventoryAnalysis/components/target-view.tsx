@@ -43,7 +43,7 @@ function GroupCard({ group }: { group: AchievementGroup }) {
     <View
       accessible
       aria-label={`${group.group_name}, ${achievementBadge(group.status).label}, ${formatMoney(group.achievement)} of ${formatMoney(group.target)}`}
-      className="gap-3 rounded-xl border border-border bg-surface p-4">
+      className="gap-3 rounded-xl shadow-card bg-surface p-4">
       <View className="flex-row items-start justify-between gap-3">
         <AppText variant="caption-strong" numberOfLines={2} className="min-w-0 shrink">
           {group.group_name}
@@ -61,7 +61,7 @@ export function TargetView({ data }: { data: Achievement }) {
 
   return (
     <>
-      <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+      <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
         <View className="flex-row items-start justify-between gap-3">
           <View className="min-w-0 shrink gap-1">
             <AppText variant="module-title" role="heading">

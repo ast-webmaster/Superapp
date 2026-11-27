@@ -1,9 +1,8 @@
-import { clsx } from 'clsx';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { toAppError } from '@/core/errors';
-import { Alert, AppText, Button, focusRing, Icon, Loading, Sheet } from '@/shared/ui';
+import { Alert, AppText, Button, Loading, Sheet, OptionRow } from '@/shared/ui';
 
 import { useRequestDesignOptions } from '../../hooks/use-options';
 import { failureOutcome } from '../write-outcome';
@@ -51,29 +50,19 @@ export function AssignSheet({ detail, online, action, onClose }: ActionSheetProp
       ) : options.data.designers.length === 0 ? (
         <AppText tone="muted">There are no designers to assign.</AppText>
       ) : (
-        <View className="gap-1 pb-2">
+        <View className="gap-2 pb-2">
           {options.data.designers.map((designer) => {
             const selected = email === designer.email;
             return (
-              <Pressable
+              <OptionRow
                 key={designer.email}
                 role="radio"
-                aria-checked={selected}
                 aria-label={designer.name}
+                label={designer.name}
+                caption={designer.email === detail.picked_by ? 'Current designer' : designer.email}
+                selected={selected}
                 onPress={() => setEmail(designer.email)}
-                className={clsx(
-                  'min-h-control flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-surface-gray',
-                  selected && 'bg-primary-soft',
-                  focusRing,
-                )}>
-                <View className="min-w-0 flex-1">
-                  <AppText variant="body-strong">{designer.name}</AppText>
-                  <AppText variant="caption" tone="muted">
-                    {designer.email === detail.picked_by ? 'Current designer' : designer.email}
-                  </AppText>
-                </View>
-                {selected ? <Icon name="check" color="primary" /> : null}
-              </Pressable>
+              />
             );
           })}
         </View>

@@ -15,7 +15,7 @@ const divider = <View role="separator" className="h-px bg-border" />;
 /** One card of the detail screen. The screen spaces the cards with `gap-4`. */
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl bg-surface p-4 border border-border">
+    <View className="gap-3 rounded-xl bg-surface p-4 shadow-card">
       {title ? (
         <AppText variant="caption-strong" role="heading">
           {title}
@@ -159,7 +159,7 @@ export function ItemsSection({ detail }: { detail: PriceApprovalDetail }) {
   return (
     <Section title="Items">
       {detail.details.map((line, index) => (
-        <View key={`${line.sku_no}-${index}`} className="rounded-lg border border-border p-3">
+        <View key={`${line.sku_no}-${index}`} className="rounded-sm border border-border p-3">
           <ItemBlock line={line} />
         </View>
       ))}

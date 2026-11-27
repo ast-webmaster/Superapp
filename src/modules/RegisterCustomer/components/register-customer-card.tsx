@@ -16,7 +16,7 @@ export function RegisterCustomerCard({ item }: { item: RegisterCustomerListItem 
         role="button"
         aria-label={`Open ${item.register_customer_no}`}
         className={clsx(
-          'gap-4 rounded-xl bg-surface p-4 border border-border active:bg-surface-gray',
+          'gap-4 rounded-xl bg-surface p-4 shadow-card active:bg-surface-gray',
           focusRing,
         )}>
         <View className="gap-1">

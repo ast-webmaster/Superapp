@@ -1,3 +1,4 @@
+import { clsx } from 'clsx';
 import { View } from 'react-native';
 
 import { Skeleton, SkeletonGroup } from '@/shared/ui';
@@ -5,21 +6,31 @@ import { Skeleton, SkeletonGroup } from '@/shared/ui';
 /** Same shape as `PriceApprovalCard`. */
 function CardSkeleton() {
   return (
-    <View className="gap-4 rounded-xl bg-surface p-4 border border-border">
-      <View className="gap-1">
-        <Skeleton className="h-4 w-1/3" />
-        <Skeleton className="h-5 w-3/4" />
-        <Skeleton className="h-6 w-1/2 rounded-pill" />
+    <View className="gap-4 rounded-xl bg-surface p-4 shadow-card">
+      <View className="flex-row items-start justify-between gap-3">
+        <View className="flex-1 gap-1">
+          <Skeleton className="h-4 w-1/3" />
+          <Skeleton className="h-5 w-3/4" />
+        </View>
+        <Skeleton className="size-8 rounded-lg" />
+      </View>
+      <View className="flex-row gap-3">
+        {[0, 1].map((column) => (
+          <View key={column} className={clsx('flex-1 gap-1', column === 1 && 'items-end')}>
+            <Skeleton className="h-3 w-12" />
+            <Skeleton className="h-3 w-20" />
+          </View>
+        ))}
       </View>
       <View className="h-px bg-border" />
       <View className="flex-row items-end justify-between gap-3">
         <View className="gap-1">
-          <Skeleton className="h-4 w-16" />
-          <Skeleton className="h-5 w-24" />
+          <Skeleton className="h-4 w-14 rounded-pill" />
+          <Skeleton className="h-3 w-20" />
         </View>
         <View className="items-end gap-1">
-          <Skeleton className="h-6 w-28 rounded-pill" />
           <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-5 w-24" />
         </View>
       </View>
     </View>
@@ -48,7 +59,7 @@ export function PriceApprovalDetailSkeleton() {
 
   return (
     <SkeletonGroup label="Loading request" className="gap-4 px-5 pt-4">
-      <View className="gap-3 rounded-xl bg-surface p-4 border border-border">
+      <View className="gap-3 rounded-xl bg-surface p-4 shadow-card">
         <View className="flex-row items-center justify-between gap-3">
           <Skeleton className="h-6 w-1/2" />
           <Skeleton className="h-8 w-20 rounded-pill" />
@@ -56,11 +67,11 @@ export function PriceApprovalDetailSkeleton() {
         <Skeleton className="h-4 w-1/3" />
         <Skeleton className="h-5 w-2/3" />
       </View>
-      <View className="gap-3 rounded-xl bg-surface p-4 border border-border">
+      <View className="gap-3 rounded-xl bg-surface p-4 shadow-card">
         <Skeleton className="h-6 w-16" />
         {rows(4)}
       </View>
-      <View className="gap-3 rounded-xl bg-surface p-4 border border-border">
+      <View className="gap-3 rounded-xl bg-surface p-4 shadow-card">
         <Skeleton className="h-6 w-16" />
         <Skeleton className="h-4 w-1/3" />
         <Skeleton className="h-5 w-3/4" />

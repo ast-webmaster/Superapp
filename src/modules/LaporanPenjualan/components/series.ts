@@ -1,4 +1,6 @@
-import type { GroupSummary } from '../types';
+import { formatShortDate } from '@/shared/utils/format';
+
+import type { DailyAmount, GroupSummary } from '../types';
 
 /**
  * Sales per week, summed over the given groups, oldest first. Weeks still to come (no sales yet)
@@ -24,9 +26,39 @@ export function groupSeries(group: Pick<GroupSummary, 'weekly' | 'daily_totals'>
     : weeklySeries([group]);
 }
 
-/** A running total that starts at 0: [3, 2, 5] -> [0, 3, 5, 10]. No values, no series. */
-export function cumulative(values: number[]): number[] {
-  if (values.length === 0) return [];
-  let total = 0;
-  return [0, ...values.map((value) => (total += value))];
+const BARS = 7;
+
+export type Bar = {
+  key: string;
+  /** Under the bar: the day of the month, or the week. */
+  label: string;
+  /** What screen readers call it. */
+  name: string;
+  value: number;
+  /** The daily target was reached. */
+  hit: boolean;
+};
+
+/** The last seven sales days. Without a daily target (0) no day counts as reached. */
+export function dayBars(days: DailyAmount[], dailyTarget: number): Bar[] {
+  return days.slice(-BARS).map(({ date, amount }) => ({
+    key: date,
+    label: String(Number(date.slice(8, 10))),
+    name: formatShortDate(date),
+    value: amount,
+    hit: dailyTarget > 0 && amount >= dailyTarget,
+  }));
+}
+
+/** The last seven weeks with sales, for a server that sends no days. A week has no daily target. */
+export function weekBars(groups: Pick<GroupSummary, 'weekly'>[]): Bar[] {
+  return weeklySeries(groups)
+    .map((value, index) => ({
+      key: `W-${index + 1}`,
+      label: `W-${index + 1}`,
+      name: `Week ${index + 1}`,
+      value,
+      hit: false,
+    }))
+    .slice(-BARS);
 }

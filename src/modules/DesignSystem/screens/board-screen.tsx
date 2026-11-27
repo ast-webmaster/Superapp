@@ -22,6 +22,7 @@ import {
   ProductImage,
   Skeleton,
   SkeletonGroup,
+  OptionRow,
   SegmentedControl,
   Stepper,
   TextField,
@@ -36,57 +37,54 @@ import { navItems } from '../components/sample-data';
 
 const palette = [
   {
-    name: 'Primary Black',
-    value: '#111113',
-    use: 'Primary actions, the tab bar',
+    name: 'Lunar Shadow',
+    value: '#282828',
+    use: 'Primary color: actions, text, the tab bar',
     swatch: 'bg-primary',
   },
   {
-    name: 'Highlight',
-    value: '#D9D9DD',
-    use: 'Secondary actions, highlights',
-    swatch: 'bg-highlight',
-  },
-  {
-    name: 'Accent Gold',
-    value: '#F3AF00',
-    use: 'The one highlight beside black. Fill only, with dark text on it',
-    swatch: 'bg-accent',
-  },
-  { name: 'Text Primary', value: '#111113', use: 'Headings, primary text', swatch: 'bg-ink' },
-  {
-    name: 'Text Secondary',
-    value: '#6A6A72',
-    use: 'Body text, secondary text',
-    swatch: 'bg-ink-muted',
-  },
-  {
-    name: 'Surface White',
+    name: 'Clean White',
     value: '#FFFFFF',
-    use: 'Cards, sheets, modals',
+    use: 'Background 1: cards, sheets, inputs',
     swatch: 'bg-surface border border-border',
   },
   {
-    name: 'Surface Gray',
-    value: '#F6F6F7',
-    use: 'App background, input fields',
-    swatch: 'bg-surface-gray border border-border',
+    name: 'Gray Whisper',
+    value: '#F7F7F7',
+    use: 'Background 2: screens, fills inside cards',
+    swatch: 'bg-ground border border-border',
   },
-  { name: 'Border Gray', value: '#E4E4E7', use: 'Dividers, borders', swatch: 'bg-border' },
   {
-    name: 'Market Ink',
-    value: '#1C1C21',
-    use: 'Raised tiles on the dark market card',
-    swatch: 'bg-ink-raised',
+    name: 'Gentle Olive',
+    value: '#CBD77E',
+    use: 'Accent 1. Fill only, with dark text on it',
+    swatch: 'bg-accent',
   },
+  {
+    name: 'Winter Hazel',
+    value: '#E6CA9A',
+    use: 'Accent 2. Fill only, with dark text on it',
+    swatch: 'bg-hazel',
+  },
+  {
+    name: 'Highlight',
+    value: '#DDDDDD',
+    use: 'Pressed soft surfaces, highlights',
+    swatch: 'bg-highlight',
+  },
+  {
+    name: 'Text Secondary',
+    value: '#6B6B6B',
+    use: 'Secondary text, captions',
+    swatch: 'bg-ink-muted',
+  },
+  { name: 'Border Gray', value: '#E6E6E6', use: 'Dividers, borders', swatch: 'bg-border' },
   {
     name: 'Soft Blue',
     value: '#E6EEFF',
     use: 'Near-target status',
     swatch: 'bg-blue-soft border border-border',
   },
-  { name: 'Gain', value: '#34D399', use: 'Up, on the market card', swatch: 'bg-gain' },
-  { name: 'Loss', value: '#FB7185', use: 'Down, on the market card', swatch: 'bg-loss' },
   {
     name: 'Glass Blur',
     value: 'rgba(255,255,255,0.7)',
@@ -260,7 +258,7 @@ export default function BoardScreen() {
           <ModuleCard loading />
           <SkeletonGroup
             label="Loading request"
-            className="gap-2 rounded-xl bg-surface p-4 border border-border">
+            className="gap-2 rounded-xl bg-surface p-4 shadow-card">
             <Skeleton className="h-6 w-1/2" />
             <Skeleton className="h-5 w-3/4" />
             <Skeleton className="h-4 w-1/3" />
@@ -369,8 +367,14 @@ export default function BoardScreen() {
         <BoardCard number="17" title="Product image" span={6}>
           <View className="flex-row items-center gap-4">
             <ProductImage uri={null} className="size-16" />
-            <ProductImage uri={null} className="size-24 rounded-xl" />
+            <ProductImage uri={null} radius="xl" className="size-24" />
           </View>
+        </BoardCard>
+        <BoardCard number="18" title="Sheet options" span={6}>
+          <TextField variant="search" icon="search" placeholder="Search languages" />
+          <OptionRow role="radio" label="Russian" selected onPress={() => {}} />
+          <OptionRow role="radio" label="English" selected={false} onPress={() => {}} />
+          <OptionRow icon="building" label="Head office" caption="Jakarta" onPress={() => {}} />
         </BoardCard>
       </BoardRow>
     </ScrollView>

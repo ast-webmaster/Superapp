@@ -54,15 +54,14 @@ export function formatMoney(value: number): string {
 }
 
 const COMPACT_UNITS = [
-  { size: 1e3, unit: 'K' },
-  { size: 1e6, unit: 'M' },
-  { size: 1e9, unit: 'B' },
-  { size: 1e12, unit: 'T' },
+  { size: 1e6, unit: 'Jt' },
+  { size: 1e9, unit: 'Mil' },
+  { size: 1e12, unit: 'Tri' },
 ] as const;
 
 /**
- * 1250000 -> "Rp 1.3M", 950 -> "Rp 950". For chart axes and labels where the full amount does
- * not fit; the full amount (`formatMoney`) stays in the text beside the chart.
+ * 1250000 -> "Rp 1.3 Jt", 3400000000 -> "Rp 3.4 Mil", 750000 -> "Rp 750,000". The short form for
+ * report figures and chart labels; keep the full amount (`formatMoney`) in the screen-reader label.
  */
 export function formatCompactMoney(value: number): string {
   const abs = Math.abs(value);
@@ -72,12 +71,12 @@ export function formatCompactMoney(value: number): string {
     if (abs < size) continue;
     const scaled = abs / size;
     const rounded = scaled >= 100 ? Math.round(scaled) : Math.round(scaled * 10) / 10;
-    // 999,960 rounds to "1000K"; the next unit up reads "1M".
+    // 999,960,000 rounds to "1000 Jt"; the next unit up reads "1 Mil".
     const next = COMPACT_UNITS[index + 1];
-    if (rounded >= 1000 && next) return `${sign}Rp 1${next.unit}`;
-    return `${sign}Rp ${rounded}${unit}`;
+    if (rounded >= 1000 && next) return `${sign}Rp 1 ${next.unit}`;
+    return `${sign}Rp ${rounded} ${unit}`;
   }
-  return `${sign}Rp ${Math.round(abs)}`;
+  return formatMoney(value);
 }
 
 /** A `Date`'s weekday as "Sen", in the phone's own time zone. */

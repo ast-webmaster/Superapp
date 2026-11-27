@@ -16,7 +16,7 @@ function Spans({ spans }: { spans: Span[] }) {
           </AppText>
         );
       case 'italic':
-        // Plus Jakarta Sans has no italic face loaded; the platform slants the regular one.
+        // Sora has no italic face loaded; the platform slants the regular one.
         return (
           <AppText key={index} style={{ fontStyle: 'italic' }}>
             {span.text}
@@ -51,7 +51,7 @@ export function ReplyText({ text }: { text: string }) {
         // Column by column, so each column is as wide as its widest cell and stays aligned.
         // Cells stay on one line; the table scrolls sideways instead of wrapping.
         return (
-          <ScrollView key={index} horizontal className="my-1 rounded-lg bg-surface-gray">
+          <ScrollView key={index} horizontal className="my-1 rounded-sm bg-surface-gray">
             {block.header.map((head, c) => (
               <View key={c}>
                 <View className="border-b border-border px-3 py-2">

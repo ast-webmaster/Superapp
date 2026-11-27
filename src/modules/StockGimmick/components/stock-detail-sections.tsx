@@ -14,7 +14,7 @@ const divider = <View role="separator" className="h-px bg-border" />;
 /** One card of the detail screen. The screen spaces the cards with `gap-4`. */
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       {title ? (
         <AppText variant="caption-strong" role="heading">
           {title}
@@ -43,7 +43,7 @@ export function SummarySection({ detail }: { detail: StockDetail }) {
   return (
     <Section>
       <View className="flex-row items-center gap-4">
-        <ProductImage uri={detail.image_url} className="size-20 shrink-0" />
+        <ProductImage uri={detail.image_url} radius="sm" className="size-20 shrink-0" />
         <View className="min-w-0 flex-1 gap-1">
           <AppText variant="label" tone="muted" numberOfLines={1}>
             {detail.product_code}
@@ -51,7 +51,9 @@ export function SummarySection({ detail }: { detail: StockDetail }) {
           <AppText variant="caption-strong" role="heading" numberOfLines={3}>
             {detail.product_name ?? detail.product_code}
           </AppText>
-          {detail.office_name ? <Badge size="sm" icon="building" label={detail.office_name} /> : null}
+          {detail.office_name ? (
+            <Badge size="sm" icon="building" label={detail.office_name} />
+          ) : null}
         </View>
       </View>
     </Section>

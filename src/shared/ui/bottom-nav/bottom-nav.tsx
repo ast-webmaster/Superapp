@@ -3,31 +3,20 @@ import { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, Easing, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { colors, radiusLg, sizes } from '@/shared/theme/tokens';
+import { colors, radiusPill, sizes } from '@/shared/theme/tokens';
 
 import { focusRing } from '../focus';
 import { Icon, type IconName } from '../icon/icon';
 import { AppText } from '../text/text';
 
-// These mirror the `px-4 gap-1` classes and the `h-14 w-17` item on the bar below.
-const BAR_PADDING = 16;
-const ITEM_GAP = 4;
-const ITEM_WIDTH = 68;
-/**
- * The active pill holds the icon and its label together. It is as wide as the item, so the
- * longest label ("AI chat") keeps 11px each side, and 10px short of the bar top and bottom,
- * so its ends follow the bar's own curve.
- */
-const PILL_WIDTH = ITEM_WIDTH;
-const PILL_HEIGHT = 52;
-/**
- * The bar is `rounded-lg`. The pill sits 10px inside it (top and bottom), so its corner radius is
- * the bar's minus that gap: the two curves then run parallel, with an even band of bar between.
- */
-const PILL_RADIUS = radiusLg - (sizes.tabBar - PILL_HEIGHT) / 2;
+// These mirror the `px-2 gap-2` classes and the `size-control` circles on the bar below.
+const BAR_PADDING = 8;
+const ITEM_GAP = 8;
+const ITEM_SIZE = 56;
 
 export interface BottomNavItem {
   key: string;
+  /** Not drawn: names the button for screen readers. */
   label: string;
   icon: IconName;
   /** Unread count shown on the icon. Hidden when 0 or missing. */
@@ -79,7 +68,7 @@ export function BottomNav({
   }, []);
 
   useEffect(() => {
-    const target = activeIndex * (ITEM_WIDTH + ITEM_GAP);
+    const target = activeIndex * (ITEM_SIZE + ITEM_GAP);
     if (!placed.current || reduceMotion) {
       // Jump to the first position, then slide on every change after it.
       offset.setValue(target);
@@ -99,21 +88,34 @@ export function BottomNav({
       role="navigation"
       className={clsx('items-center', floating && 'absolute inset-x-0', className)}
       style={floating ? { bottom: bottom + sizes.tabBarOffset } : undefined}>
-      {/* A dark bar floating on the ground. The active item is one accent pill holding its icon and its label, both black. */}
-      <View className="h-tabbar flex-row items-center gap-1 rounded-lg bg-ink px-4 shadow-glass">
+      {/* A dark capsule floating on the ground: one round button per item, no visible labels.
+          Layers, bottom to top: the gray circles, the sliding white circle, the icons. */}
+      <View className="h-tabbar flex-row items-center gap-2 rounded-pill bg-ink-raised px-2 shadow-glass">
+        <View pointerEvents="none" className="absolute inset-0 flex-row items-center gap-2 px-2">
+          {items.map((item) => (
+            <View key={item.key} className="size-control rounded-pill bg-ink-line" />
+          ))}
+        </View>
         <Animated.View
           pointerEvents="none"
           style={{
             position: 'absolute',
-            left: BAR_PADDING + (ITEM_WIDTH - PILL_WIDTH) / 2,
-            top: (sizes.tabBar - PILL_HEIGHT) / 2,
-            width: PILL_WIDTH,
-            height: PILL_HEIGHT,
-            borderRadius: PILL_RADIUS,
-            backgroundColor: colors.accent,
+            left: BAR_PADDING,
+            top: (sizes.tabBar - ITEM_SIZE) / 2,
+            width: ITEM_SIZE,
+            height: ITEM_SIZE,
+            borderRadius: radiusPill,
+            backgroundColor: colors.surface,
             transform: [{ translateX: offset }],
-          }}
-        />
+          }}>
+          {/* A count already marks that corner, so the dot gives way to it. */}
+          {items[activeIndex]?.badge ? null : (
+            <View
+              testID="active-dot"
+              className="absolute right-0.5 top-0.5 size-3 rounded-pill bg-accent"
+            />
+          )}
+        </Animated.View>
         {items.map((item) => {
           const active = item.key === activeKey;
 
@@ -125,25 +127,17 @@ export function BottomNav({
               aria-current={active ? 'page' : undefined}
               accessibilityState={{ selected: active }}
               onPress={() => onChange(item.key)}
-              className={clsx(
-                'h-14 w-17 items-center justify-center gap-0.5 rounded-lg',
-                focusRing,
-              )}>
-              <View className="size-6 items-center justify-center">
-                <Icon name={item.icon} size={22} color={active ? 'ink' : 'on-ink-muted'} />
-                {item.badge ? (
-                  <View
-                    testID={`${item.key}-badge`}
-                    className="absolute -right-2 -top-2 h-5 min-w-5 items-center justify-center rounded-pill border-2 border-ink bg-danger px-1">
-                    <AppText variant="label" tone="on-primary">
-                      {item.badge > 99 ? '99+' : String(item.badge)}
-                    </AppText>
-                  </View>
-                ) : null}
-              </View>
-              <AppText variant="label" tone={active ? 'ink' : 'on-ink-muted'} numberOfLines={1}>
-                {item.label}
-              </AppText>
+              className={clsx('size-control items-center justify-center rounded-pill', focusRing)}>
+              <Icon name={item.icon} size={22} color={active ? 'ink' : 'on-primary'} />
+              {item.badge ? (
+                <View
+                  testID={`${item.key}-badge`}
+                  className="absolute right-0 top-0 h-5 min-w-5 items-center justify-center rounded-pill border-2 border-ink-raised bg-danger px-1">
+                  <AppText variant="label" tone="on-primary">
+                    {item.badge > 99 ? '99+' : String(item.badge)}
+                  </AppText>
+                </View>
+              ) : null}
             </Pressable>
           );
         })}

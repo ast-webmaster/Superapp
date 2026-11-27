@@ -1,4 +1,4 @@
-import { cumulative, groupSeries, weeklySeries } from './series';
+import { dayBars, groupSeries, weekBars, weeklySeries } from './series';
 
 const group = (...values: number[]) => ({
   weekly: values.map((value, index) => ({
@@ -43,12 +43,29 @@ describe('groupSeries', () => {
   });
 });
 
-describe('cumulative', () => {
-  it('starts at zero and adds up', () => {
-    expect(cumulative([3, 2, 5])).toEqual([0, 3, 5, 10]);
+describe('dayBars', () => {
+  const days = Array.from({ length: 9 }, (_, index) => ({
+    date: `2026-10-0${index + 1}`,
+    amount: index * 10,
+  }));
+
+  it('keeps the last seven days and marks those that reached the target', () => {
+    const bars = dayBars(days, 70);
+
+    expect(bars.map((bar) => bar.label)).toEqual(['3', '4', '5', '6', '7', '8', '9']);
+    expect(bars.filter((bar) => bar.hit).map((bar) => bar.value)).toEqual([70, 80]);
   });
 
-  it('is empty for no values', () => {
-    expect(cumulative([])).toEqual([]);
+  it('marks none without a daily target', () => {
+    expect(dayBars(days, 0).some((bar) => bar.hit)).toBe(false);
+  });
+});
+
+describe('weekBars', () => {
+  it('names the weeks and stops at the last one with sales', () => {
+    expect(weekBars([group(10, 20, 0)]).map((bar) => [bar.label, bar.value])).toEqual([
+      ['W-1', 10],
+      ['W-2', 20],
+    ]);
   });
 });

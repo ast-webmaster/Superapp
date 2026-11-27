@@ -27,7 +27,7 @@ export function AuditCard({ item }: { item: AuditListItem }) {
         role="button"
         aria-label={`Open ${item.audit_no}`}
         className={clsx(
-          'gap-4 rounded-xl bg-surface p-4 border border-border active:bg-surface-gray',
+          'gap-4 rounded-xl bg-surface p-4 shadow-card active:bg-surface-gray',
           focusRing,
         )}>
         <View className="gap-1">

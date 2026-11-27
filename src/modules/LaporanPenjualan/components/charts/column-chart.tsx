@@ -60,6 +60,7 @@ export function ColumnChart({ data, highlight, label }: ColumnChartProps) {
       className="gap-2">
       <Reveal>
         <View
+          testID="column-plot"
           onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
           style={{ height: HEIGHT }}>
           {width > 0 ? (
@@ -100,7 +101,8 @@ export function ColumnChart({ data, highlight, label }: ColumnChartProps) {
                       top: baseline - height(column.value) - LABEL_HEIGHT,
                     }}>
                     <AppText variant="label" numberOfLines={1}>
-                      {formatCompactMoney(column.value)}
+                      {/* No "Rp": "Rp 12.5 Mil" is wider than a week's slot on a small phone. */}
+                      {formatCompactMoney(column.value).replace('Rp ', '')}
                     </AppText>
                   </View>
                 ) : null,

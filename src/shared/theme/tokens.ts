@@ -4,27 +4,31 @@
  * fails if the two drift apart. Style everything else with Tailwind utilities.
  */
 export const colors = {
-  primary: '#111113',
-  'primary-pressed': '#2c2c31',
+  primary: '#282828',
+  'primary-pressed': '#404040',
   'on-primary': '#ffffff',
-  'primary-soft': '#ececee',
-  highlight: '#d9d9dd',
-  accent: '#f3af00',
-  ink: '#111113',
-  'ink-muted': '#6a6a72',
+  'primary-soft': '#eeeeee',
+  highlight: '#dddddd',
+  accent: '#cbd77e',
+  'accent-soft': '#d9e29f',
+  hazel: '#e6ca9a',
+  'chart-first': '#3d450f',
+  'chart-second': '#5c671a',
+  'chart-third': '#80892c',
+  'chart-fourth': '#a8b34c',
+  ink: '#282828',
+  'ink-muted': '#6b6b6b',
   surface: '#ffffff',
-  ground: '#efefef',
-  'ground-glow': '#f8e2cf',
-  'surface-gray': '#f6f6f7',
-  border: '#e4e4e7',
-  'ink-raised': '#1c1c21',
-  'ink-line': '#303036',
-  'on-ink-muted': '#a9a9b1',
-  gain: '#34d399',
-  loss: '#fb7185',
-  scrim: 'rgba(17, 17, 19, 0.4)',
+  ground: '#f7f7f7',
+  'ground-glow': '#d6e8ed',
+  'surface-gray': '#f7f7f7',
+  border: '#e6e6e6',
+  'ink-raised': '#282828',
+  'ink-line': '#3f3f3f',
+  'on-ink-muted': '#adadad',
+  scrim: 'rgba(40, 40, 40, 0.4)',
   glass: 'rgba(255, 255, 255, 0.7)',
-  'control-off': '#8b8b93',
+  'control-off': '#8c8c8c',
   success: '#176a42',
   'success-bg': '#e6f4ec',
   danger: '#b42318',
@@ -45,10 +49,9 @@ export const sizes = {
   tabBarContentGap: 32,
   toastOffset: 8,
   screenTopGap: 16,
+  /** `--spacing-touch`: the height of a one-line control. */
+  touch: 48,
 } as const;
 
-/** The `rounded-lg` radius, for native views that cannot take a class and must follow a `rounded-lg` shell. */
-export const radiusLg = 16;
-
-/** The glass pill radius, for GlassView on iOS, which needs it as a number. */
+/** The `rounded-pill` radius, for native views that cannot take a class. */
 export const radiusPill = 999;

@@ -84,7 +84,7 @@ export function CaptureView({ mode, visit, settings, onSubmit, error, pending }:
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerClassName="gap-4 px-5 pb-6 pt-4">
-        <View className="gap-1 rounded-xl border border-border bg-surface p-4">
+        <View className="gap-1 rounded-xl shadow-card bg-surface p-4">
           <AppText variant="caption-strong">{visit.title}</AppText>
           <AppText variant="label" tone="muted">
             {visit.customer_name ?? '-'}
@@ -96,7 +96,7 @@ export function CaptureView({ mode, visit, settings, onSubmit, error, pending }:
           ) : null}
         </View>
 
-        <View className="gap-2 rounded-xl border border-border bg-surface p-4">
+        <View className="gap-2 rounded-xl shadow-card bg-surface p-4">
           <AppText variant="caption-strong">Before you continue</AppText>
           <AppText variant="caption" tone="muted">
             {settings.require_gps_radius

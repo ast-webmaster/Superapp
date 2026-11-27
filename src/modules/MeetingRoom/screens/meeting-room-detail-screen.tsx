@@ -18,7 +18,7 @@ import type { MeetingRoomBookingDetail } from '../types';
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       <AppText variant="module-title" role="heading">
         {title}
       </AppText>
@@ -43,7 +43,7 @@ function Summary({ detail }: { detail: MeetingRoomBookingDetail }) {
   const place = [detail.room.name, detail.room.location].filter(Boolean).join(' · ');
 
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       <View className="flex-row items-start justify-between gap-3">
         <AppText variant="module-title" role="heading" className="min-w-0 flex-1">
           {detail.title}

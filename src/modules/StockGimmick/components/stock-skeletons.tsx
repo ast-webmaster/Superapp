@@ -5,7 +5,7 @@ import { Skeleton, SkeletonGroup } from '@/shared/ui';
 /** Same shape as `StockCard`. */
 function CardSkeleton() {
   return (
-    <View className="flex-row items-center gap-4 rounded-xl border border-border bg-surface p-4">
+    <View className="flex-row items-center gap-4 rounded-xl shadow-card bg-surface p-4">
       <View className="flex-1 gap-1">
         <Skeleton className="h-4 w-1/3" />
         <Skeleton className="h-5 w-3/4" />
@@ -30,15 +30,15 @@ export function StockListSkeleton() {
 export function StockDetailSkeleton() {
   return (
     <SkeletonGroup label="Loading stock" className="gap-4 px-5 pt-4">
-      <View className="flex-row gap-4 rounded-xl border border-border bg-surface p-4">
-        <Skeleton className="size-20 rounded-lg" />
+      <View className="flex-row gap-4 rounded-xl shadow-card bg-surface p-4">
+        <Skeleton className="size-20 rounded-sm" />
         <View className="flex-1 gap-2">
           <Skeleton className="h-4 w-1/3" />
           <Skeleton className="h-6 w-3/4" />
           <Skeleton className="h-6 w-24 rounded-pill" />
         </View>
       </View>
-      <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+      <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
         {Array.from({ length: 4 }, (_, index) => (
           <View key={index} className="flex-row justify-between gap-4">
             <Skeleton className="h-4 w-16" />
@@ -53,9 +53,7 @@ export function StockDetailSkeleton() {
 /** The history card while Track Stock loads. */
 export function MovementsSkeleton() {
   return (
-    <SkeletonGroup
-      label="Loading history"
-      className="gap-4 rounded-xl border border-border bg-surface p-4">
+    <SkeletonGroup label="Loading history" className="gap-4 rounded-xl shadow-card bg-surface p-4">
       {Array.from({ length: 3 }, (_, index) => (
         <View key={index} className="flex-row justify-between gap-4">
           <View className="flex-1 gap-1">

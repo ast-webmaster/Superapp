@@ -24,6 +24,19 @@ describe('BottomNav', () => {
     expect(screen.queryByTestId('home-badge')).toBeNull();
   });
 
+  it('marks the active circle with a dot, unless that corner holds a count', async () => {
+    const inbox: BottomNavItem = { key: 'inbox', label: 'Inbox', icon: 'bell', badge: 3 };
+    const view = await render(
+      <BottomNav items={[home, inbox]} activeKey="home" onChange={jest.fn()} />,
+    );
+
+    expect(screen.getByTestId('active-dot')).toBeOnTheScreen();
+
+    await view.rerender(<BottomNav items={[home, inbox]} activeKey="inbox" onChange={jest.fn()} />);
+
+    expect(screen.queryByTestId('active-dot')).toBeNull();
+  });
+
   it('reports the pressed item', async () => {
     const onChange = jest.fn();
     await render(<BottomNav items={[home, apps]} activeKey="home" onChange={onChange} />);

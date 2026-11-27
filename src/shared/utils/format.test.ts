@@ -81,22 +81,27 @@ describe('formatShortDate', () => {
 });
 
 describe('formatCompactMoney', () => {
-  it('shortens large amounts to one decimal', () => {
-    expect(formatCompactMoney(950)).toBe('Rp 950');
-    expect(formatCompactMoney(1500)).toBe('Rp 1.5K');
-    expect(formatCompactMoney(1250000)).toBe('Rp 1.3M');
-    expect(formatCompactMoney(12000000)).toBe('Rp 12M');
-    expect(formatCompactMoney(250000000)).toBe('Rp 250M');
-    expect(formatCompactMoney(3400000000)).toBe('Rp 3.4B');
+  it('shortens millions and up to Jt, Mil and Tri with at most one decimal', () => {
+    expect(formatCompactMoney(1250000)).toBe('Rp 1.3 Jt');
+    expect(formatCompactMoney(12000000)).toBe('Rp 12 Jt');
+    expect(formatCompactMoney(250000000)).toBe('Rp 250 Jt');
+    expect(formatCompactMoney(3400000000)).toBe('Rp 3.4 Mil');
+    expect(formatCompactMoney(2000000000000)).toBe('Rp 2 Tri');
+  });
+
+  it('writes amounts under a million in full', () => {
     expect(formatCompactMoney(0)).toBe('Rp 0');
+    expect(formatCompactMoney(950)).toBe('Rp 950');
+    expect(formatCompactMoney(750000)).toBe('Rp 750,000');
   });
 
   it('moves to the next unit instead of writing 1000', () => {
-    expect(formatCompactMoney(999960)).toBe('Rp 1M');
+    expect(formatCompactMoney(999960000)).toBe('Rp 1 Mil');
   });
 
   it('keeps the minus sign', () => {
-    expect(formatCompactMoney(-700000)).toBe('-Rp 700K');
+    expect(formatCompactMoney(-700000)).toBe('-Rp 700,000');
+    expect(formatCompactMoney(-1500000000)).toBe('-Rp 1.5 Mil');
   });
 });
 

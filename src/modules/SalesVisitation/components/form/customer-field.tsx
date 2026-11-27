@@ -1,9 +1,8 @@
-import { clsx } from 'clsx';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { toAppError } from '@/core/errors';
-import { AppText, focusRing, Loading, Sheet, TextField, Toggle } from '@/shared/ui';
+import { AppText, Loading, Sheet, TextField, Toggle, OptionRow } from '@/shared/ui';
 
 import { CUSTOMER_MIN_CHARS, useCustomerSearch } from '../../hooks/use-lookups';
 import { MAX_CUSTOMER_NAME } from '../../create/draft';
@@ -81,6 +80,7 @@ export function CustomerField({
           <Sheet visible={open} fullHeight title="Choose a customer" onClose={close}>
             <TextField
               icon="search"
+              variant="search"
               placeholder="Customer name or id"
               aria-label="Search customers"
               value={query}
@@ -96,28 +96,19 @@ export function CustomerField({
             ) : search.error ? (
               <AppText tone="danger">{toAppError(search.error).message}</AppText>
             ) : search.data && search.data.length > 0 ? (
-              <View className="gap-1 pb-2">
+              <View className="gap-2 pb-2">
                 {search.data.map((item) => (
-                  <Pressable
+                  <OptionRow
                     key={item.customer_id}
-                    role="button"
                     aria-label={item.customer_name}
+                    label={item.customer_name}
+                    caption={item.customer_id}
+                    selected={customer?.customer_id === item.customer_id}
                     onPress={() => {
                       onChange({ customer: item });
                       close();
                     }}
-                    className={clsx(
-                      'min-h-control justify-center rounded-md px-3 py-2 active:bg-surface-gray',
-                      customer?.customer_id === item.customer_id && 'bg-primary-soft',
-                      focusRing,
-                    )}>
-                    <AppText variant="body-strong" numberOfLines={2}>
-                      {item.customer_name}
-                    </AppText>
-                    <AppText variant="label" tone="muted">
-                      {item.customer_id}
-                    </AppText>
-                  </Pressable>
+                  />
                 ))}
               </View>
             ) : (

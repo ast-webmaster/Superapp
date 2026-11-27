@@ -48,7 +48,7 @@ export function SectionTitle({ title, note }: { title: string; note?: string }) 
 /** One designer's points against the target for the month. */
 export function DesignerCard({ designer }: { designer: AnalyticsDesigner }) {
   return (
-    <View className="gap-4 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-4 rounded-xl shadow-card bg-surface p-4">
       <View className="flex-row items-center justify-between gap-3">
         <AppText variant="caption-strong" numberOfLines={1} className="min-w-0 flex-1">
           {designer.name}
@@ -83,7 +83,7 @@ export function TrendCard({
   max: number;
 }) {
   return (
-    <View className="gap-3 rounded-xl border border-border bg-surface p-4">
+    <View className="gap-3 rounded-xl shadow-card bg-surface p-4">
       <AppText variant="caption-strong" numberOfLines={1}>
         {series.name}
       </AppText>

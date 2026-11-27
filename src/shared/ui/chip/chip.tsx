@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import * as Haptics from 'expo-haptics';
-import type { ComponentRef, Ref } from 'react';
+import { use, type ComponentRef, type Ref } from 'react';
 import { Pressable, View, type PressableProps } from 'react-native';
 
 import { useControllableState } from '@/shared/hooks/use-controllable-state';
@@ -9,6 +9,7 @@ import { useRovingFocus } from '@/shared/hooks/use-roving-focus';
 import { focusRing } from '../focus';
 import { pressScale } from '../press';
 import { Icon, type IconName } from '../icon/icon';
+import { InSheetContext } from '../sheet/in-sheet';
 import { AppText } from '../text/text';
 
 export interface ChipProps extends Omit<PressableProps, 'children' | 'style'> {
@@ -23,7 +24,7 @@ export interface ChipProps extends Omit<PressableProps, 'children' | 'style'> {
   ref?: Ref<ComponentRef<typeof Pressable>>;
 }
 
-/** Without an icon it is a filter chip; with an icon a department switch. Selected is black (`ink`) with white text. */
+/** Without an icon it is a filter chip; with an icon a department switch. Selected is black (`ink`) with white text; unselected is white, gray inside a `Sheet`. */
 export function Chip({
   label,
   icon,
@@ -34,7 +35,11 @@ export function Chip({
   onPress,
   ...props
 }: ChipProps) {
+  const inSheet = use(InSheetContext);
   const leadingIcon = icon ?? (outlined && selected ? 'check' : undefined);
+  const idle = inSheet
+    ? 'border border-surface-gray bg-surface-gray active:bg-border'
+    : 'border border-border bg-surface active:bg-border';
 
   return (
     <Pressable
@@ -47,9 +52,9 @@ export function Chip({
       aria-pressed={selected}
       accessibilityState={{ selected }}
       className={clsx(
-        'min-h-touch flex-row items-center justify-center rounded-lg',
+        'min-h-touch flex-row items-center justify-center rounded-pill',
         compact ? 'gap-1 px-2' : 'gap-2 px-5',
-        selected ? 'border border-ink bg-ink' : 'border border-border bg-surface active:bg-border',
+        selected ? 'border border-ink bg-ink' : idle,
         pressScale,
         focusRing,
         className,

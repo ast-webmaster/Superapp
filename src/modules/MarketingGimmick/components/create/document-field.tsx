@@ -48,7 +48,7 @@ export function DocumentField({ label, required, value, onChange, error }: Docum
     <View className="gap-2">
       <FieldLabel required={required}>{label}</FieldLabel>
       {value ? (
-        <View className="flex-row items-center gap-3 rounded-lg border border-border bg-surface p-3">
+        <View className="flex-row items-center gap-3 rounded-lg shadow-card bg-surface p-3">
           <Icon name="doc" color="primary" />
           <View className="min-w-0 flex-1">
             <AppText variant="body-strong" numberOfLines={1}>

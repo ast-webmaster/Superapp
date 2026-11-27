@@ -33,6 +33,7 @@ import { colors } from '@/shared/theme/tokens';
 
 import { IconButton } from '../icon-button/icon-button';
 import { AppText } from '../text/text';
+import { InSheetContext } from './in-sheet';
 
 /** Opening is a touch slower than closing, and neither overshoots. */
 const OPEN = { duration: 300, easing: Easing.bezier(0.32, 0.72, 0, 1) } as const;
@@ -88,7 +89,7 @@ export interface SheetProps {
   footer?: ReactNode;
   /** `alertdialog` for a sheet that asks the user to confirm an action. */
   role?: 'dialog' | 'alertdialog';
-  /** The X in the header. Off for a sheet that asks a question, where the buttons answer it; the title then centers. */
+  /** The X on the right of the header. Off for a sheet that asks a question, where the buttons answer it. */
   closeButton?: boolean;
   /**
    * Off while the sheet is busy (a request is running): the dim area, the back button and the drag
@@ -208,67 +209,80 @@ export function Sheet({
       animationType="none"
       statusBarTranslucent
       onRequestClose={dismissible ? onClose : noop}>
-      {/* A `Modal` is its own native window on Android, so gestures need a root view inside it. */}
-      <GestureHandlerRootView style={fill}>
-        {/* `padding` on both platforms, so a field in the sheet stays above the keyboard: the sheet
+      <InSheetContext value>
+        {/* A `Modal` is its own native window on Android, so gestures need a root view inside it. */}
+        <GestureHandlerRootView style={fill}>
+          {/* `padding` on both platforms, so a field in the sheet stays above the keyboard: the sheet
             shrinks and its content scrolls. */}
-        <KeyboardAvoidingView
-          behavior="padding"
-          className="flex-1 items-center justify-end"
-          style={{ paddingTop: top }}>
-          <Animated.View style={[StyleSheet.absoluteFill, scrim, scrimStyle]} />
-          <Pressable
-            aria-hidden
-            importantForAccessibility="no-hide-descendants"
-            className="absolute inset-0"
-            onPress={dismissible ? onClose : undefined}
-          />
-          <Animated.View
-            onLayout={measure}
-            style={[
-              { width: '100%', maxHeight: '100%' },
-              fullHeight && { height: '100%' },
-              sheetStyle,
-            ]}>
-            <View
-              role={role}
-              aria-modal
-              aria-label={title}
-              className={clsx(
-                'w-full max-w-phone self-center rounded-t-xl bg-surface',
-                fullHeight ? 'flex-1' : 'shrink',
-              )}
-              style={{ paddingBottom: bottom }}>
-              {/* Only the header drags the sheet, so the content below keeps scrolling. */}
-              <GestureDetector gesture={pan}>
-                <View>
-                  {reducedMotion ? null : (
-                    <View aria-hidden className="items-center pt-3">
-                      <View className="h-1 w-10 rounded-pill bg-highlight" />
+          <KeyboardAvoidingView
+            behavior="padding"
+            className="flex-1 items-center justify-end"
+            style={{ paddingTop: top }}>
+            <Animated.View style={[StyleSheet.absoluteFill, scrim, scrimStyle]} />
+            <Pressable
+              aria-hidden
+              importantForAccessibility="no-hide-descendants"
+              className="absolute inset-0"
+              onPress={dismissible ? onClose : undefined}
+            />
+            <Animated.View
+              onLayout={measure}
+              style={[
+                { width: '100%', maxHeight: '100%' },
+                fullHeight && { height: '100%' },
+                sheetStyle,
+              ]}>
+              <View
+                role={role}
+                aria-modal
+                aria-label={title}
+                className={clsx(
+                  'w-full max-w-phone self-center rounded-t-2xl bg-surface',
+                  fullHeight ? 'flex-1' : 'shrink',
+                )}
+                style={{ paddingBottom: bottom }}>
+                {/* Only the header drags the sheet, so the content below keeps scrolling. */}
+                <GestureDetector gesture={pan}>
+                  <View>
+                    {reducedMotion ? null : (
+                      <View aria-hidden className="items-center pt-3">
+                        <View className="h-1.5 w-12 rounded-pill bg-highlight" />
+                      </View>
+                    )}
+                    {/* `px-4` plus the 4 the button keeps inside its press area is the 20 margin. */}
+                    <View className="flex-row items-center gap-2 px-4 py-2">
+                      {/* As wide as the close button, so the title stays centered. */}
+                      {closeButton ? <View className="size-touch" /> : null}
+                      <AppText
+                        variant="title"
+                        role="heading"
+                        className="min-w-0 flex-1 text-center">
+                        {title}
+                      </AppText>
+                      {closeButton ? (
+                        <IconButton
+                          icon="x"
+                          label="Close"
+                          size="sm"
+                          tone="outline"
+                          onPress={onClose}
+                        />
+                      ) : null}
                     </View>
-                  )}
-                  <View className="flex-row items-center gap-3 px-5 py-4">
-                    {closeButton ? <IconButton icon="x" label="Close" onPress={onClose} /> : null}
-                    <AppText
-                      variant="title"
-                      role="heading"
-                      className={clsx('min-w-0 flex-1', !closeButton && 'text-center')}>
-                      {title}
-                    </AppText>
                   </View>
-                </View>
-              </GestureDetector>
-              <ScrollView
-                keyboardShouldPersistTaps="handled"
-                className={fullHeight ? 'flex-1' : 'shrink'}
-                contentContainerClassName="gap-4 px-5 pb-4">
-                {children}
-              </ScrollView>
-              {footer ? <View className="px-5 pb-4 pt-2">{footer}</View> : null}
-            </View>
-          </Animated.View>
-        </KeyboardAvoidingView>
-      </GestureHandlerRootView>
+                </GestureDetector>
+                <ScrollView
+                  keyboardShouldPersistTaps="handled"
+                  className={fullHeight ? 'flex-1' : 'shrink'}
+                  contentContainerClassName="gap-4 px-5 pb-4">
+                  {children}
+                </ScrollView>
+                {footer ? <View className="px-5 pb-4 pt-2">{footer}</View> : null}
+              </View>
+            </Animated.View>
+          </KeyboardAvoidingView>
+        </GestureHandlerRootView>
+      </InSheetContext>
     </Modal>
   );
 }

@@ -14,24 +14,33 @@
  */
 @theme {
   --color-*: initial;
-  --color-primary: #111113;
-  --color-primary-pressed: #2c2c31;
+  --color-primary: #282828;
+  --color-primary-pressed: #404040;
   --color-on-primary: #ffffff;
-  --color-primary-soft: #ececee;
-  --color-highlight: #d9d9dd;
-  /* The one brand color beside black. A fill only, always with `ink` on top: as text it fails contrast on white. */
-  --color-accent: #f3af00;
-  --color-ink: #111113;
-  --color-ink-muted: #6a6a72;
+  --color-primary-soft: #eeeeee;
+  --color-highlight: #dddddd;
+  /* Brand accents: olive (`accent`), its lighter stripe, and hazel. Fills only, with `ink` on top: as text
+     they fail contrast on white. */
+  --color-accent: #cbd77e;
+  --color-accent-soft: #d9e29f;
+  --color-hazel: #e6ca9a;
+  /* Ranked chart fills, one olive hue from the largest down (donut and its bars). Named, not
+     numbered: the token test reads letters and hyphens only. */
+  --color-chart-first: #3d450f;
+  --color-chart-second: #5c671a;
+  --color-chart-third: #80892c;
+  --color-chart-fourth: #a8b34c;
+  /* The pale blue glow in the top-right corner of the Home ground; a gradient stop, never a fill. */
+  --color-ground-glow: #d6e8ed;
+  --color-ink: #282828;
+  --color-ink-muted: #6b6b6b;
   --color-surface: #ffffff;
-  --color-ground: #efefef;
-  /* The peach glow in the top-right corner of every screen's ground; a gradient stop, never a fill. */
-  --color-ground-glow: #f8e2cf;
-  --color-surface-gray: #f6f6f7;
-  --color-border: #e4e4e7;
-  --color-scrim: rgba(17, 17, 19, 0.4);
+  --color-ground: #f7f7f7;
+  --color-surface-gray: #f7f7f7;
+  --color-border: #e6e6e6;
+  --color-scrim: rgba(40, 40, 40, 0.4);
   --color-glass: rgba(255, 255, 255, 0.7);
-  --color-control-off: #8b8b93;
+  --color-control-off: #8c8c8c;
   --color-success: #176a42;
   --color-success-bg: #e6f4ec;
   --color-danger: #b42318;
@@ -41,21 +50,18 @@
   /* Soft blue, for the "near target" status: blue text on the soft fill (6:1). */
   --color-blue: #1d4ed8;
   --color-blue-soft: #e6eeff;
-  /* Market surfaces: a dark card on the light ground, with gain/loss colors that read on it. */
-  --color-ink-raised: #1c1c21;
-  --color-ink-line: #303036;
-  --color-on-ink-muted: #a9a9b1;
-  --color-gain: #34d399;
-  --color-loss: #fb7185;
+  /* Dark surfaces: the bottom nav and the Home inbox card. */
+  --color-ink-raised: #282828;
+  --color-ink-line: #3f3f3f;
+  --color-on-ink-muted: #adadad;
   --color-transparent: transparent;
 
-  --font-jakarta: 'PlusJakartaSans';
-  --font-jakarta-semibold: 'PlusJakartaSansSemiBold';
-  --font-jakarta-extrabold: 'PlusJakartaSansExtraBold';
+  --font-sora: 'Sora';
+  --font-sora-semibold: 'SoraSemiBold';
 
   --text-*: initial;
-  --text-hero: 44px;
-  --text-hero--line-height: 1.0909091; /* 48px */
+  --text-hero: 36px;
+  --text-hero--line-height: 1.3333333; /* 48px */
   --text-hero--font-weight: 500;
   --text-hero--letter-spacing: -1px;
   --text-display: 24px;

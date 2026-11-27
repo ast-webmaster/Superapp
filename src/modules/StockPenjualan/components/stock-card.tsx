@@ -86,7 +86,7 @@ export function StockCard({ item }: { item: StockItem }) {
     <View
       accessible
       aria-label={`${item.product_code}, ${item.product_name}`}
-      className="gap-4 rounded-xl border border-border bg-surface p-4">
+      className="gap-4 rounded-xl shadow-card bg-surface p-4">
       <Heading item={item} />
       <View role="separator" className="h-px bg-border" />
       {item.kind === 'sales' ? <SalesBody item={item} /> : <AllBody item={item} />}

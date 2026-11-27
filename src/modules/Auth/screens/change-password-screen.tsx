@@ -74,7 +74,7 @@ export function ChangePasswordScreen() {
         ) : null}
         {formError ? <Alert tone="danger" message={formError} /> : null}
 
-        <View className="gap-4 rounded-xl bg-surface p-5 border border-border">
+        <View className="gap-4 rounded-xl bg-surface p-5 shadow-card">
           <TextField
             label="Current password"
             type="password"

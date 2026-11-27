@@ -9,17 +9,10 @@ import { formatPercent, levelTrend, type Trend } from './level';
 
 type Look = { box: string; tone: AppTextProps['tone']; icon: ColorToken };
 
-const looks: Record<'light' | 'dark', Record<Trend, Look>> = {
-  light: {
-    gain: { box: 'bg-success-bg', tone: 'success', icon: 'success' },
-    flat: { box: 'bg-blue-soft', tone: 'blue', icon: 'blue' },
-    loss: { box: 'bg-danger-bg', tone: 'danger', icon: 'danger' },
-  },
-  dark: {
-    gain: { box: 'bg-ink-raised', tone: 'gain', icon: 'gain' },
-    flat: { box: 'bg-ink-raised', tone: 'on-primary', icon: 'highlight' },
-    loss: { box: 'bg-ink-raised', tone: 'loss', icon: 'loss' },
-  },
+const looks: Record<Trend, Look> = {
+  gain: { box: 'bg-success-bg', tone: 'success', icon: 'success' },
+  flat: { box: 'bg-blue-soft', tone: 'blue', icon: 'blue' },
+  loss: { box: 'bg-danger-bg', tone: 'danger', icon: 'danger' },
 };
 
 // The arrow says it without color: up when the target is met, down when it is not, level between.
@@ -32,14 +25,12 @@ const arrows: Record<Trend, IconName> = {
 export interface DeltaChipProps {
   percentage: number;
   level: AchievementLevel;
-  /** `dark` sits on the `ink` market card, `light` on a white card. */
-  surface?: 'light' | 'dark';
 }
 
 /** The share of the target reached, as a small up/down chip, like a price change. */
-export function DeltaChip({ percentage, level, surface = 'light' }: DeltaChipProps) {
+export function DeltaChip({ percentage, level }: DeltaChipProps) {
   const trend = levelTrend(level);
-  const look = looks[surface][trend];
+  const look = looks[trend];
 
   return (
     <View

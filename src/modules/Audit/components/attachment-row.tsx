@@ -24,7 +24,7 @@ export function AttachmentRow({ attachment, busy, disabled, onPress }: Attachmen
       disabled={disabled}
       onPress={onPress}
       className={clsx(
-        'min-h-control flex-row items-center gap-3 rounded-lg border border-border p-3 active:bg-surface-gray',
+        'min-h-control flex-row items-center gap-3 rounded-sm border border-border p-3 active:bg-surface-gray',
         (disabled || busy) && 'opacity-50',
         focusRing,
       )}>
